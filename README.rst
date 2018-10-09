@@ -1,9 +1,5 @@
 django-server
 -------------
-|Build Status|
-|Codacy Quality Badge|
-|Codacy Coverage Badge|
-
 The REST API server for the Chem Lab Notebook project for CPTR 450. Built with Django 2, the Django REST Framework, and Python 3.7.
 
 Local Deployment
