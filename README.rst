@@ -8,11 +8,36 @@ Use these steps to setup your local developemnt environment.
 
 MySQL
 +++++
-MySQL can be installed with Docker. Use MySQL version 5.7.22.
+MySQL is automatically installed within Vagrant. You should clone the git repository between steps 2 and 3. You will also have to run step 4 every time you pull an update from git.
 
-Docker
-......
+Vagrant (recommended)
+.....................
+1. Start Vagrant
 
+::
+
+  $ vagrant up
+
+2. Enter Vagrant
+
+::
+
+  $ vagrant ssh
+
+3. Enter mysql command line.
+
+::
+
+  $ mysql -u root -ptest123
+
+4. Import database from .sql file
+
+::
+
+  mysql> source chemlab.sql
+
+Docker (alternative)
+....................
 1. Install MySQL server
 
 ::
@@ -23,27 +48,29 @@ Docker
     --name=mysql-server \
     mysql/mysql-server:5.7.22
 
-2. Enter the MySQL command line, you may need to restart the container first
+2. Copy chemlab.sql to the container
+
+::
+
+  $ docker cp chemlab.sql mysql-server:/chemlab.sql
+
+3. Enter the MySQL command line, you may need to restart the container first
 
 ::
 
   $ docker exec -it mysql-server mysql -uroot -proot
 
-3. Give the root user permission on localhost
+4. Give the root user permission on localhost
 
 ::
 
   mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
 
-Database Setup
-..............
-1. Create the databases, use Docker step 2 to enter the MySQL command line if necessary
+5. Import chamlab.sql
 
 ::
 
-  mysql> CREATE DATABASE chemlab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-
+  mysql> source chemlab.sql
 
 Django Setup
 ++++++++++++
