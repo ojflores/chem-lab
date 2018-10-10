@@ -8,7 +8,7 @@ Use these steps to setup your local developemnt environment.
 
 MySQL
 +++++
-MySQL is automatically installed within Vagrant. You will have to run step 4 every time you pull an update from git.
+MySQL is automatically installed within Vagrant. You should clone the git repository between steps 2 and 3. You will also have to run step 4 every time you pull an update from git.
 
 Database Setup
 ......
