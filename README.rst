@@ -35,7 +35,7 @@ Database Setup
 
 ::
 
-  source chemlab.sql
+  mysql> source chemlab.sql
 
  
 Django Setup
