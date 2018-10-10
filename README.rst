@@ -10,9 +10,8 @@ MySQL
 +++++
 MySQL is automatically installed within Vagrant. You should clone the git repository between steps 2 and 3. You will also have to run step 4 every time you pull an update from git.
 
-Database Setup
-......
-
+Vagrant (recommended)
+.....................
 1. Start Vagrant
 
 ::
@@ -37,7 +36,42 @@ Database Setup
 
   mysql> source chemlab.sql
 
- 
+Docker (alternative)
+....................
+1. Install MySQL server
+
+::
+
+  $ docker run -d \
+    -p 8889:3306 \
+    -e MYSQL_ROOT_PASSWORD=root \
+    --name=mysql-server \
+    mysql/mysql-server:5.7.22
+
+2. Copy chemlab.sql to the container
+
+::
+
+  $ docker cp chemlab.sql mysql-server:/chemlab.sql
+
+3. Enter the MySQL command line, you may need to restart the container first
+
+::
+
+  $ docker exec -it mysql-server mysql -uroot -proot
+
+4. Give the root user permission on localhost
+
+::
+
+  mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
+
+5. Import chamlab.sql
+
+::
+
+  mysql> source chemlab.sql
+
 Django Setup
 ++++++++++++
 1. Install dependencies
