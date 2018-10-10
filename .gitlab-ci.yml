@@ -47,9 +47,21 @@ before_script:
 #
 # and then adding `--settings app.settings.ci` (or similar) to the test command
 
+DATABASES = {
+    'default': {
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': 'ci',
+       'USER': 'root',
+       'PASSWORD': 'testing',
+       'HOST': '127.0.0.1',
+       'PORT': '3306',
+   },
+}
+
 test:
   variables:
     #DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
     DATABASE_URL: "jbcd:mysql://127.0.0.1:3306"
   script:
-  - python manage.py test
+    --settings app.settings.ci
+    - python manage.py test
