@@ -43,6 +43,19 @@ CREATE TABLE IF NOT EXISTS `labs` (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS `answers` (
+  `student_id` CHAR(7) NOT NULL,
+  `course_id` CHAR(7) NOT NULL,
+  `lab_num` VARCHAR(3) NOT NULL,
+  `answers` JSON NOT NULL,
+  FOREIGN KEY(`student_id`)
+    REFERENCES students(`student_id`)
+    ON DELETE CASCADE,
+  FOREIGN KEY(`course_id`,`lab_num`)
+    REFERENCES labs(`course_id`, `lab_num`)
+    ON DELETE CASCADE
+);
+
 #Insert test data
 
 INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `email`) VALUES
@@ -56,3 +69,6 @@ INSERT INTO `enrolled` (`student_id`, `course_id`) VALUES
 
 INSERT INTO `labs` (`course_id`, `lab_num`, `lab_name`) VALUES
 ('CHEM101', '01', 'MgO Developer');
+
+INSERT INTO `answers` (`student_id`, `course_id`, `lab_num`, `answers`) VALUES
+('2000001', 'CHEM101', '01', JSON_OBJECT('initial_temp', '21.29', 'final_temp', '45.89'));
