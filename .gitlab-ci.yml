@@ -25,10 +25,12 @@ variables:
 # services such as redis or postgres
 before_script:
   - apt-get update
-  - apt-get --assume-yes install python3
+  - apt-get --assume-yes install python3.7
   - apt-get --assume-yes install python3-pip
-  - python3 -V                                   # Print out python version for debugging
+  - python3 -V                                   # Print out Python version for debugging
   - pip3 -V
+  - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
+  - export LANG=C.UTF-8
   # - mysql -e 'SET GLOBAL SQL_MODE="STRICT_ALL_TABLES";'
   #
   # # Uncomment next line if your Django app needs a JS runtime:
@@ -55,9 +57,6 @@ connect:
   image: mysql
   script:
     - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-
-test:
-  script:
     - python manage.py test
 
 # script:
