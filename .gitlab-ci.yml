@@ -25,7 +25,7 @@ variables:
 # services such as redis or postgres
 before_script:
   - apt-get update
-  - apt-get --assume-yes install python3.7
+  - apt-get --assume-yes install python3
   - apt-get --assume-yes install python3-pip
   - python3 -V                                   # Print out Python version for debugging
   - pip3 -V
