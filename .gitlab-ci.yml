@@ -25,7 +25,7 @@ variables:
 # services such as redis or postgres
 before_script:
   - apt-get update
-  - apt-get install python3
+  - apt-get --assume-yes install python3
   - python -V                                   # Print out python version for debugging
   # - mysql -e 'SET GLOBAL SQL_MODE="STRICT_ALL_TABLES";'
   #
