@@ -26,12 +26,14 @@ variables:
 before_script:
   - apt-get update
   - apt-get --assume-yes install python3
+  - apt-get --assume-yes install python3-pip
   - python3 -V                                   # Print out python version for debugging
+  - pip3 -V
   # - mysql -e 'SET GLOBAL SQL_MODE="STRICT_ALL_TABLES";'
   #
   # # Uncomment next line if your Django app needs a JS runtime:
   # # - apt-get update -q && apt-get install nodejs -yqq
-  - pip install pipenv
+  - pip3 install pipenv
   - pipenv install --dev
 
 # To get Django tests to work you may need to create a settings file using
@@ -52,8 +54,11 @@ before_script:
 connect:
   image: mysql
   script:
-  - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-  - python manage.py test
+    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
+
+test:
+  script:
+    - python manage.py test
 
 # script:
   # - python manage.py test
