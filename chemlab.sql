@@ -35,9 +35,9 @@ CREATE TABLE IF NOT EXISTS `enrolled` (
 
 CREATE TABLE IF NOT EXISTS `labs` (
   `course_id` VARCHAR(7) NOT NULL,
-  `lab_id` VARCHAR(2) NOT NULL,
+  `lab_num` VARCHAR(2) NOT NULL,
   `lab_name` VARCHAR(25) NOT NULL,
-  PRIMARY KEY(`course_id`, `lab_id`),
+  PRIMARY KEY(`course_id`, `lab_num`),
   FOREIGN KEY(`course_id`)
     REFERENCES courses(`course_id`)
     ON DELETE CASCADE
@@ -54,5 +54,5 @@ INSERT INTO `courses` (`course_id`, `course_name`) VALUES
 INSERT INTO `enrolled` (`student_id`, `course_id`) VALUES
 ('2000001', 'CHEM101');
 
-INSERT INTO `labs` (`course_id`, `lab_id`, `lab_name`) VALUES
+INSERT INTO `labs` (`course_id`, `lab_num`, `lab_name`) VALUES
 ('CHEM101', '01', 'MgO Developer');
