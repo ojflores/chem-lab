@@ -34,6 +34,7 @@ before_script:
   # # - apt-get update -q && apt-get install nodejs -yqq
   - pip3 install pipenv
   - pipenv install --dev
+  - pipenv shell
 
 # To get Django tests to work you may need to create a settings file using
 # the following DATABASES:
