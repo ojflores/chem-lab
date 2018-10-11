@@ -1,6 +1,5 @@
 # Official framework image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/python
-# image: python:latest
 
 # Pick zero or more services to be used on all builds.
 # Only needed when using a docker container to run your tests in.
@@ -30,8 +29,6 @@ before_script:
   - export LANG=C.UTF-8
   # - mysql -e 'SET GLOBAL SQL_MODE="STRICT_ALL_TABLES";'
   #
-  # # Uncomment next line if your Django app needs a JS runtime:
-  # # - apt-get update -q && apt-get install nodejs -yqq
   - pip3 install pipenv
   - pipenv install --dev
   # - pipenv shell
@@ -56,4 +53,4 @@ connect_and_test:
   image: python:latest
   script:
     # - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-    - pipenv run manage.py test
+    - python3 manage.py test
