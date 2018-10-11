@@ -24,9 +24,16 @@ variables:
 # This is a basic example for a gem or script which doesn't use
 # services such as redis or postgres
 before_script:
-  - apt-get update
-  - apt-get --assume-yes install python3
-  - apt-get --assume-yes install python3-pip
+  # Download prerequisites and install Python 3.7
+  - sudo apt-get --assume-yes install build-essential checkinstall
+  - sudo apt-get --assume-yes install libreadline-gplv2-dev libncursesw5-dev libssl-dev \
+    libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
+  - cd /usr/src
+  - wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
+  - tar xzf Python-3.7.0.tgz
+  - cd Python-3.7.0
+  - ./configure --enable-optimizations
+  - make install
   - python3 -V                                   # Print out Python version for debugging
   - pip3 -V
   - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
