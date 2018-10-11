@@ -9,7 +9,7 @@ USE chemlab;
 #Create tables
 
 CREATE TABLE IF NOT EXISTS `students` (
-  `student_id` VARCHAR(7) NOT NULL,
+  `student_id` CHAR(7) NOT NULL,
   `first_name` VARCHAR(25) NOT NULL,
   `last_name` VARCHAR(25) NOT NULL,
   `email` VARCHAR(50) NOT NULL,
@@ -17,14 +17,14 @@ CREATE TABLE IF NOT EXISTS `students` (
 );
 
 CREATE TABLE IF NOT EXISTS `courses` (
-  `course_id` VARCHAR(7) NOT NULL,
+  `course_id` CHAR(7) NOT NULL,
   `course_name` VARCHAR(25) NOT NULL,
   PRIMARY KEY(`course_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `enrolled` (
-  `student_id` VARCHAR(7) NOT NULL,
-  `course_id` VARCHAR(7) NOT NULL,
+  `student_id` CHAR(7) NOT NULL,
+  `course_id` CHAR(7) NOT NULL,
   FOREIGN KEY(`student_id`)
     REFERENCES students(`student_id`)
     ON DELETE CASCADE,
@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS `enrolled` (
 );
 
 CREATE TABLE IF NOT EXISTS `labs` (
-  `course_id` VARCHAR(7) NOT NULL,
-  `lab_num` VARCHAR(2) NOT NULL,
+  `course_id` CHAR(7) NOT NULL,
+  `lab_num` VARCHAR(3) NOT NULL,
   `lab_name` VARCHAR(25) NOT NULL,
   PRIMARY KEY(`course_id`, `lab_num`),
   FOREIGN KEY(`course_id`)
