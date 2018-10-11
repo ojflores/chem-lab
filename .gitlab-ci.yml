@@ -17,20 +17,20 @@ variables:
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
-cache:
-  paths:
-  - ~/.cache/pip/
+# cache:
+#   paths:
+#   - ~/.cache/pip/
 
 # This is a basic example for a gem or script which doesn't use
 # services such as redis or postgres
 before_script:
   - python -V                                   # Print out python version for debugging
-  - mysql -e 'SET GLOBAL SQL_MODE="STRICT_ALL_TABLES";'
-
-  # Uncomment next line if your Django app needs a JS runtime:
-  # - apt-get update -q && apt-get install nodejs -yqq
-  - pip install pipenv
-  - pipenv install --dev
+  # - mysql -e 'SET GLOBAL SQL_MODE="STRICT_ALL_TABLES";'
+  #
+  # # Uncomment next line if your Django app needs a JS runtime:
+  # # - apt-get update -q && apt-get install nodejs -yqq
+  # - pip install pipenv
+  # - pipenv install --dev
 
 # To get Django tests to work you may need to create a settings file using
 # the following DATABASES:
@@ -50,7 +50,7 @@ before_script:
 connect:
   image: mysql
   script:
-  - mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
+  - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
 
-script:
-  - python manage.py test
+# script:
+#   - python manage.py test
