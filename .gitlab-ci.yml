@@ -9,10 +9,11 @@ services:
   - mysql:latest
 
 variables:
-  MYSQL_USER: root
-  MYSQL_PASSWORD: testing
-  MYSQL_HOST: 127.0.0.1
-  MYSQL_PORT: 3306
+  MYSQL_DATABASE: testing_db
+  #MYSQL_USER: root
+  MYSQL_ROOT_PASSWORD: testing
+  #MYSQL_HOST: 127.0.0.1
+  #MYSQL_PORT: 3306
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
@@ -46,22 +47,10 @@ before_script:
 # }
 #
 # and then adding `--settings app.settings.ci` (or similar) to the test command
-
-DATABASES = {
-    'default': {
-       'ENGINE': 'django.db.backends.mysql',
-       'NAME': 'ci',
-       'USER': 'root',
-       'PASSWORD': 'testing',
-       'HOST': '127.0.0.1',
-       'PORT': '3306',
-   },
-}
-
-test:
-  variables:
-    #DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
-    DATABASE_URL: "jbcd:mysql://127.0.0.1:3306"
+connect:
+  image: mysql
   script:
-    --settings app.settings.ci
-    - python manage.py test
+  - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
+
+script:
+  - python manage.py test
