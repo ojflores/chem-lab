@@ -26,17 +26,17 @@ variables:
 before_script:
   # Download prerequisites and install Python 3.7
   - apt-get update
-  - apt-get --assume-yes install build-essential checkinstall
-  - apt-get --assume-yes install libreadline-gplv2-dev libncursesw5-dev libssl-dev \
-    libsqlite3-0 tk-dev libgdbm-dev libc6-dev libbz2-dev
-  - cd /usr/src
-  - wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
-  - tar xzf Python-3.7.0.tgz
-  - cd Python-3.7.0
-  - ./configure --enable-optimizations
-  - make install
-  - python3 -V                                   # Print out Python version for debugging
-  - pip3 -V
+  # - apt-get --assume-yes install build-essential checkinstall
+  # - apt-get --assume-yes install libreadline-gplv2-dev libncursesw5-dev libssl-dev \
+  #   libsqlite3-0 tk-dev libgdbm-dev libc6-dev libbz2-dev
+  # - cd /usr/src
+  # - wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
+  # - tar xzf Python-3.7.0.tgz
+  # - cd Python-3.7.0
+  # - ./configure --enable-optimizations
+  # - make install
+  # - python3 -V                                   # Print out Python version for debugging
+  # - pip3 -V
   - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
   - export LANG=C.UTF-8
   # - mysql -e 'SET GLOBAL SQL_MODE="STRICT_ALL_TABLES";'
@@ -63,6 +63,7 @@ before_script:
 # and then adding `--settings app.settings.ci` (or similar) to the test command
 connect:
   image: mysql
+  image: python:latest
   script:
     - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
     - python manage.py test
