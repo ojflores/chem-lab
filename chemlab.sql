@@ -22,11 +22,30 @@ CREATE TABLE IF NOT EXISTS `courses` (
   PRIMARY KEY(`course_id`)
 );
 
+CREATE TABLE IF NOT EXISTS `teachers` (
+  `teacher_id` CHAR(7) NOT NULL,
+  `first_name` VARCHAR(25) NOT NULL,
+  `last_name` VARCHAR(25) NOT NULL,
+  `email` VARCHAR(50) NOT NULL,
+  PRIMARY KEY(`teacher_id`)
+);
+
 CREATE TABLE IF NOT EXISTS `enrolled` (
   `student_id` CHAR(7) NOT NULL,
   `course_id` CHAR(7) NOT NULL,
   FOREIGN KEY(`student_id`)
     REFERENCES students(`student_id`)
+    ON DELETE CASCADE,
+  FOREIGN KEY(`course_id`)
+    REFERENCES courses(`course_id`)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `teaching` (
+  `teacher_id` CHAR(7) NOT NULL,
+  `course_id` CHAR(7) NOT NULL,
+  FOREIGN KEY(`teacher_id`)
+    REFERENCES teachers(`teacher_id`)
     ON DELETE CASCADE,
   FOREIGN KEY(`course_id`)
     REFERENCES courses(`course_id`)
@@ -64,8 +83,14 @@ INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `email`) VALUES
 INSERT INTO `courses` (`course_id`, `course_name`) VALUES
 ('CHEM101', 'Intro to Chemestry');
 
+INSERT INTO `teachers` (`teacher_id`, `first_name`, `last_name`, `email`) VALUES
+('2090001', 'Steven', 'Lee', 'steven.lee@wallawalla.edu');
+
 INSERT INTO `enrolled` (`student_id`, `course_id`) VALUES
 ('2000001', 'CHEM101');
+
+INSERT INTO `teaching` (`teacher_id`, `course_id`) VALUES
+('2090001', 'CHEM101');
 
 INSERT INTO `labs` (`course_id`, `lab_num`, `lab_name`) VALUES
 ('CHEM101', '01', 'MgO Developer');
