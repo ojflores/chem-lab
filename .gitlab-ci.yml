@@ -31,7 +31,6 @@ before_script:
   #
   - pip3 install pipenv
   - pipenv install --dev
-  # - pipenv shell
 
 # To get Django tests to work you may need to create a settings file using
 # the following DATABASES:
@@ -53,5 +52,4 @@ connect_and_test:
   image: python:latest
   script:
     # - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-    # - pipenv run coverage run --source='.' ./manage.py test
-    - echo $PATH
+    - pipenv run python3 ./manage.py test
