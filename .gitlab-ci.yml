@@ -54,4 +54,4 @@ connect_and_test:
   script:
     # - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
     # - pipenv run coverage run --source='.' ./manage.py test
-    echo $PATH
+    - echo $PATH
