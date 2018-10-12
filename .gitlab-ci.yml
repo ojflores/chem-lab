@@ -53,4 +53,4 @@ connect_and_test:
   image: python:latest
   script:
     # - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-    - pipenv run --source='.' manage.py test
+    - pipenv run manage.py test
