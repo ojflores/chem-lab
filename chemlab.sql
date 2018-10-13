@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `labs` (
   `course_id` CHAR(7) NOT NULL,
   `lab_num` VARCHAR(3) NOT NULL,
   `lab_name` VARCHAR(25) NOT NULL,
+  `answer_key` JSON NOT NULL,
   PRIMARY KEY(`course_id`, `lab_num`),
   FOREIGN KEY(`course_id`)
     REFERENCES courses(`course_id`)
@@ -92,8 +93,8 @@ INSERT INTO `enrolled` (`student_id`, `course_id`) VALUES
 INSERT INTO `teaching` (`teacher_id`, `course_id`) VALUES
 ('2090001', 'CHEM101');
 
-INSERT INTO `labs` (`course_id`, `lab_num`, `lab_name`) VALUES
-('CHEM101', '01', 'MgO Developer');
+INSERT INTO `labs` (`course_id`, `lab_num`, `lab_name`, `answer_key`) VALUES
+('CHEM101', '01', 'MgO Developer', JSON_OBJECT('initial_temp', '30', 'final_temp', '45'));
 
 INSERT INTO `answers` (`student_id`, `course_id`, `lab_num`, `answers`) VALUES
 ('2000001', 'CHEM101', '01', JSON_OBJECT('initial_temp', '21.29', 'final_temp', '45.89'));
