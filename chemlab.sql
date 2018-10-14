@@ -76,6 +76,29 @@ CREATE TABLE IF NOT EXISTS `answers` (
     ON DELETE CASCADE
 );
 
+#Create procedures
+
+DELIMITER //
+CREATE PROCEDURE see_key(IN cid CHAR(7), IN lnum VARCHAR(3))
+BEGIN
+  SET @j = (SELECT COUNT(JSON_KEYS(answer_key)) AS `length` FROM labs);
+  SET @i = 0;
+  CREATE TABLE `temp_table` (`key` VARCHAR(50), `answer` VARCHAR(50));
+  WHILE @i <= @j DO
+    INSERT INTO temp_table
+    SELECT
+      JSON_UNQUOTE(JSON_EXTRACT(JSON_KEYS(answer_key), CONCAT("$[", @i, "]"))) AS `key`,
+      JSON_UNQUOTE(JSON_EXTRACT(JSON_EXTRACT(answer_key, "$.*"), CONCAT("$[", @i, "]"))) AS `answers`
+    FROM labs
+    WHERE course_id = cid
+    AND lab_num = lnum;
+    SET @i = @i +1;
+  END WHILE;
+  SELECT * FROM temp_table;
+  DROP TABLE `temp_table`;
+END //
+DELIMITER ;
+
 #Insert test data
 
 INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `email`) VALUES
