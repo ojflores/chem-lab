@@ -24,6 +24,7 @@ if os.getenv('DJANGO_ENV') == 'prod':
     X_FRAME_OPTIONS = 'DENY'
 else:
     DEBUG = True
+    ALLOWED_HOSTS = ['*']
 
 # base
 SECRET_KEY = os.getenv('SECRET_KEY', 'dev')
