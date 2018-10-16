@@ -90,5 +90,5 @@ Django Setup
 
 ::
 
-  $ pipenv run python manage.py runserver
+  $ pipenv run python manage.py runserver 8080
 
