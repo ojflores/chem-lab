@@ -24,7 +24,7 @@ Django/Docker Setup (Reccomended)
 
 ::
 
-  $ docker run -p 8080:8080 --name django-server django-image
+  $ docker run -p 8000:8000 --name django-server django-image
 
 4. stop the conatiner once you test it (Ctrl-C)
 
@@ -47,7 +47,7 @@ Django Setup (Without Docker)
 
 ::
 
-  $ pipenv run python manage.py runserver 0.0.0.0:8080
+  $ pipenv run python manage.py runserver 0.0.0.0:8000
 
 Local Deployment
 ----------------

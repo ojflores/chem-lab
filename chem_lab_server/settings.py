@@ -1,5 +1,5 @@
 # sheldon woodward -chagned Bobby Locke
-# last updated 10/16/18
+# last updated 10/17/18
 #
 #
 # --Environment Variables--
@@ -41,11 +41,10 @@ USE_L10N = True
 USE_TZ = True
 
 # databases
-DATABASES = {}
 
-'''
 DATABASES = {
-    'default': {
+    'default': {},
+    'chemlab': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'chemlab',
         'USER': 'root',
@@ -54,7 +53,7 @@ DATABASES = {
         'PORT': '8889',
     },
 }
-'''
+
 
 # django setup
 INSTALLED_APPS = [
