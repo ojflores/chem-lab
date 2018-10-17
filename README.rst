@@ -18,14 +18,22 @@ Django/Docker Setup (Reccomended)
 
 ::
 
-  $ docker build . -t django-server
+  $ docker build . -t django-image
   
 3. Run Django-server
 
 ::
 
-  $ docker run -p 8080:8080 django-server
+  $ docker run -p 8080:8080 --name django-server django-image
 
+4. stop the conatiner once you test it (Ctrl-C)
+
+5. Perminantly start up server
+
+::
+
+  $ docker start django-server
+  
 
 Django Setup (Without Docker)
 ++++++++++++
