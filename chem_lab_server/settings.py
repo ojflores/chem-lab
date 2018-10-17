@@ -41,7 +41,9 @@ USE_L10N = True
 USE_TZ = True
 
 # databases
+DATABASES = {}
 
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -52,6 +54,7 @@ DATABASES = {
         'PORT': '8889',
     },
 }
+'''
 
 # django setup
 INSTALLED_APPS = [
