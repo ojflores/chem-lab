@@ -1,11 +1,4 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.http import HttpResponse
 
-
-class Ping(APIView):
-    """
-    Ping sample endpoint.
-    """
-    @staticmethod
-    def get(request):
-        return Response({'result': 'pong!'})
+def index(request):
+    return HttpResponse("Pong!")
