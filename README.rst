@@ -66,7 +66,7 @@ Docker (alternative)
 
   mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
 
-5. Import chamlab.sql
+5. Import chemlab.sql
 
 ::
 
