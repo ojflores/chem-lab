@@ -4,7 +4,7 @@ The REST API server for the Chem Lab Notebook project for CPTR 450. Built with D
 
 Local Deployment
 ----------------
-Use these steps to setup your local developemnt environment.
+Use these steps to setup your local development environment.
 
 MySQL
 +++++
@@ -91,4 +91,3 @@ Django Setup
 ::
 
   $ pipenv run python manage.py runserver
-
