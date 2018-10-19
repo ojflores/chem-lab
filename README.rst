@@ -5,8 +5,8 @@ The REST API server for the Chem Lab Notebook project for CPTR 450. Built with D
 Production Deployment
 ----------------
 Use these steps to setups to activate the server on cptr450.cs.wallawalla.edu.
-  
-Django/Docker Setup (Reccomended)
+
+Django/Docker Setup (Recommended)
 ++++++++++++
 1. Navigate to the correct directory
 
@@ -14,26 +14,26 @@ Django/Docker Setup (Reccomended)
 
   $ cd home/chem-lab-server
 
-2. Build Docker enviornment
+2. Build Docker environment
 
 ::
 
   $ docker build . -t django-image
-  
+
 3. Run Django-server
 
 ::
 
   $ docker run -p 8000:8000 --name django-server django-image
 
-4. stop the conatiner once you test it (Ctrl-C)
+4. stop the container once you test it (Ctrl-C)
 
-5. Perminantly start up server
+5. Permanently start up server
 
 ::
 
   $ docker start django-server
-  
+
 
 Django Setup (Without Docker)
 ++++++++++++
@@ -42,7 +42,7 @@ Django Setup (Without Docker)
 ::
 
   $ cd home/chem-lab-server
-  
+
 2. Activate server
 
 ::
@@ -119,7 +119,7 @@ Docker (alternative)
 
   mysql> source chemlab.sql
 
-Django Setup
+Django Setup (old)
 ++++++++++++
 1. Install dependencies
 
