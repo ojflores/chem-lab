@@ -1,5 +1,5 @@
-# sheldon woodward
-# last updated August 7, 2018
+# sheldon woodward -Change by Bobby Locke
+# last updated 10/16/18
 #
 #
 # --Environment Variables--
@@ -16,7 +16,7 @@ import os
 # set security settings
 if os.getenv('DJANGO_ENV') == 'prod':
     DEBUG = False
-    ALLOWED_HOSTS = []  # SET ME ##########################################################################
+    ALLOWED_HOSTS = ['*']  # SET ME ##########################################################################
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     SESSION_COOKIE_SECURE = True
@@ -24,6 +24,7 @@ if os.getenv('DJANGO_ENV') == 'prod':
     X_FRAME_OPTIONS = 'DENY'
 else:
     DEBUG = True
+    ALLOWED_HOSTS = ['*']
 
 # base
 SECRET_KEY = os.getenv('SECRET_KEY', 'dev')
@@ -43,67 +44,7 @@ USE_TZ = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django',
-        'USER': os.getenv('MYSQL_USER', 'root'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'root'),
-        'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
-        'PORT': os.getenv('MYSQL_PORT', 8889),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-        'TEST': {
-            'CHARSET': 'utf8mb4',
-            'COLLATION': 'utf8mb4_unicode_ci',
-        },
-    },
-    'elections': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'elections',
-        'USER': os.getenv('MYSQL_USER', 'root'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'root'),
-        'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
-        'PORT': os.getenv('MYSQL_PORT', 8889),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-        'TEST': {
-            'CHARSET': 'utf8mb4',
-            'COLLATION': 'utf8mb4_unicode_ci',
-        },
-    },
-    'jobs': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'jobs',
-        'USER': os.getenv('MYSQL_USER', 'root'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'root'),
-        'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
-        'PORT': os.getenv('MYSQL_PORT', 8889),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-        'TEST': {
-            'CHARSET': 'utf8mb4',
-            'COLLATION': 'utf8mb4_unicode_ci',
-        },
-    },
-    'pages': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pages',
-        'USER': os.getenv('MYSQL_USER', 'root'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'root'),
-        'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
-        'PORT': os.getenv('MYSQL_PORT', 8889),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-        'TEST': {
-            'CHARSET': 'utf8mb4',
-            'COLLATION': 'utf8mb4_unicode_ci',
-        },
-    },
-    'people': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'people',
+        'NAME': 'chemlab',
         'USER': os.getenv('MYSQL_USER', 'root'),
         'PASSWORD': os.getenv('MYSQL_PASSWORD', 'root'),
         'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
