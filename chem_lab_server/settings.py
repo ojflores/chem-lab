@@ -49,7 +49,7 @@ DATABASES = {
         'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
         'PORT': os.getenv('MYSQL_PORT', 8889),
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'sql_mode': 'traditional',
         },
         'TEST': {
             'CHARSET': 'utf8mb4',
