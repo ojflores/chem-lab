@@ -11,7 +11,7 @@ class Instructor(models.Model):
     wwuid = models.CharField(max_length=7)
 
 class Course(models.Model):
-    name = models.CharFeild(max_length=100)
+    name = models.CharField(max_length=100)
 
 class LabGroup(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -39,7 +39,7 @@ class TaskTemplate(models.Model):
 class AssignmentEntry(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
-    grade = models.floatField()
+    grade = models.FloatField()
 
 class TaskEntry(models.Model):
     assignment_entry = models.ForeignKey(AssignmentEntry, on_delete=models.CASCADE)
