@@ -45,32 +45,27 @@ Docker (alternative)
   $ docker run -d \
     -p 8889:3306 \
     -e MYSQL_ROOT_PASSWORD=root \
-    --name=mysql-server \
+    --name=mysql-cptr450 \
     mysql/mysql-server:5.7.22
 
-2. Copy chemlab.sql to the container
-
-::
-
-  $ docker cp chemlab.sql mysql-server:/chemlab.sql
-
-3. Enter the MySQL command line, you may need to restart the container first
+2. Enter the MySQL command line, you may need to restart the container first
 
 ::
 
   $ docker exec -it mysql-server mysql -uroot -proot
 
-4. Give the root user permission on localhost
+3. Give the root user permission on localhost
 
 ::
 
   mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
 
-5. Import chemlab.sql
+4. Create the Django table
 
 ::
 
-  mysql> source chemlab.sql
+  mysql> CREATE DATABASE django CHARACTER SET utf8 COLLATE utf8_bin;
+
 
 Django Setup
 ++++++++++++
