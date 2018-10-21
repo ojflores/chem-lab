@@ -28,7 +28,7 @@ before_script:
 # To get Django tests to work you may need to create a settings file using
 # the following DATABASES:
 #
-DATABASES = {
+DATABASES: {
     'default': {
        'ENGINE': 'django.db.backends.mysql',
        'NAME': 'django',
