@@ -8,11 +8,8 @@ services:
   - mysql:latest
 
 variables:
-  MYSQL_DATABASE: testing_db
-  #MYSQL_USER: root
-  MYSQL_ROOT_PASSWORD: testing
-  #MYSQL_HOST: 127.0.0.1
-  #MYSQL_PORT: 3306
+  MYSQL_DATABASE: chem_lab_test_db
+  MYSQL_ROOT_PASSWORD: root
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
@@ -20,15 +17,11 @@ cache:
   paths:
   - ~/.cache/pip/
 
-# This is a basic example for a gem or script which doesn't use
-# services such as redis or postgres
 before_script:
   - python3 -V                                   # Print out Python version for debugging
   - pip3 -V
   - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
   - export LANG=C.UTF-8
-  # - mysql -e 'SET GLOBAL SQL_MODE="STRICT_ALL_TABLES";'
-  #
   - pip3 install pipenv
   - pipenv install --dev
 
@@ -51,7 +44,5 @@ connect_and_test:
   image: mysql
   image: python:latest
   script:
-    # - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-    # - pipenv run python3 manage.py migrate
-    # - pipenv run python manage.py runserver
+    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
     - pipenv run python manage.py test
