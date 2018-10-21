@@ -53,5 +53,5 @@ connect_and_test:
   script:
     # - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
     # - pipenv run python3 manage.py migrate
-    - pipenv run python manage.py runserver
-    - pipenv run python3 ./manage.py test
+    # - pipenv run python manage.py runserver
+    - pipenv run python manage.py test
