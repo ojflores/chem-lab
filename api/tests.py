@@ -1,5 +1,8 @@
 from django.test import TestCase
 
 class SampleTest(TestCase):
-    def sample_test(self):
+    def setUp(self):
+        pass
+
+    def test_sample(self):
         self.assertTrue(True)
