@@ -2,53 +2,6 @@ django-server
 -------------
 The REST API server for the Chem Lab Notebook project for CPTR 450. Built with Django 2, the Django REST Framework, and Python 3.7.
 
-Production Deployment
-----------------
-Use these steps to setups to activate the server on cptr450.cs.wallawalla.edu.
-
-Django/Docker Setup (Recommended)
-++++++++++++
-1. Navigate to the correct directory
-
-::
-
-  $ cd home/chem-lab-server
-
-2. Build Docker environment
-
-::
-
-  $ docker build . -t django-image
-
-3. Run Django-server
-
-::
-
-  $ docker run -p 8000:8000 --name django-server django-image
-
-4. stop the container once you test it (Ctrl-C)
-
-5. Permanently start up server
-
-::
-
-  $ docker start django-server
-
-
-Django Setup (Without Docker)
-++++++++++++
-1. Navigate to the correct directory
-
-::
-
-  $ cd home/chem-lab-server
-
-2. Activate server
-
-::
-
-  $ pipenv run python manage.py runserver 0.0.0.0:8000
-
 Local Deployment
 ----------------
 Use these steps to setup your local development environment.
@@ -114,7 +67,7 @@ Docker (alternative)
   mysql> CREATE DATABASE django CHARACTER SET utf8 COLLATE utf8_bin;
 
 
-Django Setup (old)
+Django Setup
 ++++++++++++
 1. Install dependencies
 

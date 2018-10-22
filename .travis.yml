@@ -11,9 +11,9 @@ services:
 
 env:
   - MYSQL_USER="root"
-    MYSQL_PASSWORD="root"
-    MYSQL_HOST="0.0.0.0"
-    MYSQL_PORT="8889"
+    MYSQL_PASSWORD=""
+    MYSQL_HOST="127.0.0.1"
+    MYSQL_PORT="3306"
 
 before_install:
   - mysql -e 'SET GLOBAL SQL_MODE="STRICT_ALL_TABLES";'

@@ -1,5 +1,5 @@
-# sheldon woodward -chagned Bobby Locke
-# last updated 10/17/18
+# sheldon woodward
+# last updated August 7, 2018
 #
 #
 # --Environment Variables--
@@ -16,7 +16,7 @@ import os
 # set security settings
 if os.getenv('DJANGO_ENV') == 'prod':
     DEBUG = False
-    ALLOWED_HOSTS = ['*']  # SET ME #########################################
+    ALLOWED_HOSTS = []  # SET ME ##########################################################################
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     SESSION_COOKIE_SECURE = True
@@ -41,12 +41,9 @@ USE_L10N = True
 USE_TZ = True
 
 # databases
-
 DATABASES = {
-    'default': {},
-    'chemlab': {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
-<<<<<<< HEAD
         'NAME': 'django',
         'USER': os.getenv('MYSQL_USER', 'root'),
         'PASSWORD': os.getenv('MYSQL_PASSWORD', 'root'),
@@ -62,16 +59,8 @@ DATABASES = {
             'CHARSET': 'utf8mb4',
             'COLLATION': 'utf8mb4_unicode_ci',
         },
-=======
-        'NAME': 'chemlab',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '0.0.0.0',
-        'PORT': '8889',
->>>>>>> develop
     },
 }
-
 
 # django setup
 INSTALLED_APPS = [
