@@ -25,12 +25,8 @@ before_script:
   - pip3 install pipenv
   - pipenv install --dev
 
-connect:
-  image: mysql
-  script:
-    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-
-test:
+connect_and_test:
+  image: mysql:latest
   image: python:latest
-  script:
+    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
     - pipenv run python manage.py test
