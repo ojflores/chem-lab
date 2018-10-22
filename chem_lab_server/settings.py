@@ -41,10 +41,8 @@ USE_L10N = True
 USE_TZ = True
 
 # databases
-
 DATABASES = {
-    'default': {},
-    'chemlab': {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django',
         'USER': os.getenv('MYSQL_USER', 'root'),

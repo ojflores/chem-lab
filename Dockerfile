@@ -1,26 +1,28 @@
-FROM python:3.7
+FROM python:3.7.0-alpine3.8
 
-ENV PYTHONUNBUFFERED 1
+MAINTAINER sheldon.woodward@wallawalla.edu 
 
-RUN pip install pip==18.0 && \
-    pip install django && \
-    pip install djangorestframework && \
-    pip install PyMySQL && \
-    pip install mysqlclient && \
+RUN apk add mariadb-dev pcre pcre-dev && \
+    apk add --no-cache --virtual .build-deps gcc libc-dev linux-headers libffi-dev && \
+    pip install pipenv==2018.7.1 && \
+    pip install uwsgi==2.0.17.1 && \
     set -e && \
-    adduser --system django
+    adduser -S django
 
 WORKDIR /home/django
 
-COPY ./ /home/django/chem_lab_server
+COPY . chem_lab_server
 
 WORKDIR /home/django/chem_lab_server
+RUN pipenv install --system --deploy
 
 ENV DJANGO_ENV=prod
 ENV DOCKER_CONTAINER=1
 
 EXPOSE 8000
 
+RUN apk del .build-deps
 
 USER django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["uwsgi", "--ini", "/home/django/chem_lab_server/uwsgi.ini"]
+
