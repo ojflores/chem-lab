@@ -22,6 +22,8 @@ before_script:
   - pip3 -V
   - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
   - export LANG=C.UTF-8
+  - export MYSQL_HOST=mysql
+  - export MYSQL_PORT=3306
   - pip3 install pipenv
   - pipenv install --dev
   
