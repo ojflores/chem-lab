@@ -11,7 +11,7 @@ variables:
   MYSQL_DATABASE: django
   MYSQL_ROOT_PASSWORD: root
   MYSQL_HOST: "127.0.0.1"
-  MYSQL_PORT: "8889:3306"
+  MYSQL_PORT: "3306"
   # DATABASE_URL: mysql+pymysql://root:root@127.0.0.1:8889/django
 
 # This folder is cached between builds
@@ -34,4 +34,5 @@ test:
     - export LANG=C.UTF-8
     - pip3 install pipenv
     - pipenv install --dev
+    - cat /etc/my.cnf
     - pipenv run python manage.py test
