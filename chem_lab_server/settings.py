@@ -16,7 +16,7 @@ import os
 # set security settings
 if os.getenv('DJANGO_ENV') == 'prod':
     DEBUG = False
-    ALLOWED_HOSTS = ['*']  # SET ME #########################################
+    ALLOWED_HOSTS = []  # SET ME #########################################
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     SESSION_COOKIE_SECURE = True
@@ -46,11 +46,18 @@ DATABASES = {
     'default': {},
     'chemlab': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'chemlab',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '0.0.0.0',
-        'PORT': '8889',
+        'NAME': 'django',
+        'USER': os.getenv('MYSQL_USER', 'root'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'root'),
+        'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
+        'PORT': os.getenv('MYSQL_PORT', 8889),
+        'OPTIONS': {
+            'sql_mode': 'traditional',
+        },
+        'TEST': {
+            'CHARSET': 'utf8mb4',
+            'COLLATION': 'utf8mb4_unicode_ci',
+        },
     },
 }
 
@@ -64,6 +71,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'api',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
