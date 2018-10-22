@@ -15,19 +15,19 @@ variables:
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
 cache:
   paths:
-  - ~/.cache/pip/
+  # - ~/.cache/pip/
 
-before_script:
-  - python3 -V                                   # Print out Python version for debugging
-  - pip3 -V
-  - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
-  - export LANG=C.UTF-8
-  - pip3 install pipenv
-  - pipenv install --dev
+# before_script:
+#   - python3 -V                                   # Print out Python version for debugging
+#   - pip3 -V
+#   - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
+#   - export LANG=C.UTF-8
+#   - pip3 install pipenv
+#   - pipenv install --dev
 
 connect_and_test:
   image: mysql:latest
-  image: python:latest
+  # image: python:latest
   script:
     - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-    - pipenv run python manage.py test
+    # - pipenv run python manage.py test
