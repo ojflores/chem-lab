@@ -1,5 +1,5 @@
-django-server
--------------
+chem_lab_server
+---------------
 The REST API server for the Chem Lab Notebook project for CPTR 450. Built with Django 2, the Django REST Framework, and Python 3.7.
 
 
