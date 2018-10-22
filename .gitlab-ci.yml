@@ -10,6 +10,7 @@ services:
 variables:
   MYSQL_DATABASE: django
   MYSQL_ROOT_PASSWORD: root
+  DATABASE_URL: mysql+pymysql://root:root@127.0.0.1:8889/django
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
