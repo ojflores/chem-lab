@@ -8,7 +8,7 @@ services:
   - mysql:latest
 
 variables:
-  MYSQL_DATABASE: default
+  MYSQL_DATABASE: django
   MYSQL_ROOT_PASSWORD: root
 
 # This folder is cached between builds
@@ -25,24 +25,12 @@ before_script:
   - pip3 install pipenv
   - pipenv install --dev
 
-# To get Django tests to work you may need to create a settings file using
-# the following DATABASES:
-#
-DATABASES: {
-    'default': {
-       'ENGINE': 'django.db.backends.mysql',
-       'NAME': 'django',
-       'USER': 'root',
-       'PASSWORD': 'root',
-       'HOST': 'mysql',
-       'PORT': '8889',
-   },
-}
-#
-# and then adding `--settings app.settings.ci` (or similar) to the test command
-connect_and_test:
+connect:
   image: mysql
+  script:
+    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
+
+test:
   image: python:latest
   script:
-    # - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-    - pipenv run python manage.py test --settings app.settings.ci
+    - pipenv run python manage.py test
