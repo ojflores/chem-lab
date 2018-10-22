@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from marknote import views
+from api import views
 
 
 urlpatterns = []

@@ -25,3 +25,7 @@ RUN apk del .build-deps
 
 USER django
 CMD ["uwsgi", "--ini", "/home/django/chem_lab_server/uwsgi.ini"]
+<<<<<<< HEAD
+=======
+
+>>>>>>> develop
