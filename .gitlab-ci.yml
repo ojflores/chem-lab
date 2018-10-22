@@ -1,11 +1,4 @@
-# Official framework image. Look for the different tagged releases at:
-# https://hub.docker.com/r/library/python
-
-# Pick zero or more services to be used on all builds.
-# Only needed when using a docker container to run your tests in.
-# Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-a-service
-services:
-  - mysql:latest
+image: docker:stable
 
 variables:
   MYSQL_DATABASE: django
@@ -16,11 +9,8 @@ variables:
   # MYSQL_PORT: "3306"
   # DATABASE_URL: mysql+pymysql://root:root@127.0.0.1:8889/django
 
-# This folder is cached between builds
-# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
-cache:
-  paths:
-  - ~/.cache/pip/
+services:
+  - docker:dind
 
 # connect:
 #   image: mysql:latest
