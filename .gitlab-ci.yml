@@ -27,6 +27,7 @@ cache:
 
 test:
   image: python:latest
+  script:
     - python3 -V                                   # Print out Python version for debugging
     - pip3 -V
     - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
