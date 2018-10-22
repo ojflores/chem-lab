@@ -1,29 +1,33 @@
-image: docker:stable
+# Official framework image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/python
+
+# Pick zero or more services to be used on all builds.
+# Only needed when using a docker container to run your tests in.
+# Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-a-service
+services:
+  - mysql:latest
 
 variables:
-  # When using dind service we need to instruct docker, to talk with the
-  # daemon started inside of the service. The daemon is available with
-  # a network connection instead of the default /var/run/docker.sock socket.
-  #
-  # The 'docker' hostname is the alias of the service container as described at
-  # https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#accessing-the-services
-  #
-  # Note that if you're using Kubernetes executor, the variable should be set to
-  # tcp://localhost:2375 because of how Kubernetes executor connects services
-  # to the job container
-  DOCKER_HOST: tcp://docker:2375/
-  # When using dind, it's wise to use the overlayfs driver for
-  # improved performance.
-  DOCKER_DRIVER: overlay2
+  MYSQL_DATABASE: chemlab
+  MYSQL_ROOT_PASSWORD: root
 
-services:
-  - docker:dind
+# This folder is cached between builds
+# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+cache:
+  paths:
+  - ~/.cache/pip/
 
 before_script:
-  - docker info
-
-build:
-  stage: build
+  - python3 -V                                   # Print out Python version for debugging
+  - pip3 -V
+  - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
+  - export LANG=C.UTF-8
+  - export MYSQL_HOST=mysql
+  - export MYSQL_PORT=3306
+  - pip3 install pipenv
+  - pipenv install --dev
+  
+test:
+  image: python:latest
   script:
-    - docker build . -t django-image
-    - docker run -p 8000:8000 --name django-server django-image
+    - pipenv run python manage.py test

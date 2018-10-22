@@ -82,7 +82,7 @@ Local Django Setup
 
   $ pipenv install
 
-Note: on MacOS the MySQL driver may need to be installed and can cause issues. Using brew to install MySQL will usually fix this.
+Note: on MacOS the MySQL driver may need to be installed and can cause issues. Using brew to install MySQL will usually fix this. Ask Sheldon for help if needed.
 
 3. Run migrations
 

@@ -1,5 +1,4 @@
-# sheldon woodward -chagned Bobby Locke
-# last updated 10/17/18
+# sheldon woodward
 #
 #
 # --Environment Variables--
@@ -58,7 +57,6 @@ DATABASES = {
         },
     },
 }
-
 
 # django setup
 INSTALLED_APPS = [
