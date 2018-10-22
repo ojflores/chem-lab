@@ -19,13 +19,15 @@ cache:
   - ~/.cache/pip/
 
 connect:
-  image: mysql:latest
+  # image: mysql:latest
   script:
     - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
 
 test:
   image: python:latest
+  image: mysql:lates
   script:
+    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
     - python3 -V                                   # Print out Python version for debugging
     - pip3 -V
     - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
