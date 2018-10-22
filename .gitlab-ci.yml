@@ -8,7 +8,7 @@ services:
   - mysql:latest
 
 variables:
-  MYSQL_DATABASE: django
+  MYSQL_DATABASE: chemlab
   MYSQL_ROOT_PASSWORD: root
 
 # This folder is cached between builds

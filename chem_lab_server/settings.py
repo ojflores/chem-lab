@@ -1,5 +1,4 @@
 # sheldon woodward
-# last updated August 7, 2018
 #
 #
 # --Environment Variables--
