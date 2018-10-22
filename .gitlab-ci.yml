@@ -1,29 +1,29 @@
 image: docker:stable
 
 variables:
-  # When using dind service we need to instruct docker, to talk with the
-  # daemon started inside of the service. The daemon is available with
-  # a network connection instead of the default /var/run/docker.sock socket.
-  #
-  # The 'docker' hostname is the alias of the service container as described at
-  # https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#accessing-the-services
-  #
-  # Note that if you're using Kubernetes executor, the variable should be set to
-  # tcp://localhost:2375 because of how Kubernetes executor connects services
-  # to the job container
-  DOCKER_HOST: tcp://docker:2375/
-  # When using dind, it's wise to use the overlayfs driver for
-  # improved performance.
-  DOCKER_DRIVER: overlay2
+  MYSQL_DATABASE: django
+  # MYSQL_USER: root
+  # MYSQL_PASSWORD: root
+  MYSQL_ROOT_PASSWORD: root
+  # MYSQL_HOST: "mysql"
+  # MYSQL_PORT: "3306"
+  # DATABASE_URL: mysql+pymysql://root:root@127.0.0.1:8889/django
 
 services:
   - docker:dind
 
-before_script:
-  - docker info
+# connect:
+#   image: mysql:latest
+#   script:
+#     - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
 
-build:
-  stage: build
+test:
+  image: python:latest
   script:
-    - docker build . -t django-image
-    - docker run -p 8000:8000 --name django-server django-image
+    - python3 -V                                   # Print out Python version for debugging
+    - pip3 -V
+    - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
+    - export LANG=C.UTF-8
+    - pip3 install pipenv
+    - pipenv install --dev
+    - pipenv run python manage.py test

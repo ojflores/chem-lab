@@ -95,4 +95,3 @@ Note: on MacOS the MySQL driver may need to be installed and can cause issues. U
 ::
 
   $ pipenv run python manage.py runserver
-
