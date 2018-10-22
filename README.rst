@@ -1,17 +1,18 @@
-django-server
--------------
+chem_lab_server
+---------------
 The REST API server for the Chem Lab Notebook project for CPTR 450. Built with Django 2, the Django REST Framework, and Python 3.7.
+
 
 Local Deployment
 ----------------
-Use these steps to setup your local developemnt environment.
+Use these steps to setup your local development environment.
 
 MySQL
 +++++
 MySQL is automatically installed within Vagrant. You should clone the git repository between steps 2 and 3. You will also have to run step 4 every time you pull an update from git.
 
-Vagrant (recommended)
-.....................
+Vagrant (Linux lab computers)
+.............................
 1. Start Vagrant
 
 ::
@@ -34,10 +35,10 @@ Vagrant (recommended)
 
 ::
 
-  mysql> source chemlab.sql
-
-Docker (alternative)
-....................
+  mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
+   
+Docker (Personal computers)
+...........................
 1. Install MySQL server
 
 ::
@@ -45,50 +46,53 @@ Docker (alternative)
   $ docker run -d \
     -p 8889:3306 \
     -e MYSQL_ROOT_PASSWORD=root \
-    --name=mysql-server \
+    --name=mysql-cptr450 \
     mysql/mysql-server:5.7.22
 
-2. Copy chemlab.sql to the container
-
-::
-
-  $ docker cp chemlab.sql mysql-server:/chemlab.sql
-
-3. Enter the MySQL command line, you may need to restart the container first
+2. Enter the MySQL command line, you may need to restart the container first
 
 ::
 
   $ docker exec -it mysql-server mysql -uroot -proot
 
-4. Give the root user permission on localhost
+3. Give the root user permission on localhost
 
 ::
 
   mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
 
-5. Import chamlab.sql
+4. Create the Django table
 
 ::
 
-  mysql> source chemlab.sql
+  mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
 
-Django Setup
-++++++++++++
-1. Install dependencies
+
+Local Django Setup
+++++++++++++++++++
+1. Install pipenv
+
+::
+
+  $ pip install pipenv
+
+2. Install dependencies
 
 ::
 
   $ pipenv install
 
-2. Run migrations
+Note: on MacOS the MySQL driver may need to be installed and can cause issues. Using brew to install MySQL will usually fix this. Ask Sheldon for help if needed.
+
+3. Run migrations
 
 ::
 
   $ pipenv run python manage.py migrate
 
-3. Run server
+4. Run server
 
 ::
 
-  $ pipenv run python manage.py runserver 0.0.0.0:8080
+  $ pipenv run python manage.py runserver
 

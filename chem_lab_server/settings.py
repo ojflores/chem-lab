@@ -1,5 +1,4 @@
-# sheldon woodward -Change by Bobby Locke
-# last updated 10/16/18
+# sheldon woodward
 #
 #
 # --Environment Variables--
@@ -16,7 +15,7 @@ import os
 # set security settings
 if os.getenv('DJANGO_ENV') == 'prod':
     DEBUG = False
-    ALLOWED_HOSTS = ['*']  # SET ME ##########################################################################
+    ALLOWED_HOSTS = []  # SET ME #########################################
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     SESSION_COOKIE_SECURE = True
@@ -50,7 +49,7 @@ DATABASES = {
         'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
         'PORT': os.getenv('MYSQL_PORT', 8889),
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'sql_mode': 'traditional',
         },
         'TEST': {
             'CHARSET': 'utf8mb4',
@@ -68,6 +67,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'api',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

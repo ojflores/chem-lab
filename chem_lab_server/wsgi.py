@@ -1,5 +1,5 @@
 """
-WSGI config for django_server project.
+WSGI config for chem_lab_server project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

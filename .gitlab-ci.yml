@@ -1,0 +1,33 @@
+# Official framework image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/python
+
+# Pick zero or more services to be used on all builds.
+# Only needed when using a docker container to run your tests in.
+# Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-a-service
+services:
+  - mysql:latest
+
+variables:
+  MYSQL_DATABASE: chemlab
+  MYSQL_ROOT_PASSWORD: root
+
+# This folder is cached between builds
+# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+cache:
+  paths:
+  - ~/.cache/pip/
+
+before_script:
+  - python3 -V                                   # Print out Python version for debugging
+  - pip3 -V
+  - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
+  - export LANG=C.UTF-8
+  - export MYSQL_HOST=mysql
+  - export MYSQL_PORT=3306
+  - pip3 install pipenv
+  - pipenv install --dev
+  
+test:
+  image: python:latest
+  script:
+    - pipenv run python manage.py test
