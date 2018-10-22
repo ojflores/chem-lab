@@ -11,6 +11,7 @@ variables:
   MYSQL_DATABASE: django
   MYSQL_USER: root
   MYSQL_PASSWORD: root
+  MYSQL_ROOT_PASSWORD: root
   MYSQL_HOST: "127.0.0.1"
   MYSQL_PORT: "3306"
   # DATABASE_URL: mysql+pymysql://root:root@127.0.0.1:8889/django
