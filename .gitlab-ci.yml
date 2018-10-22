@@ -34,5 +34,4 @@ test:
     - export LANG=C.UTF-8
     - pip3 install pipenv
     - pipenv install --dev
-    - find my.cnf
     - pipenv run python manage.py test
