@@ -24,6 +24,9 @@ class LabGroup(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     term = models.CharField(max_length=10)
 
+    class Meta:
+        db_table = 'api_lab_group'
+
 class Student(models.Model):
     '''
     The Student model represents a student in a chemistry class.
@@ -39,6 +42,9 @@ class AssignmentTemplate(models.Model):
     '''
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = 'api_assignment_template'
 
 class TaskTemplate(models.Model):
     '''
@@ -60,6 +66,9 @@ class TaskTemplate(models.Model):
     keyword_min = models.IntegerField()
     points = models.FloatField()
 
+    class Meta:
+        db_table = 'api_task_template'
+
 class Assignment(models.Model):
     '''
     The Assignment model represents the "assignment" of an AssignmentTemplate. 
@@ -80,6 +89,9 @@ class AssignmentEntry(models.Model):
     completed = models.BooleanField()
     grade = models.FloatField()
 
+    class Meta:
+        db_table = 'api_assignment_entry'
+
 class TaskEntry(models.Model):
     '''
     The TaskEntry model represents a users attempt to complete a task for an 
@@ -89,4 +101,7 @@ class TaskEntry(models.Model):
     task_template = models.ForeignKey(TaskTemplate, on_delete=models.CASCADE)
     attempts = models.IntegerField()
     passed = models.BooleanField()
+
+    class Meta:
+        db_table = 'api_task_entry'
 
