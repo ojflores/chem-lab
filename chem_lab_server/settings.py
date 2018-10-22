@@ -44,7 +44,7 @@ USE_TZ = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django',
+        'NAME': 'chemlab',
         'USER': os.getenv('MYSQL_USER', 'root'),
         'PASSWORD': os.getenv('MYSQL_PASSWORD', 'root'),
         # This must be mysql to connect to the gitlab-ci mysql service

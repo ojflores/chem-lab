@@ -2,10 +2,7 @@ chem_lab_server
 ---------------
 The REST API server for the Chem Lab Notebook project for CPTR 450. Built with Django 2, the Django REST Framework, and Python 3.7.
 
-<<<<<<< HEAD
-=======
 
->>>>>>> develop
 Local Deployment
 ----------------
 Use these steps to setup your local development environment.
@@ -79,13 +76,10 @@ Local Django Setup
 
   $ pip install pipenv
 
-<<<<<<< HEAD
+
 Django Setup
 ++++++++++++
 1. Install dependencies
-=======
-2. Install dependencies
->>>>>>> develop
 
 ::
 
