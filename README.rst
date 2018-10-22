@@ -1,7 +1,11 @@
-django-server
--------------
+chem_lab_server
+---------------
 The REST API server for the Chem Lab Notebook project for CPTR 450. Built with Django 2, the Django REST Framework, and Python 3.7.
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> develop
 Local Deployment
 ----------------
 Use these steps to setup your local development environment.
@@ -10,8 +14,8 @@ MySQL
 +++++
 MySQL is automatically installed within Vagrant. You should clone the git repository between steps 2 and 3. You will also have to run step 4 every time you pull an update from git.
 
-Vagrant (recommended)
-.....................
+Vagrant (Linux lab computers)
+.............................
 1. Start Vagrant
 
 ::
@@ -34,10 +38,10 @@ Vagrant (recommended)
 
 ::
 
-  mysql> source chemlab.sql
-
-Docker (alternative)
-....................
+  mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
+   
+Docker (Personal computers)
+...........................
 1. Install MySQL server
 
 ::
@@ -64,25 +68,40 @@ Docker (alternative)
 
 ::
 
-  mysql> CREATE DATABASE django CHARACTER SET utf8 COLLATE utf8_bin;
+  mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
 
 
+Local Django Setup
+++++++++++++++++++
+1. Install pipenv
+
+::
+
+  $ pip install pipenv
+
+<<<<<<< HEAD
 Django Setup
 ++++++++++++
 1. Install dependencies
+=======
+2. Install dependencies
+>>>>>>> develop
 
 ::
 
   $ pipenv install
 
-2. Run migrations
+Note: on MacOS the MySQL driver may need to be installed and can cause issues. Using brew to install MySQL will usually fix this.
+
+3. Run migrations
 
 ::
 
   $ pipenv run python manage.py migrate
 
-3. Run server
+4. Run server
 
 ::
 
   $ pipenv run python manage.py runserver
+
