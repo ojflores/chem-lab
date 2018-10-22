@@ -2,10 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 
-class Student(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    wwuid = models.CharField(max_length=7)
-
 class Instructor(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     wwuid = models.CharField(max_length=7)
@@ -16,6 +12,11 @@ class Course(models.Model):
 class LabGroup(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+
+class Student(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    lab_group = models.ForeignKey(LabGroup, on_delete=models.CASCADE)
+    wwuid = models.CharField(max_length=7)
 
 class AssignmentTemplate(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -36,15 +37,21 @@ class TaskTemplate(models.Model):
     keyword_min = models.IntegerField()
     points = models.FloatField()
 
+class Assignment(models.Model):
+    assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
+    lab_group = models.ForeignKey(LabGroup, on_delete=models.CASCADE)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+
 class AssignmentEntry(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    completed = models.BooleanField()
     grade = models.FloatField()
 
 class TaskEntry(models.Model):
     assignment_entry = models.ForeignKey(AssignmentEntry, on_delete=models.CASCADE)
     task_template = models.ForeignKey(TaskTemplate, on_delete=models.CASCADE)
     attempts = models.IntegerField()
-    completed = models.BooleanField()
     passed = models.BooleanField()
 
