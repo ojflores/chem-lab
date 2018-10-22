@@ -18,14 +18,14 @@ cache:
   paths:
   - ~/.cache/pip/
 
-connect:
-  # image: mysql:latest
-  script:
-    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
+# connect:
+#   image: mysql:latest
+#   script:
+#     - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
 
 test:
   image: python:latest
-  image: mysql:lates
+  image: mysql:latest
   script:
     - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
     - python3 -V                                   # Print out Python version for debugging
