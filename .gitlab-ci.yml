@@ -10,7 +10,9 @@ services:
 variables:
   MYSQL_DATABASE: django
   MYSQL_ROOT_PASSWORD: root
-  DATABASE_URL: mysql+pymysql://root:root@127.0.0.1:8889/django
+  MYSQL_HOST: "127.0.0.1"
+  MYSQL_PORT: "3306"
+  # DATABASE_URL: mysql+pymysql://root:root@127.0.0.1:8889/django
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
@@ -25,9 +27,6 @@ cache:
 
 test:
   image: python:latest
-  image: mysql:latest
-  script:
-    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
     - python3 -V                                   # Print out Python version for debugging
     - pip3 -V
     - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
