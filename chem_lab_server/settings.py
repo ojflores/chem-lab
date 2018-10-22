@@ -49,7 +49,7 @@ DATABASES = {
         'PASSWORD': os.getenv('MYSQL_PASSWORD', 'root'),
         # This must be mysql to connect to the gitlab-ci mysql service
         # (https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#how-is-service-linked-to-the-job)
-        'HOST': 'mysql'
+        'HOST': 'mysql',
         # 'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
         # 'PORT': os.getenv('MYSQL_PORT', 8889),
         'OPTIONS': {
