@@ -52,7 +52,8 @@ class TaskTemplate(models.Model):
     acceptable_inputs = models.TextField()
     accuracy_check = models.BooleanField()
     accuracy = models.IntegerField()
-    multiple_choice = models.BooleanField()  # needs implementation
+    multiple_choice = models.BooleanField()
+    multiple_choise_options = models.TextField()
     attempts_allowed = models.IntegerField()
     keyword_check = models.BooleanField()
     keywork_list = models.TextField()
