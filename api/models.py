@@ -23,6 +23,7 @@ class LabGroup(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     term = models.CharField(max_length=10)
+    enroll_key = models.CharField(max_length=20)
 
     class Meta:
         db_table = 'api_lab_group'
