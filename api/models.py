@@ -52,19 +52,15 @@ class TaskTemplate(models.Model):
     assignment such as the question to ask and how to grade them.
     '''
     assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=30)
     description = models.TextField()
-    image_urls = models.TextField()
-    acceptable_inputs = models.TextField()
-    accuracy_check = models.BooleanField()
-    accuracy = models.IntegerField()
-    multiple_choice = models.BooleanField()
-    multiple_choise_options = models.TextField()
-    attempts_allowed = models.IntegerField()
-    keyword_check = models.BooleanField()
-    keywork_list = models.TextField()
-    keyword_min = models.IntegerField()
+    image_urls = models.TextField(null=True) 
     points = models.FloatField()
+    attempts_allowed = models.IntegerField(null=True)
+    text_input = models.TextField(null=True)
+    numeric_input = models.TextField(null=True)
+    numeric_accuracy = models.IntegerField(null=True)
+    multiple_choice = models.TextField(null=True)
 
     class Meta:
         db_table = 'api_task_template'
@@ -76,8 +72,8 @@ class Assignment(models.Model):
     '''
     assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
     lab_group = models.ForeignKey(LabGroup, on_delete=models.CASCADE)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    open_date = models.DateTimeField()
+    close_date = models.DateTimeField()
 
 class AssignmentEntry(models.Model):
     '''
@@ -86,8 +82,9 @@ class AssignmentEntry(models.Model):
     '''
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-    completed = models.BooleanField()
     grade = models.FloatField()
+    start_date = models.DateTimeField(auto_now_add=True)
+    submit_date = models.DateTimeField(null=True)
 
     class Meta:
         db_table = 'api_assignment_entry'
