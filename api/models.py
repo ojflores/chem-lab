@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -7,7 +8,7 @@ class Instructor(models.Model):
     The Instructor model represents an instructor that can teach and manage 
     chemistry labs.
     '''
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     wwuid = models.CharField(max_length=7)
 
 class Course(models.Model):
@@ -32,7 +33,7 @@ class Student(models.Model):
     '''
     The Student model represents a student in a chemistry class.
     '''
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     lab_group = models.ForeignKey(LabGroup, on_delete=models.CASCADE)
     wwuid = models.CharField(max_length=7)
 
