@@ -55,7 +55,7 @@ class TaskTemplate(models.Model):
     '''
     assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     image_urls = models.TextField(null=True) 
     points = models.FloatField()
     attempts_allowed = models.IntegerField(null=True)
