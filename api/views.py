@@ -5,6 +5,9 @@ from api.models import Course
 
 
 class CourseLCView(ListCreateAPIView):
+    '''
+    The list create view for courses.
+    '''
     lookup_field = 'pk'
     serializer_class = serializers.CourseSerializer
 
@@ -20,6 +23,9 @@ class CourseLCView(ListCreateAPIView):
 
 
 class CourseRUDView(RetrieveUpdateDestroyAPIView):
+    '''
+    The retrieve update destroy view for courses.
+    '''
     lookup_field = 'pk'
     serializer_class = serializers.CourseSerializer
 
