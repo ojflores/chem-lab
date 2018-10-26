@@ -8,6 +8,8 @@ class CourseLCView(ListCreateAPIView):
     '''
     The list create view for courses.
     '''
+    authentication_classes = (SessionAuthentication)
+    permissions_classes = (DajngoModelPermissions)
     lookup_field = 'pk'
     serializer_class = serializers.CourseSerializer
 
@@ -26,6 +28,8 @@ class CourseRUDView(RetrieveUpdateDestroyAPIView):
     '''
     The retrieve update destroy view for courses.
     '''
+    authentication_classes = (SessionAuthentication)
+    permissions_classes = (DajngoModelPermissions)
     lookup_field = 'pk'
     serializer_class = serializers.CourseSerializer
 
