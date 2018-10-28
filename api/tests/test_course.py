@@ -31,7 +31,7 @@ class TestCourseLCPost(APITestCase):
             'name': 'test name'
         }
         response = self.client.post(reverse(self.view_name), request_body)
-        response_body = json.loads(resonse.content.decode('utf-8'))
+        response_body = json.loads(response.content.decode('utf-8'))
         course = Course.objects.first()
         # test database
         self.assertEqual(course.name, request_body['name'])
