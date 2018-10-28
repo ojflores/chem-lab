@@ -8,7 +8,7 @@ import json
 from api.models import Course
 
 
-class TestCourseLCPost(APITestCase):
+class TestCourseLC(APITestCase):
     '''
     Test cases for POST requests on CourseLCView.
     '''
@@ -26,16 +26,32 @@ class TestCourseLCPost(APITestCase):
         '''
         Tests that a course is properly created.
         '''
-        # create a course
+        # request
         request_body = {
             'name': 'test name'
         }
         response = self.client.post(reverse(self.view_name), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
-        course = Course.objects.first()
         # test database
+        course = Course.objects.first()
         self.assertEqual(course.name, request_body['name'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['name'], request_body['name'])
+
+    def test_course_list(self):
+        '''
+        Tests that courses are properly listed.
+        '''
+        # add courses to database
+        Course(name='test name 1').save()
+        Course(name='test name 2').save()
+        # request
+        response = self.client.get(reverse(self.view_name))
+        response_body = json.loads(response.content.decode('utf-8'))
+        # test response
+        courses = Course.objects.all()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_body['courses'][0]['name'], courses[0].name)
+        self.assertEqual(response_body['courses'][1]['name'], courses[1].name)
 
