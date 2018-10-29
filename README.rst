@@ -9,37 +9,20 @@ Use these steps to setup your local development environment.
 
 MySQL
 +++++
-MySQL is automatically installed within Vagrant. You should clone the git repository between steps 2 and 3. You will also have to run step 4 every time you pull an update from git.
-
-Vagrant (Linux lab computers)
-.............................
-1. Start Vagrant
-
-::
-
-  $ vagrant up
-
-2. Enter Vagrant
-
-::
-
-  $ vagrant ssh
-
-3. Enter mysql command line.
-
-::
-
-  $ mysql -u root -ptest123
-
-4. Import database from .sql file
-
-::
-
-  mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
+MySQL is the database server for our API. You will need to install it and there 
+are few options for how.
    
-Docker (Personal computers)
-...........................
-1. Install MySQL server
+Docker
+......
+1. Install Docker
+
+Download your OS' Docker version here_ and install it. You will need to make an 
+account. Linux users can probably install it with your respective package 
+manager.
+
+.. _here: https://store.docker.com/search?type=edition&offering=community
+
+2. Install MySQL server
 
 ::
 
@@ -47,21 +30,21 @@ Docker (Personal computers)
     -p 8889:3306 \
     -e MYSQL_ROOT_PASSWORD=root \
     --name=mysql-cptr450 \
-    mysql/mysql-server:5.7.22
+    mysql/mysql-server:5.7.24
 
-2. Enter the MySQL command line, you may need to restart the container first
+3. Enter the MySQL command line, you may need to restart the container first
 
 ::
 
   $ docker exec -it mysql-cptr450 mysql -uroot -proot
 
-3. Give the root user permission on localhost
+4. Give the root user permission on localhost
 
 ::
 
   mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
 
-4. Create the Django table
+5. Create the chemlab table
 
 ::
 
@@ -70,7 +53,9 @@ Docker (Personal computers)
 
 Local Django Setup
 ++++++++++++++++++
-1. Install pipenv
+MacOS and Linux
+...............
+1. Install pipenv (make sure you use python 3, not 2)
 
 ::
 
@@ -78,11 +63,27 @@ Local Django Setup
 
 2. Install dependencies
 
+On MacOS, use brew_ to install mysql and set two environment variables so 
+pipenv can find the OpenSSL libraries. For Linux, the default package managers 
+may work but you can install and use linuxbrew_ as well.
+
+Install brew using the command in one of the above links then run these three 
+commands:
+
+.. _brew: https://brew.sh/
+.. _linuxbrew: http://linuxbrew.sh/
+
+::
+
+  $ brew install mysql
+  $ export LDFLAGS="-L/usr/local/opt/openssl/lib"
+  $ export CPPFLAGS="-I/usr/local/opt/openssl/include"
+  
+After that you should be able to install the dependencies with pipenv.
+
 ::
 
   $ pipenv install
-
-Note: on MacOS the MySQL driver may need to be installed and can cause issues. Using brew to install MySQL will usually fix this. Ask Sheldon for help if needed.
 
 3. Run migrations
 
@@ -95,4 +96,8 @@ Note: on MacOS the MySQL driver may need to be installed and can cause issues. U
 ::
 
   $ pipenv run python manage.py runserver
+  
+Windows
+.......
+¯\\_(ツ)_/¯
 
