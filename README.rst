@@ -53,7 +53,7 @@ Docker (Personal computers)
 
 ::
 
-  $ docker exec -it mysql-server mysql -uroot -proot
+  $ docker exec -it mysql-cptr450 mysql -uroot -proot
 
 3. Give the root user permission on localhost
 
