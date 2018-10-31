@@ -9,9 +9,9 @@ from api.models import Course
 
 
 class CourseLCTest(APITestCase):
-    '''
+    """
     Test cases for list and create requests on CourseLCView.
-    '''
+    """
     def setUp(self):
         # create test user with permissions
         self.username = 'test'
@@ -23,9 +23,9 @@ class CourseLCTest(APITestCase):
         self.view_name = 'api:course-lc'
 
     def test_course_create(self):
-        '''
+        """
         Tests that a course is properly created.
-        '''
+        """
         # request
         request_body = {
             'name': 'test name'
@@ -41,9 +41,9 @@ class CourseLCTest(APITestCase):
         self.assertEqual(response_body['name'], request_body['name'])
 
     def test_course_list(self):
-        '''
+        """
         Tests that courses are properly listed.
-        '''
+        """
         # add courses to database
         Course(name='test name 1').save()
         Course(name='test name 2').save()
@@ -60,9 +60,9 @@ class CourseLCTest(APITestCase):
 
 
 class CourseRUDTest(APITestCase):
-    '''
-    Test cases for request, update, and destroy requests on CourseRUDView.
-    '''
+    """
+    Test cases for retrieve, update, and destroy requests on CourseRUDView.
+    """
     def setUp(self):
         # create test user with permissions
         self.username = 'test'
@@ -82,9 +82,9 @@ class CourseRUDTest(APITestCase):
         self.view_name = 'api:course-rud'
 
     def test_course_retrieve(self):
-        '''
+        """
         Tests that a course is properly retrieved.
-        '''
+        """
         # request
         response = self.client.get(reverse(self.view_name, args=[self.course_2.id]))
         response_body = json.loads(response.content.decode('utf-8'))
@@ -94,9 +94,9 @@ class CourseRUDTest(APITestCase):
         self.assertEqual(response_body['name'], self.course_2.name)
 
     def test_course_update(self):
-        '''
+        """
         Tests that a course is properly updated.
-        '''
+        """
         # modify values
         request_body = {
             'name': 'name changed',
@@ -114,9 +114,9 @@ class CourseRUDTest(APITestCase):
         self.assertEqual(response_body['name'], request_body['name'])
 
     def test_course_destroy(self):
-        '''
+        """
         Tests that a course is properly destroyed.
-        '''
+        """
         # request
         response = self.client.delete(reverse(self.view_name, args=[self.course_2.id]))
         # test database
@@ -126,4 +126,3 @@ class CourseRUDTest(APITestCase):
         self.assertTrue(self.course_3 in courses)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
