@@ -103,8 +103,8 @@ Linux VM
 
   $ python manage.py runserver
 
-MacOS
-.....
+MacOS and Linux
+...............
 1. Install pipenv (make sure you use python 3, not 2)
 
 ::
@@ -147,7 +147,28 @@ After that you should be able to install the dependencies with pipenv.
 
   $ pipenv run python manage.py runserver
   
-Windows
-.......
-¯\\_(ツ)_/¯
+Updating the database
++++++++++++++++++++++
+In the case that the database models ever change, the best way to reconfigure 
+your databse will be to recreate it.
+
+1. Enter the mysql shell
+
+::
+
+  $ mysql -uroot -proot
+  
+2. Drop the database
+
+::
+
+  mysql> DROP DATABSE chemlab;
+  
+3. Now recreate it
+
+::
+
+  mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
+
+
 
