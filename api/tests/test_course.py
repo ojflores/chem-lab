@@ -93,3 +93,22 @@ class CourseRUDTest(APITestCase):
         self.assertEqual(response_body['pk'], self.course_2.id)
         self.assertEqual(response_body['name'], self.course_2.name)
 
+    def test_course_update(self):
+        '''
+        Tests that a course is properly updated.
+        '''
+        # modify values
+        request_body = {
+            'name': 'name changed',
+        }
+        # request
+        response = self.client.put(reverse(self.view_name, args=[self.course_2.id]), request_body)
+        response_body = json.loads(response.content.decode('utf-8'))
+        # test database
+        course = Course.objects.filter(name=request_body['name']).first()
+        self.assertEqual(course.id, self.course_2.id)
+        self.assertEqual(course.name, request_body['name'])
+        # test repsonse
+        self.assertEqual(response_body['pk'], self.course_2.id)
+        self.assertEqual(response_body['name'], request_body['name'])
+
