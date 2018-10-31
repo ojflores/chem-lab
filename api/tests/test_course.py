@@ -108,7 +108,7 @@ class CourseRUDTest(APITestCase):
         course = Course.objects.filter(name=request_body['name']).first()
         self.assertEqual(course.id, self.course_2.id)
         self.assertEqual(course.name, request_body['name'])
-        # test repsonse
+        # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.course_2.id)
         self.assertEqual(response_body['name'], request_body['name'])
