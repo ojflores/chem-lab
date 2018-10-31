@@ -9,37 +9,36 @@ Use these steps to setup your local development environment.
 
 MySQL
 +++++
-MySQL is automatically installed within Vagrant. You should clone the git repository between steps 2 and 3. You will also have to run step 4 every time you pull an update from git.
+MySQL is the database server for our API. You will need to install it and there 
+are few options for how.
 
-Vagrant (Linux lab computers)
-.............................
-1. Start Vagrant
-
-::
-
-  $ vagrant up
-
-2. Enter Vagrant
+Linux VM
+........
+1. Enter the MySQL server shell
 
 ::
 
-  $ vagrant ssh
+  $ mysql -uroot -proot
 
-3. Enter mysql command line.
-
-::
-
-  $ mysql -u root -ptest123
-
-4. Import database from .sql file
+2. Create the chemlab database
 
 ::
 
   mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
+  
+3. Press ctrl+D to exit the mysql shell
    
-Docker (Personal computers)
-...........................
-1. Install MySQL server
+Docker
+......
+1. Install Docker
+
+Download your OS' Docker version here_ and install it. You will need to make an 
+account. Linux users can probably install it with your respective package 
+manager.
+
+.. _here: https://store.docker.com/search?type=edition&offering=community
+
+2. Install MySQL server
 
 ::
 
@@ -47,21 +46,21 @@ Docker (Personal computers)
     -p 8889:3306 \
     -e MYSQL_ROOT_PASSWORD=root \
     --name=mysql-cptr450 \
-    mysql/mysql-server:5.7.22
+    mysql/mysql-server:5.7.24
 
-2. Enter the MySQL command line, you may need to restart the container first
+3. Enter the MySQL command line, you may need to restart the container first
 
 ::
 
-  $ docker exec -it mysql-server mysql -uroot -proot
+  $ docker exec -it mysql-cptr450 mysql -uroot -proot
 
-3. Give the root user permission on localhost
+4. Give the root user permission on localhost
 
 ::
 
   mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
 
-4. Create the Django table
+5. Create the chemlab table
 
 ::
 
@@ -70,7 +69,49 @@ Docker (Personal computers)
 
 Local Django Setup
 ++++++++++++++++++
-1. Install pipenv
+Django is what runs our server.
+
+Linux VM
+........
+1. Generate your SSH keys
+
+::
+
+  $ ssh-keygen
+
+2. Print your public key and add it to GitLab
+
+::
+
+  cat ~/.ssh/id_rsa.pub
+
+3. Clone the project
+
+::
+
+  git clone git@gitlab.cs.wallawalla.edu:ChemLab/chem-lab-server.git
+  
+4. Setup up the chamlab tables
+
+::
+
+  $ python manage.py migrate
+  
+5. Start the development server
+
+::
+
+  $ python manage.py runserver
+  
+6. Run the tests with
+
+::
+
+  $ python manage.py test
+
+MacOS and Linux
+...............
+1. Install pipenv (make sure you use python 3, not 2)
 
 ::
 
@@ -78,11 +119,27 @@ Local Django Setup
 
 2. Install dependencies
 
+On MacOS, use brew_ to install mysql and set two environment variables so 
+pipenv can find the OpenSSL libraries. For Linux, the default package managers 
+may work but you can install and use linuxbrew_ as well.
+
+Install brew using the command in one of the above links then run these three 
+commands:
+
+.. _brew: https://brew.sh/
+.. _linuxbrew: http://linuxbrew.sh/
+
+::
+
+  $ brew install mysql
+  $ export LDFLAGS="-L/usr/local/opt/openssl/lib"
+  $ export CPPFLAGS="-I/usr/local/opt/openssl/include"
+  
+After that you should be able to install the dependencies with pipenv.
+
 ::
 
   $ pipenv install
-
-Note: on MacOS the MySQL driver may need to be installed and can cause issues. Using brew to install MySQL will usually fix this. Ask Sheldon for help if needed.
 
 3. Run migrations
 
@@ -95,4 +152,34 @@ Note: on MacOS the MySQL driver may need to be installed and can cause issues. U
 ::
 
   $ pipenv run python manage.py runserver
+  
+Updating the database
++++++++++++++++++++++
+In the case that the database models ever change, the best way to reconfigure 
+your databse will be to recreate it.
 
+1. Enter the mysql shell
+
+::
+
+  $ mysql -uroot -proot
+  
+2. Drop the database
+
+::
+
+  mysql> DROP DATABASE chemlab;
+  
+3. Now recreate the database
+
+::
+
+  mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
+  
+4. Exit the mysql shell with ctrl+D
+
+5. Run the migrations
+
+::
+
+  python manage.py migrate
