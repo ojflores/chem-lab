@@ -102,6 +102,12 @@ Linux VM
 ::
 
   $ python manage.py runserver
+  
+6. Run the tests with
+
+::
+
+  $ python manage.py test
 
 MacOS and Linux
 ...............
