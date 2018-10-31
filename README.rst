@@ -11,6 +11,22 @@ MySQL
 +++++
 MySQL is the database server for our API. You will need to install it and there 
 are few options for how.
+
+Linux VM
+........
+1. Enter the MySQL server shell
+
+::
+
+  $ mysql -uroot -proot
+
+2. Create the chemlab database
+
+::
+
+  mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
+  
+3. Press ctrl+D to exit the mysql shell
    
 Docker
 ......
@@ -53,8 +69,42 @@ manager.
 
 Local Django Setup
 ++++++++++++++++++
-MacOS and Linux
-...............
+Django is what runs our server.
+
+Linux VM
+........
+1. Generate your SSH keys
+
+::
+
+  $ ssh-keygen
+
+2. Print your public key and add it to GitLab
+
+::
+
+  cat ~/.ssh/id_rsa.pub
+
+3. Clone the project
+
+::
+
+  git clone git@gitlab.cs.wallawalla.edu:ChemLab/chem-lab-server.git
+  
+4. Setup up the chamlab tables
+
+::
+
+  $ python manage.py migrate
+  
+5. Start the development server
+
+::
+
+  $ python manage.py runserver
+
+MacOS
+.....
 1. Install pipenv (make sure you use python 3, not 2)
 
 ::
