@@ -162,13 +162,18 @@ your databse will be to recreate it.
 
 ::
 
-  mysql> DROP DATABSE chemlab;
+  mysql> DROP DATABASE chemlab;
   
-3. Now recreate it
+3. Now recreate the database
 
 ::
 
   mysql> CREATE DATABASE chemlab CHARACTER SET utf8 COLLATE utf8_bin;
+  
+4. Exit the mysql shell with ctrl+D
 
+5. Run the migrations
 
+::
 
+  python manage.py migrate
