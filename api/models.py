@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.db import models
 
 
@@ -11,11 +10,13 @@ class Instructor(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     wwuid = models.CharField(max_length=7)
 
+
 class Course(models.Model):
     """
     The Course model represents a course such as CHEM241.
     """
     name = models.CharField(max_length=100)
+
 
 class LabGroup(models.Model):
     """
@@ -29,6 +30,7 @@ class LabGroup(models.Model):
     class Meta:
         db_table = 'api_lab_group'
 
+
 class Student(models.Model):
     """
     The Student model represents a student in a chemistry class.
@@ -36,6 +38,7 @@ class Student(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     lab_group = models.ForeignKey(LabGroup, on_delete=models.CASCADE)
     wwuid = models.CharField(max_length=7)
+
 
 class AssignmentTemplate(models.Model):
     """
@@ -48,6 +51,7 @@ class AssignmentTemplate(models.Model):
     class Meta:
         db_table = 'api_assignment_template'
 
+
 class TaskTemplate(models.Model):
     """
     The TaskTemplate model represents the details of a specific task of an 
@@ -56,7 +60,7 @@ class TaskTemplate(models.Model):
     assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     description = models.TextField(blank=True)
-    image_urls = models.TextField(null=True) 
+    image_urls = models.TextField(null=True)
     points = models.FloatField()
     attempts_allowed = models.IntegerField(null=True)
     text_input = models.TextField(null=True)
@@ -67,6 +71,7 @@ class TaskTemplate(models.Model):
     class Meta:
         db_table = 'api_task_template'
 
+
 class Assignment(models.Model):
     """
     The Assignment model represents the "assignment" of an AssignmentTemplate. 
@@ -76,6 +81,7 @@ class Assignment(models.Model):
     lab_group = models.ForeignKey(LabGroup, on_delete=models.CASCADE)
     open_date = models.DateTimeField()
     close_date = models.DateTimeField()
+
 
 class AssignmentEntry(models.Model):
     """
@@ -91,6 +97,7 @@ class AssignmentEntry(models.Model):
     class Meta:
         db_table = 'api_assignment_entry'
 
+
 class TaskEntry(models.Model):
     """
     The TaskEntry model represents a users attempt to complete a task for an 
@@ -103,4 +110,3 @@ class TaskEntry(models.Model):
 
     class Meta:
         db_table = 'api_task_entry'
-

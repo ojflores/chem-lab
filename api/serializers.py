@@ -13,4 +13,3 @@ class CourseSerializer(serializers.ModelSerializer):
             'pk',
             'name',
         )
-

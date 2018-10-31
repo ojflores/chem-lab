@@ -37,4 +37,3 @@ class CourseRUDView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Course.objects.all()
-
