@@ -109,6 +109,21 @@ class CourseRUDTest(APITestCase):
         self.assertEqual(course.id, self.course_2.id)
         self.assertEqual(course.name, request_body['name'])
         # test repsonse
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.course_2.id)
         self.assertEqual(response_body['name'], request_body['name'])
+
+    def test_course_destroy(self):
+        '''
+        Tests that a course is properly destroyed.
+        '''
+        # request
+        response = self.client.delete(reverse(self.view_name, args=[self.course_2.id]))
+        # test database
+        courses = Course.objects.all()
+        self.assertTrue(self.course_1 in courses)
+        self.assertTrue(self.course_2 not in courses)
+        self.assertTrue(self.course_3 in courses)
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
