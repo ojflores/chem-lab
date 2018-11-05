@@ -4,6 +4,9 @@ from rest_framework.permissions import DjangoModelPermissions
 
 from api import serializers
 from api.models import Course
+from api.models import LabGroup
+
+
 
 
 class CourseLCView(ListCreateAPIView):
@@ -37,3 +40,22 @@ class CourseRUDView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Course.objects.all()
+
+class LabGroupLCView(ListCreateAPIView):
+    """
+    this list creates view for LabGroups
+    """
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (DjangoModelPermissions,)
+    lookup_field = 'pk'
+    serializer_class = serializers.LabGroupSerializer
+
+    def get_queryset(self):
+        return LabGroup.object.all()
+
+    def list(self, request, *args, **kwargs):
+            response = super(LabGroupLCView, self).list(request, *args, **kwargs)
+            response.data = {
+                'labgroups': response.data,
+            }
+            
