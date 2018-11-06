@@ -41,7 +41,7 @@ class CourseRUDView(RetrieveUpdateDestroyAPIView):
 
 class InstructorLCView(ListCreateAPIView):
     """
-    The list create view for courses.
+    The list create view for instructors.
     """
     authentication_classes = (SessionAuthentication,)
     permission_classes = (DjangoModelPermissions,)
@@ -61,7 +61,7 @@ class InstructorLCView(ListCreateAPIView):
 
 class InstructorRUDView(RetrieveUpdateDestroyAPIView):
     """
-    The retrieve update destroy view for courses.
+    The retrieve update destroy view for instructors.
     """
     authentication_classes = (SessionAuthentication,)
     permissions_classes = (DjangoModelPermissions,)
