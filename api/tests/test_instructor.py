@@ -15,8 +15,10 @@ class InstructorLCTest(APITestCase):
     def setUp(self):
         # create test user with permissions
         self.username = 'test'
+        self.username_2 = 'test 2'
         self.password = 'test'
         self.user = User.objects.create_user(username=self.username, password=self.password)
+        self.user_2 = User.objects.create_user(username=self.username_2, password=self.password)
         self.user.user_permissions.add(Permission.objects.get(codename='add_instructor'))
         self.client.login(username=self.username, password=self.password)
         # retrieve the view
@@ -29,25 +31,27 @@ class InstructorLCTest(APITestCase):
         # request
         request_body = {
             'wwuid': 'test wwuid',
-            'user': 'test user'
+            'user': self.user.id
         }
         response = self.client.post(reverse(self.view_name), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
         instructor = Instructor.objects.first()
-        self.assertEqual(instructor.name, request_body['name'])
+        self.assertEqual(instructor.wwuid, request_body['wwuid'])
+        self.assertEqual(instructor.user, self.user)
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['pk'], instructor.id)
-        self.assertEqual(response_body['name'], request_body['name'])
+        self.assertEqual(response_body['wwuid'], request_body['wwuid'])
+        self.assertEqual(response_body['user'], request_body['user'])
 
     def test_instructor_list(self):
         """
         Tests that instructors are properly listed.
         """
         # add courses to database
-        Instructor(wwuid='test wwuid 1', user='test user 1').save()
-        Instructor(wwuid='test wwuid 2', user='test user 2').save()
+        Instructor(wwuid='test wwuid 1', user=self.user).save()
+        Instructor(wwuid='test wwuid 2', user=self.user_2).save()
         # request
         response = self.client.get(reverse(self.view_name))
         response_body = json.loads(response.content.decode('utf-8'))
@@ -56,10 +60,10 @@ class InstructorLCTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['instructors'][0]['pk'], instructors[0].id)
         self.assertEqual(response_body['instructors'][0]['wwuid'], instructors[0].wwuid)
-        self.assertEqual(response_body['instructors'][0]['user'], instructors[0].user)
+        self.assertEqual(response_body['instructors'][0]['user'], instructors[0].user.id)
         self.assertEqual(response_body['instructors'][1]['pk'], instructors[1].id)
         self.assertEqual(response_body['instructors'][1]['wwuid'], instructors[1].wwuid)
-        self.assertEqual(response_body['instructors'][1]['user'], instructors[0].user)
+        self.assertEqual(response_body['instructors'][1]['user'], instructors[1].user.id)
 
 
 class InstructorRUDTest(APITestCase):
@@ -68,18 +72,22 @@ class InstructorRUDTest(APITestCase):
     """
     def setUp(self):
         # create test user with permissions
-        self.username = 'test'
+        self.username = 'test 1'
+        self.username_2 = 'test 2'
+        self.username_3 = 'test 3'
         self.password = 'test'
         self.user = User.objects.create_user(username=self.username, password=self.password)
+        self.user_2 = User.objects.create_user(username=self.username_2, password=self.password)
+        self.user_3 = User.objects.create_user(username=self.username_3, password=self.password)
         self.user.user_permissions.add(Permission.objects.get(codename='change_instructor'))
         self.user.user_permissions.add(Permission.objects.get(codename='delete_instructor'))
         self.client.login(username=self.username, password=self.password)
         # add courses to database
-        self.instructor_1 = Instructor(wwuid='test wwuid 1', user='test user 1')
+        self.instructor_1 = Instructor(wwuid='test wwuid 1', user=self.user)
         self.instructor_1.save()
-        self.instructor_2 = Instructor(wwuid='test wwuid 2', user='test user 2')
+        self.instructor_2 = Instructor(wwuid='test wwuid 2', user=self.user_2)
         self.instructor_2.save()
-        self.instructor_3 = Instructor(wwuid='test wwuid 3', user='test user 3')
+        self.instructor_3 = Instructor(wwuid='test wwuid 3', user=self.user_3)
         self.instructor_3.save()
         # retrieve the view
         self.view_name = 'api:instructor-rud'
@@ -95,7 +103,7 @@ class InstructorRUDTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.instructor_2.id)
         self.assertEqual(response_body['wwuid'], self.instructor_2.wwuid)
-        self.assertEqual(response_body['user'], self.instructor_2.user)
+        self.assertEqual(response_body['user'], self.instructor_2.user.id)
 
     def test_instructor_update(self):
         """
@@ -104,7 +112,7 @@ class InstructorRUDTest(APITestCase):
         # modify values
         request_body = {
             'wwuid': 'wwuid changed',
-            'user': 'user changed'
+            'user': self.user.id
         }
         # request
         response = self.client.put(reverse(self.view_name, args=[self.instructor_2.id]), request_body)
@@ -113,7 +121,7 @@ class InstructorRUDTest(APITestCase):
         instructor = Instructor.objects.filter(id=self.instructor_2.id).first()
         self.assertEqual(instructor.id, self.instructor_2.id)
         self.assertEqual(instructor.wwuid, request_body['wwuid'])
-        self.assertEqual(instructor.user, request_body['user'])
+        self.assertEqual(instructor.user.id, request_body['user'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.instructor_2.id)
