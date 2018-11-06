@@ -51,7 +51,7 @@ class LabGroupLCView(ListCreateAPIView):
     serializer_class = serializers.LabGroupSerializer
 
     def get_queryset(self):
-        return LabGroup.object.all()
+        return LabGroup.objects.all()
 
     def list(self, request, *args, **kwargs):
             response = super(LabGroupLCView, self).list(request, *args, **kwargs)
@@ -60,7 +60,7 @@ class LabGroupLCView(ListCreateAPIView):
             }
             return response
 
-class LabGroupRUD(RetrieveUpdateDestroyAPIView):
+class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for labgroups
     """
@@ -70,4 +70,4 @@ class LabGroupRUD(RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.LabGroupSerializer
 
     def get_queryset(self):
-        return LabGroup.object.all()
+        return LabGroup.objects.all()
