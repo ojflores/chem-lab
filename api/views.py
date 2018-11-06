@@ -65,3 +65,14 @@ class AssignmentTemplateLCView(ListCreateAPIView):
         return response
 
 
+class AssignmentTemplateRUDView(RetrieveUpdateDestroyAPIView):
+    """
+    The retrieve update destroy view for AssignmentTemplate.
+    """
+    authentication_classes = (SessionAuthentication,)
+    permissions_classes = (DjangoModelPermissions,)
+    lookup_field = 'pk'
+    serializer_class = serializers.AssignmentTemplateSerializer
+
+    def get_queryset(self):
+        return AssignmentTemplate.objects.all()
