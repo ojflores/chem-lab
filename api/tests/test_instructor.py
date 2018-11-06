@@ -30,7 +30,7 @@ class InstructorLCTest(APITestCase):
         """
         # request
         request_body = {
-            'wwuid': 'test wwuid',
+            'wwuid': 'tewwuid',
             'user': self.user.id
         }
         response = self.client.post(reverse(self.view_name), request_body)
@@ -50,8 +50,8 @@ class InstructorLCTest(APITestCase):
         Tests that instructors are properly listed.
         """
         # add courses to database
-        Instructor(wwuid='test wwuid 1', user=self.user).save()
-        Instructor(wwuid='test wwuid 2', user=self.user_2).save()
+        Instructor(wwuid='wwuid 1', user=self.user).save()
+        Instructor(wwuid='wwuid 2', user=self.user_2).save()
         # request
         response = self.client.get(reverse(self.view_name))
         response_body = json.loads(response.content.decode('utf-8'))
@@ -83,11 +83,11 @@ class InstructorRUDTest(APITestCase):
         self.user.user_permissions.add(Permission.objects.get(codename='delete_instructor'))
         self.client.login(username=self.username, password=self.password)
         # add courses to database
-        self.instructor_1 = Instructor(wwuid='test wwuid 1', user=self.user)
+        self.instructor_1 = Instructor(wwuid='wwuid 1', user=self.user)
         self.instructor_1.save()
-        self.instructor_2 = Instructor(wwuid='test wwuid 2', user=self.user_2)
+        self.instructor_2 = Instructor(wwuid='wwuid 2', user=self.user_2)
         self.instructor_2.save()
-        self.instructor_3 = Instructor(wwuid='test wwuid 3', user=self.user_3)
+        self.instructor_3 = Instructor(wwuid='wwuid 3', user=self.user_3)
         self.instructor_3.save()
         # retrieve the view
         self.view_name = 'api:instructor-rud'
@@ -111,7 +111,7 @@ class InstructorRUDTest(APITestCase):
         """
         # modify values
         request_body = {
-            'wwuid': 'wwuid changed',
+            'wwuid': 'changed',
             'user': self.user.id
         }
         # request
