@@ -17,6 +17,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     """
     The serializer for students.
+    M.Davis and J.Berglund
     """
     class Meta:
         model = Student
