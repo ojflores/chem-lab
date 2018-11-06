@@ -58,4 +58,16 @@ class LabGroupLCView(ListCreateAPIView):
             response.data = {
                 'labgroups': response.data,
             }
-            
+            return response
+
+class LabGroupRUD(RetrieveUpdateDestroyAPIView):
+    """
+    The retrieve update destroy view for labgroups
+    """
+    authentication_classes = (SessionAuthentication,)
+    permissions_classes = (DjangoModelPermissions,)
+    lookup_field = 'pk'
+    serializer_class = serializers.LabGroupSerializer
+
+    def get_queryset(self):
+        return LabGroup.object.all()
