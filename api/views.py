@@ -3,7 +3,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import DjangoModelPermissions
 
 from api import serializers
-from api.models import Course
+from api.models import Course, Instructor
 
 
 class CourseLCView(ListCreateAPIView):
@@ -37,3 +37,36 @@ class CourseRUDView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Course.objects.all()
+
+
+class InstructorLCView(ListCreateAPIView):
+    """
+    The list create view for courses.
+    """
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (DjangoModelPermissions,)
+    lookup_field = 'pk'
+    serializer_class = serializers.InstructorSerializer
+
+    def get_queryset(self):
+        return Instructor.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        response = super(InstructorLCView, self).list(request, *args, **kwargs)
+        response.data = {
+            'instructors': response.data,
+        }
+        return response
+
+
+class InstructorRUDView(RetrieveUpdateDestroyAPIView):
+    """
+    The retrieve update destroy view for courses.
+    """
+    authentication_classes = (SessionAuthentication,)
+    permissions_classes = (DjangoModelPermissions,)
+    lookup_field = 'pk'
+    serializer_class = serializers.InstructorSerializer
+
+    def get_queryset(self):
+        return Instructor.objects.all()
