@@ -107,21 +107,18 @@ class InstructorRUDTest(APITestCase):
 
     def test_instructor_update(self):
         """
-        Tests that a instructor is properly updated.
+        Tests that an instructor is properly updated.
         """
         # modify values
         request_body = {
-            'wwuid': 'changed',
-            'user': 1
+            'user': self.user_2.id,
+            'wwuid': 'changed'
         }
         # request
         response = self.client.put(reverse(self.view_name, args=[self.instructor_2.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
         instructor = Instructor.objects.filter(id=self.instructor_2.id).first()
-        print(response.status_code)
-        print(response_body)
-        print(self.user.id)
         self.assertEqual(instructor.id, self.instructor_2.id)
         self.assertEqual(instructor.wwuid, request_body['wwuid'])
         self.assertEqual(instructor.user.id, request_body['user'])
