@@ -111,7 +111,7 @@ class InstructorRUDTest(APITestCase):
         """
         # modify values
         request_body = {
-            'user': self.user_2.id,
+            'user': self.instructor_2.user.id,
             'wwuid': 'changed'
         }
         # request
