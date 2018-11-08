@@ -4,8 +4,6 @@ from api.models import Course
 from api.models import LabGroup
 
 
-
-
 class CourseSerializer(serializers.ModelSerializer):
     """
     The serializer for courses.
@@ -17,9 +15,10 @@ class CourseSerializer(serializers.ModelSerializer):
             'name',
         )
 
+
 class LabGroupSerializer(serializers.ModelSerializer):
     """
-        The serializer for LabGroups
+    The serializer for LabGroups.
     """
     class Meta:
         model = LabGroup

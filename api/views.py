@@ -7,8 +7,6 @@ from api.models import Course
 from api.models import LabGroup
 
 
-
-
 class CourseLCView(ListCreateAPIView):
     """
     The list create view for courses.
@@ -41,9 +39,10 @@ class CourseRUDView(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Course.objects.all()
 
+
 class LabGroupLCView(ListCreateAPIView):
     """
-    this list creates view for LabGroups
+    The list create view for labgroups.
     """
     authentication_classes = (SessionAuthentication,)
     permission_classes = (DjangoModelPermissions,)
@@ -60,9 +59,10 @@ class LabGroupLCView(ListCreateAPIView):
             }
             return response
 
+
 class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
     """
-    The retrieve update destroy view for labgroups
+    The retrieve update destroy view for labgroups.
     """
     authentication_classes = (SessionAuthentication,)
     permissions_classes = (DjangoModelPermissions,)

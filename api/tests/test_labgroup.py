@@ -6,12 +6,10 @@ from rest_framework.test import APITestCase
 import json
 
 from api.models import Course, Instructor, LabGroup
-
-
 class LabGroupLCTest(APITestCase):
-    """
-    Test cases for list and create requests on LabGroupView.
-    """
+        """
+        Test cases for list and create requests on LabGroupLCView.
+        """
     def setUp(self):
         # create test user with permissions
         self.username = 'test'
@@ -21,25 +19,21 @@ class LabGroupLCTest(APITestCase):
         self.client.login(username=self.username, password=self.password)
         # retrieve the view
         self.view_name = 'api:labgroup-lc'
-
         # Create foreign keys
         self.instructor = Instructor(user=self.user, wwuid="1234567")
         self.instructor.save()
         self.course = Course(name="test_course")
         self.course.save()
-
     def test_labgroup_create(self):
         """
         Tests that a labgroup is properly created.
         """
-
         # request
         request_body = {
             'course': self.course.id,
             'instructor': self.instructor.id,
             'term': 'test term',
             'enroll_key': 'test enroll_key',
-
         }
         response = self.client.post(reverse(self.view_name), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
@@ -49,7 +43,6 @@ class LabGroupLCTest(APITestCase):
         self.assertEqual(labgroup.instructor, self.instructor)
         self.assertEqual(labgroup.term, request_body['term'])
         self.assertEqual(labgroup.enroll_key, request_body['enroll_key'])
-
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['pk'], labgroup.id)
@@ -71,13 +64,11 @@ class LabGroupLCTest(APITestCase):
         # test response
         labgroups = LabGroup.objects.all()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         self.assertEqual(response_body['labgroups'][0]['pk'], labgroups[0].id)
         self.assertEqual(response_body['labgroups'][0]['course'], labgroups[0].course.id)
         self.assertEqual(response_body['labgroups'][0]['instructor'], labgroups[0].instructor.id)
         self.assertEqual(response_body['labgroups'][0]['enroll_key'], labgroups[0].enroll_key)
         self.assertEqual(response_body['labgroups'][0]['term'], labgroups[0].term)
-
         self.assertEqual(response_body['labgroups'][1]['pk'], labgroups[1].id)
         self.assertEqual(response_body['labgroups'][1]['course'], labgroups[1].course.id)
         self.assertEqual(response_body['labgroups'][1]['instructor'], labgroups[1].instructor.id)
@@ -85,15 +76,11 @@ class LabGroupLCTest(APITestCase):
         self.assertEqual(response_body['labgroups'][1]['term'], labgroups[1].term)
 
 
-class CourseRUDTest(APITestCase):
+class LabGroupRUDTest(APITestCase):
     """
-    Test cases for retrieve, update, and destroy requests on CourseRUDView.
+    Test cases for retrieve, update, and destroy requests on LabGroupRUDView.
     """
-
-
-
     def setUp(self):
-        # create test user with permissions
         # create test user with permissions
         self.username = 'test'
         self.password = 'test'
@@ -102,7 +89,6 @@ class CourseRUDTest(APITestCase):
         self.client.login(username=self.username, password=self.password)
         # retrieve the view
         self.view_name = 'api:labgroup-lc'
-
         # Create foreign keys
         self.instructor = Instructor(user=self.user, wwuid="1234567")
         self.instructor.save()
