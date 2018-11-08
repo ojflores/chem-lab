@@ -7,9 +7,9 @@ import json
 
 from api.models import Course, Instructor, LabGroup
 class LabGroupLCTest(APITestCase):
-        """
-        Test cases for list and create requests on LabGroupLCView.
-        """
+    """
+    Test cases for list and create requests on LabGroupLCView.
+    """
     def setUp(self):
         # create test user with permissions
         self.username = 'test'
@@ -24,6 +24,7 @@ class LabGroupLCTest(APITestCase):
         self.instructor.save()
         self.course = Course(name="test_course")
         self.course.save()
+
     def test_labgroup_create(self):
         """
         Tests that a labgroup is properly created.
