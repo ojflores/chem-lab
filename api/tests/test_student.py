@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 import json
 
-from api.models import Student, LabGroup, Instructor, Course
+from api.models import Course, Instructor, LabGroup, Student
 
 
 class StudentLCTest(APITestCase):
@@ -50,9 +50,9 @@ class StudentLCTest(APITestCase):
         self.assertEqual(student.wwuid, request_body['wwuid'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response_body['user'], student.user.id)
-        self.assertEqual(response_body['lab_group'], student.lab_group.id)
-        self.assertEqual(response_body['wwuid'], student.wwuid)
+        self.assertEqual(response_body['user'], request_body['user'])
+        self.assertEqual(response_body['lab_group'], request_body['lab_group'])
+        self.assertEqual(response_body['wwuid'], request_body['wwuid'])
 
     def test_student_list(self):
         """
@@ -81,25 +81,33 @@ class StudentRUDTest(APITestCase):
     """
     def setUp(self):
         # create test user with permissions and test student user
-        self.instructor_username = 'test2'
-        self.student_username = 'test3'
-        self.password = 'test2'
-        self.student_user = User.objects.create_user(username=self.student_username, password=self.password)
+        self.instructor_username = 'test instructor'
+        self.student_username_1 = 'test student 1'
+        self.student_username_2 = 'test student 2'
+        self.student_username_3 = 'test student 3'
+        self.password = 'test'
+        self.student_user_1 = User.objects.create_user(username=self.student_username_1, password=self.password)
+        self.student_user_2 = User.objects.create_user(username=self.student_username_2, password=self.password)
+        self.student_user_3 = User.objects.create_user(username=self.student_username_3, password=self.password)
         self.instructor_user = User.objects.create_user(username=self.instructor_username, password=self.password)
         self.instructor_user.user_permissions.add(Permission.objects.get(codename='change_student'))
         self.instructor_user.user_permissions.add(Permission.objects.get(codename='delete_student'))
         self.client.login(username=self.instructor_username, password=self.password)
         # populate database
-        self.instructor = Instructor(user=self.instructor_user, wwuid='9994141')
+        self.instructor = Instructor(user=self.instructor_user, wwuid='9999999')
         self.instructor.save()
-        self.course = Course(name='Encom')
+        self.course = Course(name='test course')
         self.course.save()
-        self.group = LabGroup(course=self.course, instructor=self.instructor, term='never', enroll_key='6')
-        self.group.save()
+        self.group_1 = LabGroup(course=self.course, instructor=self.instructor, term='never', enroll_key='6')
+        self.group_1.save()
         self.group_2 = LabGroup(course=self.course, instructor=self.instructor, term='ever', enroll_key='8')
         self.group_2.save()
-        self.student = Student(user=self.student_user, lab_group=self.group, wwuid='694')
-        self.student.save()
+        self.student_1 = Student(user=self.student_user_1, lab_group=self.group_1, wwuid='1111111')
+        self.student_1.save()
+        self.student_2 = Student(user=self.student_user_2, lab_group=self.group_1, wwuid='2222222')
+        self.student_2.save()
+        self.student_3 = Student(user=self.student_user_3, lab_group=self.group_1, wwuid='3333333')
+        self.student_3.save()
         # retrieve the view
         self.view_name = 'api:student-rud'
 
@@ -108,13 +116,13 @@ class StudentRUDTest(APITestCase):
         Tests that a student is properly retrieved.
         """
         # request
-        response = self.client.get(reverse(self.view_name, args=[self.student.id]))
+        response = self.client.get(reverse(self.view_name, args=[self.student_2.id]))
         response_body = json.loads(response.content.decode('utf-8'))
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_body['user'], self.student.user.id)
-        self.assertEqual(response_body['lab_group'], self.student.lab_group.id)
-        self.assertEqual(response_body['wwuid'], self.student.wwuid)
+        self.assertEqual(response_body['user'], self.student_2.user.id)
+        self.assertEqual(response_body['lab_group'], self.student_2.lab_group.id)
+        self.assertEqual(response_body['wwuid'], self.student_2.wwuid)
 
     def test_student_update(self):
         """
@@ -122,25 +130,22 @@ class StudentRUDTest(APITestCase):
         """
         # modify values
         request_body = {
-            'user': self.student_user.id,
+            'user': self.student_user_2.id,
             'lab_group': self.group_2.id,
-            'wwuid': '1993',
+            'wwuid': '8888888',
         }
         # request
-        response = self.client.put(reverse(self.view_name, args=[self.student.id]), request_body)
+        response = self.client.put(reverse(self.view_name, args=[self.student_2.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
-        student = Student.objects.filter(user=self.student_user).first()
+        student = Student.objects.filter(user=self.student_user_2).first()
         self.assertEqual(student.user.id, request_body['user'])
         self.assertEqual(student.lab_group.id, request_body['lab_group'])
         self.assertEqual(student.wwuid, request_body['wwuid'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_body['user'], self.student.user.id)
         self.assertEqual(response_body['user'], request_body['user'])
-        self.assertEqual(response_body['lab_group'], self.group_2.id)
         self.assertEqual(response_body['lab_group'], request_body['lab_group'])
-        self.assertEqual(response_body['wwuid'], '1993')
         self.assertEqual(response_body['wwuid'], request_body['wwuid'])
 
     def test_student_destroy(self):
@@ -148,9 +153,11 @@ class StudentRUDTest(APITestCase):
         Tests that a student is properly destroyed.
         """
         # request
-        response = self.client.delete(reverse(self.view_name, args=[self.student.id]))
+        response = self.client.delete(reverse(self.view_name, args=[self.student_2.id]))
         # test database
         students = Student.objects.all()
-        self.assertTrue(self.student not in students)
+        self.assertTrue(self.student_1 in students)
+        self.assertTrue(self.student_2 not in students)
+        self.assertTrue(self.student_3 in students)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
