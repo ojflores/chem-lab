@@ -41,7 +41,7 @@ class CourseRUDView(RetrieveUpdateDestroyAPIView):
 
 class LabGroupLCView(ListCreateAPIView):
     """
-    The list create view for labgroups.
+    The list create view for lab groups.
     """
     authentication_classes = (SessionAuthentication,)
     permission_classes = (DjangoModelPermissions,)
@@ -54,14 +54,14 @@ class LabGroupLCView(ListCreateAPIView):
     def list(self, request, *args, **kwargs):
             response = super(LabGroupLCView, self).list(request, *args, **kwargs)
             response.data = {
-                'labgroups': response.data,
+                'lab_groups': response.data,
             }
             return response
 
 
 class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
     """
-    The retrieve update destroy view for labgroups.
+    The retrieve update destroy view for lab groups.
     """
     authentication_classes = (SessionAuthentication,)
     permissions_classes = (DjangoModelPermissions,)
