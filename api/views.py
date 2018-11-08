@@ -5,9 +5,9 @@ from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+
 from api import serializers
-from api.models import Course, Student
-from api.models import LabGroup
+from api.models import Course, Student, LabGroup, Instructor
 
 
 class CourseLCView(ListCreateAPIView):
@@ -42,9 +42,10 @@ class CourseRUDView(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Course.objects.all()
 
+
 class LabGroupLCView(ListCreateAPIView):
     """
-    this list creates view for LabGroups
+    The list create view for lab groups.
     """
     authentication_classes = (SessionAuthentication,)
     permission_classes = (DjangoModelPermissions,)
@@ -57,13 +58,14 @@ class LabGroupLCView(ListCreateAPIView):
     def list(self, request, *args, **kwargs):
             response = super(LabGroupLCView, self).list(request, *args, **kwargs)
             response.data = {
-                'labgroups': response.data,
+                'lab_groups': response.data,
             }
             return response
 
+
 class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
     """
-    The retrieve update destroy view for labgroups
+    The retrieve update destroy view for lab groups.
     """
     authentication_classes = (SessionAuthentication,)
     permissions_classes = (DjangoModelPermissions,)
@@ -72,6 +74,72 @@ class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return LabGroup.objects.all()
+
+
+class StudentLCView(ListCreateAPIView):
+    """
+    The list create view for students.
+    """
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (DjangoModelPermissions,)
+    lookup_field = 'wwuid'
+    serializer_class = serializers.StudentSerializer
+
+    def get_queryset(self):
+        return Student.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        response = super(StudentLCView, self).list(request, *args, **kwargs)
+        response.data = {
+            'students': response.data,
+        }
+        return response
+
+
+class StudentRUDView(RetrieveUpdateDestroyAPIView):
+    """
+    The retrieve update destroy view for students.
+    """
+    authentication_classes = (SessionAuthentication,)
+    permissions_classes = (DjangoModelPermissions,)
+    lookup_field = 'pk'
+    serializer_class = serializers.StudentSerializer
+
+    def get_queryset(self):
+        return Student.objects.all()
+
+
+class InstructorLCView(ListCreateAPIView):
+    """
+    The list create view for instructors.
+    """
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (DjangoModelPermissions,)
+    lookup_field = 'pk'
+    serializer_class = serializers.InstructorSerializer
+
+    def get_queryset(self):
+        return Instructor.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        response = super(InstructorLCView, self).list(request, *args, **kwargs)
+        response.data = {
+            'instructors': response.data,
+        }
+        return response
+
+
+class InstructorRUDView(RetrieveUpdateDestroyAPIView):
+    """
+    The retrieve update destroy view for instructors.
+    """
+    authentication_classes = (SessionAuthentication,)
+    permissions_classes = (DjangoModelPermissions,)
+    lookup_field = 'pk'
+    serializer_class = serializers.InstructorSerializer
+
+    def get_queryset(self):
+        return Instructor.objects.all()
 
 
 class EnrollView(APIView):
@@ -90,4 +158,3 @@ class EnrollView(APIView):
             Student.objects.filter(user=request.user).update(lab_group=lab_group)
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_403_FORBIDDEN)
-
