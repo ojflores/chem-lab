@@ -6,6 +6,8 @@ from rest_framework.test import APITestCase
 import json
 
 from api.models import Course, Instructor, LabGroup
+
+
 class LabGroupLCTest(APITestCase):
     """
     Test cases for list and create requests on LabGroupLCView.
@@ -40,8 +42,8 @@ class LabGroupLCTest(APITestCase):
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
         lab_group = LabGroup.objects.first()
-        self.assertEqual(lab_group.course, self.course)
-        self.assertEqual(lab_group.instructor, self.instructor)
+        self.assertEqual(lab_group.course.id, request_body['course'])
+        self.assertEqual(lab_group.instructor.id, request_body['course'])
         self.assertEqual(lab_group.term, request_body['term'])
         self.assertEqual(lab_group.enroll_key, request_body['enroll_key'])
         # test response
@@ -146,8 +148,8 @@ class LabGroupRUDTest(APITestCase):
         # test database
         lab_group = LabGroup.objects.filter(term=request_body['term']).first()
         self.assertEqual(lab_group.id, self.lab_group_2.id)
-        self.assertEqual(lab_group.course, self.course_2)
-        self.assertEqual(lab_group.instructor, self.instructor)
+        self.assertEqual(lab_group.course.id, request_body['course'])
+        self.assertEqual(lab_group.instructor.id, request_body['instructor'])
         self.assertEqual(lab_group.term, request_body['term'])
         self.assertEqual(lab_group.enroll_key, request_body['enroll_key'])
         # test response
