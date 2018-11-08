@@ -21,8 +21,7 @@ class StudentLCTest(APITestCase):
         self.student_user = User.objects.create_user(username=self.student_username, password=self.password)
         self.instructor_user.user_permissions.add(Permission.objects.get(codename='add_student'))
         self.client.login(username=self.username, password=self.password)
-
-        #populate test database
+        # populate test database
         self.instructor = Instructor(user = self.instructor_user, wwuid = '9994141')
         self.instructor.save()
         self.course = Course(name = 'fact')
@@ -79,70 +78,83 @@ class StudentLCTest(APITestCase):
 
 
 
-class CourseRUDTest(APITestCase):
+class StudentRUDTest(APITestCase):
     """
-    Test cases for retrieve, update, and destroy requests on CourseRUDView.
+    Test cases for retrieve, update, and destroy requests on StudentRUDView.
     """
     def setUp(self):
-        # create test user with permissions
-        self.username = 'test'
-        self.password = 'test'
-        self.user = User.objects.create_user(username=self.username, password=self.password)
-        self.user.user_permissions.add(Permission.objects.get(codename='change_course'))
-        self.user.user_permissions.add(Permission.objects.get(codename='delete_course'))
-        self.client.login(username=self.username, password=self.password)
-        # add courses to database
-        self.course_1 = Course(name='test name 1')
-        self.course_1.save()
-        self.course_2 = Course(name='test name 2')
-        self.course_2.save()
-        self.course_3 = Course(name='test name 3')
-        self.course_3.save()
-        # retrieve the view
-        self.view_name = 'api:course-rud'
+        # create test user with permissions and test student user
+        self.instructor_username = 'test2'
+        self.student_username = 'test3'
+        self.password = 'test2'
+        self.student_user = User.objects.create_user(username=self.student_username, password=self.password)
+        self.instructor_user = User.objects.create_user(username=self.instructor_username, password=self.password)
+        self.instructor_user.user_permissions.add(Permission.objects.get(codename='change_student'))
+        self.instructor_user.user_permissions.add(Permission.objects.get(codename='delete_student'))
+        self.client.login(username=self.instructor_username, password=self.password)
+        # populate database
+        self.instructor = Instructor(user=self.instructor_user, wwuid='9994141')
+        self.instructor.save()
+        self.course = Course(name='Encom')
+        self.course.save()
+        self.group = LabGroup(course=self.course, instructor=self.instructor, term='never', enroll_key='6')
+        self.group.save()
+        self.group_2 = LabGroup(course=self.course, instructor=self.instructor, term='ever', enroll_key='8')
+        self.group_2.save()
+        self.student = Student(user=self.student_user, lab_group=self.group, wwuid='694')
+        self.student.save()
 
-    def test_course_retrieve(self):
+        # retrieve the view
+        self.view_name = 'api:student-rud'
+
+    def test_student_retrieve(self):
         """
-        Tests that a course is properly retrieved.
+        Tests that a student is properly retrieved.
         """
         # request
-        response = self.client.get(reverse(self.view_name, args=[self.course_2.id]))
+        response = self.client.get(reverse(self.view_name, args=[self.student.id]))
         response_body = json.loads(response.content.decode('utf-8'))
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_body['pk'], self.course_2.id)
-        self.assertEqual(response_body['name'], self.course_2.name)
+        self.assertEqual(response_body['user'], self.student.user.id)
+        self.assertEqual(response_body['lab_group'], self.student.lab_group.id)
+        self.assertEqual(response_body['wwuid'], self.student.wwuid)
 
-    def test_course_update(self):
+    def test_student_update(self):
         """
-        Tests that a course is properly updated.
+        Tests that a student is properly updated.
         """
         # modify values
         request_body = {
-            'name': 'name changed',
+            'user': self.student_user.id,
+            'lab_group': self.group_2.id,
+            'wwuid': '1993',
         }
         # request
-        response = self.client.put(reverse(self.view_name, args=[self.course_2.id]), request_body)
+        response = self.client.put(reverse(self.view_name, args=[self.student.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
-        course = Course.objects.filter(name=request_body['name']).first()
-        self.assertEqual(course.id, self.course_2.id)
-        self.assertEqual(course.name, request_body['name'])
+        student = Student.objects.filter(user=self.student_user).first()
+        self.assertEqual(student.user.id, request_body['user'])
+        self.assertEqual(student.lab_group.id, request_body['lab_group'])
+        self.assertEqual(student.wwuid, request_body['wwuid'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_body['pk'], self.course_2.id)
-        self.assertEqual(response_body['name'], request_body['name'])
+        self.assertEqual(response_body['user'], self.student.user.id)
+        self.assertEqual(response_body['user'], request_body['user'])
+        self.assertEqual(response_body['lab_group'], self.group_2.id)
+        self.assertEqual(response_body['lab_group'], request_body['lab_group'])
+        self.assertEqual(response_body['wwuid'], '1993')
+        self.assertEqual(response_body['wwuid'], request_body['wwuid'])
 
-    def test_course_destroy(self):
+    def test_student_destroy(self):
         """
-        Tests that a course is properly destroyed.
+        Tests that a student is properly destroyed.
         """
         # request
-        response = self.client.delete(reverse(self.view_name, args=[self.course_2.id]))
+        response = self.client.delete(reverse(self.view_name, args=[self.student.id]))
         # test database
-        courses = Course.objects.all()
-        self.assertTrue(self.course_1 in courses)
-        self.assertTrue(self.course_2 not in courses)
-        self.assertTrue(self.course_3 in courses)
+        students = Student.objects.all()
+        self.assertTrue(self.student not in students)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

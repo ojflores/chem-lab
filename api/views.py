@@ -38,6 +38,7 @@ class CourseRUDView(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Course.objects.all()
 
+
 class StudentLCView(ListCreateAPIView):
     """
     The list create view for students.
@@ -64,12 +65,11 @@ class StudentRUDView(RetrieveUpdateDestroyAPIView):
     """
     authentication_classes = (SessionAuthentication,)
     permissions_classes = (DjangoModelPermissions,)
-    lookup_field = 'wwuid'
+    lookup_field = 'pk'
     serializer_class = serializers.StudentSerializer
 
     def get_queryset(self):
-        #name = Student.user.get_full_name()
-        return Student.objects.all() #name
+        return Student.objects.all()
 
 
 class LabGroupLCView(ListCreateAPIView):
