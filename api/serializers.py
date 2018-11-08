@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Course, Student,
+from api.models import Course, Student
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -18,7 +18,6 @@ class CourseSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     """
     The serializer for students.
-    M.Davis and J.Berglund
     """
     class Meta:
         model = Student
