@@ -30,7 +30,7 @@ class InstructorLCTest(APITestCase):
         """
         # request
         request_body = {
-            'wwuid': 'tewwuid',
+            'wwuid': '1111111',
             'user': self.user.id
         }
         response = self.client.post(reverse(self.view_name), request_body)
@@ -38,7 +38,7 @@ class InstructorLCTest(APITestCase):
         # test database
         instructor = Instructor.objects.first()
         self.assertEqual(instructor.wwuid, request_body['wwuid'])
-        self.assertEqual(instructor.user, self.user)
+        self.assertEqual(instructor.user.id, request_body['user'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['pk'], instructor.id)
