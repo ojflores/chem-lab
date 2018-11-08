@@ -10,7 +10,7 @@ from api.models import Student, LabGroup, Instructor, Course
 
 class StudentLCTest(APITestCase):
     """
-    Test cases for list and create requests on CourseLCView.
+    Test cases for list and create requests on StudentLCView.
     """
     def setUp(self):
         # create test user with permissions
@@ -22,11 +22,11 @@ class StudentLCTest(APITestCase):
         self.instructor_user.user_permissions.add(Permission.objects.get(codename='add_student'))
         self.client.login(username=self.username, password=self.password)
         # populate test database
-        self.instructor = Instructor(user = self.instructor_user, wwuid = '9994141')
+        self.instructor = Instructor(user=self.instructor_user, wwuid='9994141')
         self.instructor.save()
-        self.course = Course(name = 'fact')
+        self.course = Course(name='fact')
         self.course.save()
-        self.group = LabGroup(course = self.course, instructor = self.instructor, term = 'never', enroll_key = '6')
+        self.group = LabGroup(course=self.course, instructor=self.instructor, term='never', enroll_key='6')
         self.group.save()
         # retrieve the view
         self.view_name = 'api:student-lc'
@@ -48,7 +48,6 @@ class StudentLCTest(APITestCase):
         self.assertEqual(student.user.id, request_body['user'])
         self.assertEqual(student.lab_group.id, request_body['lab_group'])
         self.assertEqual(student.wwuid, request_body['wwuid'])
-
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['user'], student.user.id)
@@ -60,9 +59,8 @@ class StudentLCTest(APITestCase):
         Tests that students are properly listed.
         """
         # add students to database
-        Student(user = self.student_user, lab_group = self.group, wwuid = '64').save()
-        Student(user = self.instructor_user, lab_group=self.group, wwuid='12').save()
-
+        Student(user=self.student_user, lab_group=self.group, wwuid='64').save()
+        Student(user=self.instructor_user, lab_group=self.group, wwuid='12').save()
         # request
         response = self.client.get(reverse(self.view_name))
         response_body = json.loads(response.content.decode('utf-8'))
@@ -75,7 +73,6 @@ class StudentLCTest(APITestCase):
         self.assertEqual(response_body['students'][1]['user'], students[1].user.id)
         self.assertEqual(response_body['students'][1]['lab_group'], students[1].lab_group.id)
         self.assertEqual(response_body['students'][1]['wwuid'], students[1].wwuid)
-
 
 
 class StudentRUDTest(APITestCase):
@@ -103,7 +100,6 @@ class StudentRUDTest(APITestCase):
         self.group_2.save()
         self.student = Student(user=self.student_user, lab_group=self.group, wwuid='694')
         self.student.save()
-
         # retrieve the view
         self.view_name = 'api:student-rud'
 
