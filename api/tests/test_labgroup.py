@@ -46,6 +46,10 @@ class LabGroupLCTest(APITestCase):
         # test database
         labgroup = LabGroup.objects.first()
         self.assertEqual(labgroup.course, self.course)
+        self.assertEqual(labgroup.instructor, self.instructor)
+        self.assertEqual(labgroup.term, request_body['term'])
+        self.assertEqual(labgroup.enroll_key, request_body['enroll_key'])
+
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['pk'], labgroup.id)
@@ -59,38 +63,57 @@ class LabGroupLCTest(APITestCase):
         Tests that labgroups are properly listed.
         """
         # add labgroups to database
-        Course(name='test name 1').save()
-        Course(name='test name 2').save()
+        LabGroup(course=self.course, instructor=self.instructor, term='test1', enroll_key='test key 1').save()
+        LabGroup(course=self.course, instructor=self.instructor, term='test2', enroll_key='test key 2').save()
         # request
         response = self.client.get(reverse(self.view_name))
         response_body = json.loads(response.content.decode('utf-8'))
         # test response
-        labgroups = Course.objects.all()
+        labgroups = LabGroup.objects.all()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         self.assertEqual(response_body['labgroups'][0]['pk'], labgroups[0].id)
-        self.assertEqual(response_body['labgroups'][0]['name'], labgroups[0].name)
+        self.assertEqual(response_body['labgroups'][0]['course'], labgroups[0].course.id)
+        self.assertEqual(response_body['labgroups'][0]['instructor'], labgroups[0].instructor.id)
+        self.assertEqual(response_body['labgroups'][0]['enroll_key'], labgroups[0].enroll_key)
+        self.assertEqual(response_body['labgroups'][0]['term'], labgroups[0].term)
+
         self.assertEqual(response_body['labgroups'][1]['pk'], labgroups[1].id)
-        self.assertEqual(response_body['labgroups'][1]['name'], labgroups[1].name)
+        self.assertEqual(response_body['labgroups'][1]['course'], labgroups[1].course.id)
+        self.assertEqual(response_body['labgroups'][1]['instructor'], labgroups[1].instructor.id)
+        self.assertEqual(response_body['labgroups'][1]['enroll_key'], labgroups[1].enroll_key)
+        self.assertEqual(response_body['labgroups'][1]['term'], labgroups[1].term)
 
 
 class CourseRUDTest(APITestCase):
     """
     Test cases for retrieve, update, and destroy requests on CourseRUDView.
     """
+
+
+
     def setUp(self):
+        # create test user with permissions
         # create test user with permissions
         self.username = 'test'
         self.password = 'test'
         self.user = User.objects.create_user(username=self.username, password=self.password)
-        self.user.user_permissions.add(Permission.objects.get(codename='change_labgroup'))
-        self.user.user_permissions.add(Permission.objects.get(codename='delete_labgroup'))
+        self.user.user_permissions.add(Permission.objects.get(codename='add_labgroup'))
         self.client.login(username=self.username, password=self.password)
+        # retrieve the view
+        self.view_name = 'api:labgroup-lc'
+
+        # Create foreign keys
+        self.instructor = Instructor(user=self.user, wwuid="1234567")
+        self.instructor.save()
+        self.course = Course(name="test_course")
+        self.course.save()
         # add labgroups to database
-        self.labgroup_1 = Course(name='test name 1')
+        self.labgroup_1 = LabGroup(course=self.course, instructor=self.instructor, term='test1', enroll_key='test key 1')
         self.labgroup_1.save()
-        self.labgroup_2 = Course(name='test name 2')
+        self.labgroup_2 = LabGroup(course=self.course, instructor=self.instructor, term='test2', enroll_key='test key 2')
         self.labgroup_2.save()
-        self.labgroup_3 = Course(name='test name 3')
+        self.labgroup_3 = LabGroup(course=self.course, instructor=self.instructor, term='test3', enroll_key='test key 3')
         self.labgroup_3.save()
         # retrieve the view
         self.view_name = 'api:labgroup-rud'
@@ -105,7 +128,10 @@ class CourseRUDTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.labgroup_2.id)
-        self.assertEqual(response_body['name'], self.labgroup_2.name)
+        self.assertEqual(response_body['course'], self.labgroup_2.course.id)
+        self.assertEqual(response_body['term'], self.labgroup_2.term)
+        self.assertEqual(response_body['instructor'], self.labgroup_2.instructor.id)
+        self.assertEqual(response_body['enroll_key'], self.labgroup_2.enroll_key)
 
     def test_labgroup_update(self):
         """
@@ -113,19 +139,23 @@ class CourseRUDTest(APITestCase):
         """
         # modify values
         request_body = {
-            'name': 'name changed',
+            'course': self.course.id,
+            'instructor': self.instructor.id,
+            'term': 'test2',
+            'enroll_key': 'test key 2',
         }
         # request
         response = self.client.put(reverse(self.view_name, args=[self.labgroup_2.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
-        labgroup = Course.objects.filter(name=request_body['name']).first()
-        self.assertEqual(labgroup.id, self.labgroup_2.id)
-        self.assertEqual(labgroup.name, request_body['name'])
+        labgroup = LabGroup.objects.first()
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.labgroup_2.id)
-        self.assertEqual(response_body['name'], request_body['name'])
+        self.assertEqual(response_body['course'], self.labgroup_2.course.id)
+        self.assertEqual(response_body['term'], self.labgroup_2.term)
+        self.assertEqual(response_body['instructor'], self.labgroup_2.instructor.id)
+        self.assertEqual(response_body['enroll_key'], self.labgroup_2.enroll_key)
 
     def test_labgroup_destroy(self):
         """
@@ -134,7 +164,7 @@ class CourseRUDTest(APITestCase):
         # request
         response = self.client.delete(reverse(self.view_name, args=[self.labgroup_2.id]))
         # test database
-        labgroups = Course.objects.all()
+        labgroups = LabGroup.objects.all()
         self.assertTrue(self.labgroup_1 in labgroups)
         self.assertTrue(self.labgroup_2 not in labgroups)
         self.assertTrue(self.labgroup_3 in labgroups)
