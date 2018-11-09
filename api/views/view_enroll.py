@@ -14,11 +14,11 @@ class EnrollView(APIView):
 
     def post(self, request):
         """
-        Enroll in a lab group.
+        Enroll in a labgroup.
         """
-        # load the lab group from the database
-        lab_group = LabGroup.objects.get(pk=request.data['lab_group'])
-        if request.data['enroll_key'] == lab_group.enroll_key:
-            Student.objects.filter(user=request.user).update(lab_group=lab_group)
+        # load the labgroup from the database
+        labgroup = LabGroup.objects.get(pk=request.data['labgroup'])
+        if request.data['enroll_key'] == labgroup.enroll_key:
+            Student.objects.filter(user=request.user).update(labgroup=labgroup)
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_403_FORBIDDEN)

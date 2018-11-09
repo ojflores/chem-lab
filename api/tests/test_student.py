@@ -38,7 +38,7 @@ class StudentLCTest(APITestCase):
         # request
         request_body = {
             'user': self.student_user.id,
-            'lab_group': self.group.id,
+            'labgroup': self.group.id,
             'wwuid': '16',
         }
         response = self.client.post(reverse(self.view_name), request_body)
@@ -46,12 +46,12 @@ class StudentLCTest(APITestCase):
         # test database
         student = Student.objects.first()
         self.assertEqual(student.user.id, request_body['user'])
-        self.assertEqual(student.lab_group.id, request_body['lab_group'])
+        self.assertEqual(student.labgroup.id, request_body['labgroup'])
         self.assertEqual(student.wwuid, request_body['wwuid'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['user'], request_body['user'])
-        self.assertEqual(response_body['lab_group'], request_body['lab_group'])
+        self.assertEqual(response_body['labgroup'], request_body['labgroup'])
         self.assertEqual(response_body['wwuid'], request_body['wwuid'])
 
     def test_student_list(self):
@@ -59,8 +59,8 @@ class StudentLCTest(APITestCase):
         Tests that students are properly listed.
         """
         # add students to database
-        Student(user=self.student_user, lab_group=self.group, wwuid='64').save()
-        Student(user=self.instructor_user, lab_group=self.group, wwuid='12').save()
+        Student(user=self.student_user, labgroup=self.group, wwuid='64').save()
+        Student(user=self.instructor_user, labgroup=self.group, wwuid='12').save()
         # request
         response = self.client.get(reverse(self.view_name))
         response_body = json.loads(response.content.decode('utf-8'))
@@ -68,10 +68,10 @@ class StudentLCTest(APITestCase):
         students = Student.objects.all()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['students'][0]['user'], students[0].user.id)
-        self.assertEqual(response_body['students'][0]['lab_group'], students[0].lab_group.id)
+        self.assertEqual(response_body['students'][0]['labgroup'], students[0].labgroup.id)
         self.assertEqual(response_body['students'][0]['wwuid'], students[0].wwuid)
         self.assertEqual(response_body['students'][1]['user'], students[1].user.id)
-        self.assertEqual(response_body['students'][1]['lab_group'], students[1].lab_group.id)
+        self.assertEqual(response_body['students'][1]['labgroup'], students[1].labgroup.id)
         self.assertEqual(response_body['students'][1]['wwuid'], students[1].wwuid)
 
 
@@ -102,11 +102,11 @@ class StudentRUDTest(APITestCase):
         self.group_1.save()
         self.group_2 = LabGroup(course=self.course, instructor=self.instructor, term='ever', enroll_key='8')
         self.group_2.save()
-        self.student_1 = Student(user=self.student_user_1, lab_group=self.group_1, wwuid='1111111')
+        self.student_1 = Student(user=self.student_user_1, labgroup=self.group_1, wwuid='1111111')
         self.student_1.save()
-        self.student_2 = Student(user=self.student_user_2, lab_group=self.group_1, wwuid='2222222')
+        self.student_2 = Student(user=self.student_user_2, labgroup=self.group_1, wwuid='2222222')
         self.student_2.save()
-        self.student_3 = Student(user=self.student_user_3, lab_group=self.group_1, wwuid='3333333')
+        self.student_3 = Student(user=self.student_user_3, labgroup=self.group_1, wwuid='3333333')
         self.student_3.save()
         # retrieve the view
         self.view_name = 'api:student-rud'
@@ -121,7 +121,7 @@ class StudentRUDTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['user'], self.student_2.user.id)
-        self.assertEqual(response_body['lab_group'], self.student_2.lab_group.id)
+        self.assertEqual(response_body['labgroup'], self.student_2.labgroup.id)
         self.assertEqual(response_body['wwuid'], self.student_2.wwuid)
 
     def test_student_update(self):
@@ -131,7 +131,7 @@ class StudentRUDTest(APITestCase):
         # modify values
         request_body = {
             'user': self.student_user_2.id,
-            'lab_group': self.group_2.id,
+            'labgroup': self.group_2.id,
             'wwuid': '8888888',
         }
         # request
@@ -140,12 +140,12 @@ class StudentRUDTest(APITestCase):
         # test database
         student = Student.objects.filter(user=self.student_user_2).first()
         self.assertEqual(student.user.id, request_body['user'])
-        self.assertEqual(student.lab_group.id, request_body['lab_group'])
+        self.assertEqual(student.labgroup.id, request_body['labgroup'])
         self.assertEqual(student.wwuid, request_body['wwuid'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['user'], request_body['user'])
-        self.assertEqual(response_body['lab_group'], request_body['lab_group'])
+        self.assertEqual(response_body['labgroup'], request_body['labgroup'])
         self.assertEqual(response_body['wwuid'], request_body['wwuid'])
 
     def test_student_destroy(self):

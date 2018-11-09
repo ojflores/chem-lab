@@ -5,7 +5,7 @@ from api.models import LabGroup
 
 class LabGroupSerializer(serializers.ModelSerializer):
     """
-    The serializer for lab groups.
+    The serializer for labgroups.
     """
     class Meta:
         model = LabGroup

@@ -11,7 +11,7 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = (
             'pk',
-            'lab_group',
+            'labgroup',
             'user',
             'wwuid',
         )
