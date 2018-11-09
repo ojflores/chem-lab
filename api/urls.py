@@ -10,6 +10,6 @@ urlpatterns = [
     url(r'^instructor/(?P<pk>\d+)$', views.InstructorRUDView.as_view(), name='instructor-rud'),
     url(r'^student$', views.StudentLCView.as_view(), name='student-lc'),
     url(r'^student/(?P<pk>\d+)$', views.StudentRUDView.as_view(), name='student-rud'),
-    url(r'^group$', views.LabGroupLCView.as_view(), name='lab-group-lc'),
-    url(r'^group/(?P<pk>\d+)$', views.LabGroupRUDView.as_view(), name='lab-group-rud'),
+    url(r'^labgroup$', views.LabGroupLCView.as_view(), name='lab-group-lc'),
+    url(r'^labgroup/(?P<pk>\d+)$', views.LabGroupRUDView.as_view(), name='lab-group-rud'),
 ]
