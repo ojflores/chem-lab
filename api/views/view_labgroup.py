@@ -3,37 +3,37 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import DjangoModelPermissions
 
 from api import serializers
-from api.models import Course
+from api.models import LabGroup
 
 
-class CourseLCView(ListCreateAPIView):
+class LabGroupLCView(ListCreateAPIView):
     """
-    The list create view for courses.
+    The list create view for lab groups.
     """
     authentication_classes = (SessionAuthentication,)
     permission_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
-    serializer_class = serializers.CourseSerializer
+    serializer_class = serializers.LabGroupSerializer
 
     def get_queryset(self):
-        return Course.objects.all()
+        return LabGroup.objects.all()
 
     def list(self, request, *args, **kwargs):
-        response = super(CourseLCView, self).list(request, *args, **kwargs)
-        response.data = {
-            'courses': response.data,
-        }
-        return response
+            response = super(LabGroupLCView, self).list(request, *args, **kwargs)
+            response.data = {
+                'lab_groups': response.data,
+            }
+            return response
 
 
-class CourseRUDView(RetrieveUpdateDestroyAPIView):
+class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
     """
-    The retrieve update destroy view for courses.
+    The retrieve update destroy view for lab groups.
     """
     authentication_classes = (SessionAuthentication,)
     permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
-    serializer_class = serializers.CourseSerializer
+    serializer_class = serializers.LabGroupSerializer
 
     def get_queryset(self):
-        return Course.objects.all()
+        return LabGroup.objects.all()

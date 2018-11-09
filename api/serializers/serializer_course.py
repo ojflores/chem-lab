@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Course, Instructor, LabGroup, Student
+from api.models import Course
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -12,47 +12,4 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = (
             'pk',
             'name',
-        )
-
-
-class InstructorSerializer(serializers.ModelSerializer):
-    """
-    The serializer for instructors.
-    """
-    class Meta:
-        model = Instructor
-        fields = (
-            'pk',
-            'user',
-            'wwuid',
-        )
-
-
-class StudentSerializer(serializers.ModelSerializer):
-    """
-    The serializer for students.
-    """
-    class Meta:
-        model = Student
-        fields = (
-            'pk',
-            'lab_group',
-            'user',
-            'wwuid',
-        )
-
-
-class LabGroupSerializer(serializers.ModelSerializer):
-    """
-    The serializer for lab groups.
-    """
-    class Meta:
-        model = LabGroup
-        fields = (
-            'pk',
-            'course',
-            'instructor',
-            'group_name',
-            'term',
-            'enroll_key',
         )
