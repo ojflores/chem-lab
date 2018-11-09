@@ -35,6 +35,7 @@ class LabGroupLCTest(APITestCase):
         request_body = {
             'course': self.course.id,
             'instructor': self.instructor.id,
+            'group_name': 'test name',
             'term': 'test term',
             'enroll_key': 'test enroll_key',
         }
@@ -44,6 +45,7 @@ class LabGroupLCTest(APITestCase):
         lab_group = LabGroup.objects.first()
         self.assertEqual(lab_group.course.id, request_body['course'])
         self.assertEqual(lab_group.instructor.id, request_body['course'])
+        self.assertEqual(lab_group.group_name, request_body['group_name'])
         self.assertEqual(lab_group.term, request_body['term'])
         self.assertEqual(lab_group.enroll_key, request_body['enroll_key'])
         # test response
@@ -51,6 +53,7 @@ class LabGroupLCTest(APITestCase):
         self.assertEqual(response_body['pk'], lab_group.id)
         self.assertEqual(response_body['course'], request_body['course'])
         self.assertEqual(response_body['instructor'], request_body['instructor'])
+        self.assertEqual(response_body['group_name'], request_body['group_name'])
         self.assertEqual(response_body['term'], request_body['term'])
         self.assertEqual(response_body['enroll_key'], request_body['enroll_key'])
 
@@ -59,8 +62,16 @@ class LabGroupLCTest(APITestCase):
         Tests that lab groups are properly listed.
         """
         # add lab groups to database
-        LabGroup(course=self.course, instructor=self.instructor, term='test1', enroll_key='test key 1').save()
-        LabGroup(course=self.course, instructor=self.instructor, term='test2', enroll_key='test key 2').save()
+        LabGroup(course=self.course,
+                 instructor=self.instructor,
+                 group_name='test name 1',
+                 term='test1',
+                 enroll_key='test key 1').save()
+        LabGroup(course=self.course,
+                 instructor=self.instructor,
+                 group_name='test name 2',
+                 term='test2',
+                 enroll_key='test key 2').save()
         # request
         response = self.client.get(reverse(self.view_name))
         response_body = json.loads(response.content.decode('utf-8'))
@@ -70,11 +81,13 @@ class LabGroupLCTest(APITestCase):
         self.assertEqual(response_body['lab_groups'][0]['pk'], lab_groups[0].id)
         self.assertEqual(response_body['lab_groups'][0]['course'], lab_groups[0].course.id)
         self.assertEqual(response_body['lab_groups'][0]['instructor'], lab_groups[0].instructor.id)
+        self.assertEqual(response_body['lab_groups'][0]['group_name'], lab_groups[0].group_name)
         self.assertEqual(response_body['lab_groups'][0]['enroll_key'], lab_groups[0].enroll_key)
         self.assertEqual(response_body['lab_groups'][0]['term'], lab_groups[0].term)
         self.assertEqual(response_body['lab_groups'][1]['pk'], lab_groups[1].id)
         self.assertEqual(response_body['lab_groups'][1]['course'], lab_groups[1].course.id)
         self.assertEqual(response_body['lab_groups'][1]['instructor'], lab_groups[1].instructor.id)
+        self.assertEqual(response_body['lab_groups'][1]['group_name'], lab_groups[1].group_name)
         self.assertEqual(response_body['lab_groups'][1]['enroll_key'], lab_groups[1].enroll_key)
         self.assertEqual(response_body['lab_groups'][1]['term'], lab_groups[1].term)
 
@@ -128,6 +141,7 @@ class LabGroupRUDTest(APITestCase):
         self.assertEqual(response_body['pk'], self.lab_group_2.id)
         self.assertEqual(response_body['course'], self.lab_group_2.course.id)
         self.assertEqual(response_body['term'], self.lab_group_2.term)
+        self.assertEqual(response_body['group_name'], self.lab_group_2.group_name)
         self.assertEqual(response_body['instructor'], self.lab_group_2.instructor.id)
         self.assertEqual(response_body['enroll_key'], self.lab_group_2.enroll_key)
 
@@ -139,6 +153,7 @@ class LabGroupRUDTest(APITestCase):
         request_body = {
             'course': self.course_2.id,
             'instructor': self.instructor.id,
+            'group_name': 'changed',
             'term': 'changed',
             'enroll_key': 'changed',
         }
@@ -149,6 +164,7 @@ class LabGroupRUDTest(APITestCase):
         lab_group = LabGroup.objects.filter(term=request_body['term']).first()
         self.assertEqual(lab_group.id, self.lab_group_2.id)
         self.assertEqual(lab_group.course.id, request_body['course'])
+        self.assertEqual(lab_group.group_name, request_body['group_name'])
         self.assertEqual(lab_group.instructor.id, request_body['instructor'])
         self.assertEqual(lab_group.term, request_body['term'])
         self.assertEqual(lab_group.enroll_key, request_body['enroll_key'])
@@ -156,6 +172,7 @@ class LabGroupRUDTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.lab_group_2.id)
         self.assertEqual(response_body['course'], request_body['course'])
+        self.assertEqual(response_body['group_name'], request_body['group_name'])
         self.assertEqual(response_body['instructor'], request_body['instructor'])
         self.assertEqual(response_body['term'], request_body['term'])
         self.assertEqual(response_body['enroll_key'], request_body['enroll_key'])

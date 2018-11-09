@@ -52,6 +52,7 @@ class LabGroupSerializer(serializers.ModelSerializer):
             'pk',
             'course',
             'instructor',
+            'group_name',
             'term',
             'enroll_key',
         )
