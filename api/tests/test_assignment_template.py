@@ -17,7 +17,7 @@ class AssignmentTemplateLCTest(APITestCase):
         self.username = 'test'
         self.password = 'test'
         self.user = User.objects.create_user(username=self.username, password=self.password)
-        self.user.user_permissions.add(Permission.objects.get(codename='add_course'))
+        self.user.user_permissions.add(Permission.objects.get(codename='add_assignmenttemplate'))
         self.client.login(username=self.username, password=self.password)
         # retrieve the view
         self.view_name = 'api:template-lc'
@@ -34,12 +34,17 @@ class AssignmentTemplateLCTest(APITestCase):
         Tests that a course is properly created.
         """
         # request
-        request_body = {
+        request_body = \
+        {
             'name': 'test name',
             'course': self.course.id
         }
+
         response = self.client.post(reverse(self.view_name), request_body)
+
         response_body = json.loads(response.content.decode('utf-8'))
+        print(response_body)
+        #create assignment template
         # test database
         temp = AssignmentTemplate.objects.first()
         self.assertEqual(temp.name, request_body['name'])
@@ -48,7 +53,7 @@ class AssignmentTemplateLCTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['pk'], temp.id)
         self.assertEqual(response_body['name'], request_body['name'])
-        self.assertEqual(response_body['course'],course.id)
+        self.assertEqual(response_body['course'], self.course.id)
 
     def test_assignment_template_list(self):
         """
@@ -56,18 +61,18 @@ class AssignmentTemplateLCTest(APITestCase):
         """
         # add courses to database
 
-        AssignmentTemplate(name='test name 1', courses=self.course).save()
-        AssignmentTemplate(name='test name 2', courses=self.course).save()
+        AssignmentTemplate(name='test name 1', course=self.course).save()
+        AssignmentTemplate(name='test name 2', course=self.course).save()
         # request
         response = self.client.get(reverse(self.view_name))
         response_body = json.loads(response.content.decode('utf-8'))
         # test response
         assignments = AssignmentTemplate.objects.all()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_body['template'][0]['pk'], assignments[0].id)
-        self.assertEqual(response_body['template'][0]['name'], assignments[0].name)
-        self.assertEqual(response_body['template'][1]['pk'], assignments[1].id)
-        self.assertEqual(response_body['template'][1]['name'], assignments[1].name)
+        self.assertEqual(response_body['templates'][0]['pk'], assignments[0].id)
+        self.assertEqual(response_body['templates'][0]['name'], assignments[0].name)
+        self.assertEqual(response_body['templates'][1]['pk'], assignments[1].id)
+        self.assertEqual(response_body['templates'][1]['name'], assignments[1].name)
 
 
 class CourseRUDTest(APITestCase):
@@ -83,58 +88,64 @@ class CourseRUDTest(APITestCase):
         self.user.user_permissions.add(Permission.objects.get(codename='delete_assignmenttemplate'))
         self.client.login(username=self.username, password=self.password)
         # add courses to database
-        self.course_1 = AssignmentTemplate(name='test name 1',courses=self.course)
-        self.course_1.save()
-        self.course_2 = AssignmentTemplate(name='test name 2',courses=self.course)
-        self.course_2.save()
-        self.course_3 = AssignmentTemplate(name='test name 3',courses=self.course)
-        self.course_3.save()
+        self.course = Course(name="testcourse")
+        self.course.save() #John added this line and is not sure about it...
+        self.template_1 = AssignmentTemplate(name='test name 1',course =self.course)
+        self.template_1.save()
+        self.template_2 = AssignmentTemplate(name='test name 2',course =self.course)
+        self.template_2.save()
+        self.template_3 = AssignmentTemplate(name='test name 3',course =self.course)
+        self.template_3.save()
         # retrieve the view
         self.view_name = 'api:template-rud'
 
-    def test_course_retrieve(self):
+    def test_template_retrieve(self):
         """
         Tests that a course is properly retrieved.
         """
         # request
-        response = self.client.get(reverse(self.view_name, args=[self.course_2.id]))
+        response = self.client.get(reverse(self.view_name, args=[self.template_2.id]))
         response_body = json.loads(response.content.decode('utf-8'))
+        print("RESPONSE BODY:")
+        print(response_body)
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_body['pk'], self.course_2.id)
-        self.assertEqual(response_body['name'], self.course_2.name)
-        self.assertEqual(response_body['course'], self.course)
+        self.assertEqual(response_body['pk'], self.template_2.id)
+        self.assertEqual(response_body['name'], self.template_2.name)
+        self.assertEqual(response_body['course'], self.course.id)
 
-    def test_course_update(self):
+    def test_template_update(self):
         """
         Tests that a course is properly updated.
         """
         # modify values
         request_body = {
             'name': 'name changed',
+            'course' : self.course.id
         }
         # request
-        response = self.client.put(reverse(self.view_name, args=[self.course_2.id]), request_body)
+        response = self.client.put(reverse(self.view_name, args=[self.template_2.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
-        course = AssignmentTemplate.objects.filter(name=request_body['name']).first()
-        self.assertEqual(course.id, self.course_2.id)
+        # self.template_1 = AssignmentTemplate(name='test name 1',course =self.course)
+        course = AssignmentTemplate.objects.filter(name=request_body['name'],course=request_body['course']).first()
+        self.assertEqual(course.id, self.template_2.id)
         self.assertEqual(course.name, request_body['name'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_body['pk'], self.course_2.id)
+        self.assertEqual(response_body['pk'], self.template_2.id)
         self.assertEqual(response_body['name'], request_body['name'])
 
-    def test_course_destroy(self):
+    def test_template_destroy(self):
         """
         Tests that a course is properly destroyed.
         """
         # request
-        response = self.client.delete(reverse(self.view_name, args=[self.course_2.id]))
+        response = self.client.delete(reverse(self.view_name, args=[self.template_2.id]))
         # test database
         courses = AssignmentTemplate.objects.all()
-        self.assertTrue(self.course_1 in courses)
-        self.assertTrue(self.course_2 not in courses)
-        self.assertTrue(self.course_3 in courses)
+        self.assertTrue(self.template_1 in courses)
+        self.assertTrue(self.template_2 not in courses)
+        self.assertTrue(self.template_3 in courses)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

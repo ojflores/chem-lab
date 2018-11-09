@@ -54,12 +54,12 @@ class AssignmentTemplateLCView(ListCreateAPIView):
         return AssignmentTemplate.objects.all()
 
     #returns a list of AssignmentTemplates
-    def List(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
         #create a response object that will be returned
         response = super(AssignmentTemplateLCView,self).list(request,*args,**kwargs)
         #name the response data? so that it can be referenced later by UI maybe??
         response.data = {
-            'assignmenttemplates' : response.data,
+            'templates' : response.data,
         }
         #return the response
         return response
