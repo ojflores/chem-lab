@@ -24,6 +24,7 @@ class LabGroup(models.Model):
     """
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    group_name = models.CharField(max_length=20)
     term = models.CharField(max_length=10)
     enroll_key = models.CharField(max_length=20)
 
@@ -36,7 +37,7 @@ class Student(models.Model):
     The Student model represents a student in a chemistry class.
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    lab_group = models.ForeignKey(LabGroup, on_delete=models.CASCADE)
+    lab_group = models.ForeignKey(LabGroup, null=True, on_delete=models.CASCADE)
     wwuid = models.CharField(max_length=7)
 
 
