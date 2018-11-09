@@ -19,47 +19,47 @@ class EnrollTest(APITestCase):
         self.instructor_user = User.objects.create_user(username=self.teacher_username, password=self.password)
         self.client.login(username=self.student_username, password=self.password)
         # populate the database
-        self.student = Student(lab_group=None, user=self.student_user, wwuid='1111111')
+        self.student = Student(labgroup=None, user=self.student_user, wwuid='1111111')
         self.student.save()
         self.instructor = Instructor(user=self.instructor_user, wwuid='2222222')
         self.instructor.save()
         self.course = Course(name='test name')
         self.course.save()
-        self.lab_group = LabGroup(course=self.course,
+        self.labgroup = LabGroup(course=self.course,
                                   instructor=self.instructor,
                                   group_name='A',
                                   term='FALL2018',
                                   enroll_key='ABC')
-        self.lab_group.save()
+        self.labgroup.save()
         # retrieve the view
         self.view_name = 'api:enroll'
 
     def test_enroll(self):
         """
-        Tests that a lab group can be properly enrolled in.
+        Tests that a labgroup can be properly enrolled in.
         """
         # request
         request_body = {
-            'lab_group': self.lab_group.id,
-            'enroll_key': self.lab_group.enroll_key
+            'labgroup': self.labgroup.id,
+            'enroll_key': self.labgroup.enroll_key
         }
         response = self.client.post(reverse(self.view_name), request_body)
         # test database
-        self.assertEqual(Student.objects.first().lab_group, self.lab_group)
+        self.assertEqual(Student.objects.first().labgroup, self.labgroup)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_enroll_bad_key(self):
         """
-        Tests that a lab group is not enrolled in with a bad key.
+        Tests that a labgroup is not enrolled in with a bad key.
         """
         # request
         request_body = {
-            'lab_group': self.lab_group.id,
+            'labgroup': self.labgroup.id,
             'enroll_key': ''
         }
         response = self.client.post(reverse(self.view_name), request_body)
         # test database
-        self.assertEqual(Student.objects.first().lab_group, None)
+        self.assertEqual(Student.objects.first().labgroup, None)
         # test response
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
