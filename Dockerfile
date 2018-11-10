@@ -16,7 +16,6 @@ COPY . chem_lab_server
 WORKDIR /home/django/chem_lab_server
 RUN pipenv install --system --deploy
 
-ENV DJANGO_ENV=prod
 ENV DOCKER_CONTAINER=1
 
 EXPOSE 8000
