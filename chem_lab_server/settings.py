@@ -26,7 +26,7 @@ else:
     ALLOWED_HOSTS = ['*']
 
 # base
-SECRET_KEY = os.getenv('SECRET_KEY', 'dev')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_URLCONF = 'chem_lab_server.urls'
 WSGI_APPLICATION = 'chem_lab_server.wsgi.application'
