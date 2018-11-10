@@ -27,7 +27,7 @@ services:
     container_name: chem_lab_server
     restart: on-failure
     ports:
-      - "8000:8000"
+      - "${DJANGO_PORT}:8000"
     networks:
       - backend
 
