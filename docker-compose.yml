@@ -12,8 +12,6 @@ services:
     volumes:
       - "mysql:/var/lib/mysql"
     restart: on-failure
-    networks:
-      - backend
   server:
     environment:
       - DJANGO_ENV
@@ -28,11 +26,9 @@ services:
     restart: on-failure
     ports:
       - "${DJANGO_PORT}:8000"
-    networks:
-      - backend
+    links:
+      - database
 
 volumes:
   mysql:
 
-networks:
-  backend:
