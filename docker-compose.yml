@@ -23,6 +23,8 @@ services:
     image: "chem-lab-server:${DJANGO_TAG}"
     build: .
     container_name: chem_lab_server
+    volumes:
+      - "${STATIC_ROOT}:${ROOT_DIR}/static"
     restart: on-failure
     ports:
       - "${DJANGO_PORT}:8000"

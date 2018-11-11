@@ -13,8 +13,11 @@ WORKDIR /home/django
 
 COPY . chem_lab_server
 
-WORKDIR /home/django/chem_lab_server
-RUN pipenv install --system --deploy
+ENV ROOT_DIR=/home/django/chem_lab_server
+
+WORKDIR ${ROOT_DIR}
+RUN pipenv install --system --deploy && \
+    python manage.py collectstatic
 
 ENV DOCKER_CONTAINER=1
 
