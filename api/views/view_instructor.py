@@ -1,9 +1,9 @@
+from django.contrib.auth.models import ContentType, Group, Permission
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import DjangoModelPermissions
 
-
-from api import serializers
+from api import models, serializers
 from api.models import Instructor
 
 
@@ -18,6 +18,27 @@ class InstructorLCView(ListCreateAPIView):
 
     def get_queryset(self):
         return Instructor.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        response = super(InstructorLCView, self).create(request, *args, **kwargs)
+        # create the instructor group if it does not exist
+        group, created = Group.objects.get_or_create(name='Instructor')
+        if created:
+            # get permissions for all instructor models
+            content_types = [
+                ContentType.objects.get_for_model(models.Course),
+                ContentType.objects.get_for_model(models.LabGroup),
+                ContentType.objects.get_for_model(models.Student),
+                ContentType.objects.get_for_model(models.Assignment),
+                ContentType.objects.get_for_model(models.Assignment),
+                ContentType.objects.get_for_model(models.AssignmentTemplate),
+                ContentType.objects.get_for_model(models.TaskTemplate)
+            ]
+            for ct in content_types:
+                group.permissions.add(Permission.objects.filter(content_type=ct))
+        # add new instructor to instructor group
+        group.user_set.add(request.user.id)
+        return response
 
     def list(self, request, *args, **kwargs):
         response = super(InstructorLCView, self).list(request, *args, **kwargs)
