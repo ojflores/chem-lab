@@ -26,7 +26,7 @@ class InstructorLCTest(APITestCase):
 
     def test_instructor_create(self):
         """
-        Tests that a instructor is properly created.
+        Tests that an instructor is properly created.
         """
         # request
         request_body = {
@@ -44,6 +44,19 @@ class InstructorLCTest(APITestCase):
         self.assertEqual(response_body['pk'], instructor.id)
         self.assertEqual(response_body['wwuid'], request_body['wwuid'])
         self.assertEqual(response_body['user'], request_body['user'])
+
+    def test_instructor_permissions(self):
+        """
+        Tests that an instructor's user is assigned the appropriate permissions.
+        """
+        # request
+        request_body = {
+            'wwuid': '1111111',
+            'user': self.user.id
+        }
+        self.client.post(reverse(self.view_name), request_body)
+        # check that the user is in the instructor group
+        self.assertTrue(self.user.groups.filter(name='Instructor').exists())
 
     def test_instructor_list(self):
         """
@@ -94,7 +107,7 @@ class InstructorRUDTest(APITestCase):
 
     def test_instructor_retrieve(self):
         """
-        Tests that a instructor is properly retrieved.
+        Tests that an instructor is properly retrieved.
         """
         # request
         response = self.client.get(reverse(self.view_name, args=[self.instructor_2.id]))
@@ -130,7 +143,7 @@ class InstructorRUDTest(APITestCase):
 
     def test_instructor_destroy(self):
         """
-        Tests that a instructor is properly destroyed.
+        Tests that an instructor is properly destroyed.
         """
         # request
         response = self.client.delete(reverse(self.view_name, args=[self.instructor_2.id]))
