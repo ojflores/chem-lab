@@ -19,6 +19,13 @@ class InstructorLCView(ListCreateAPIView):
     def get_queryset(self):
         return Instructor.objects.all()
 
+    def list(self, request, *args, **kwargs):
+        response = super(InstructorLCView, self).list(request, *args, **kwargs)
+        response.data = {
+            'instructors': response.data,
+        }
+        return response
+
     def create(self, request, *args, **kwargs):
         response = super(InstructorLCView, self).create(request, *args, **kwargs)
         # create the instructor group if it does not exist
@@ -36,15 +43,8 @@ class InstructorLCView(ListCreateAPIView):
             ]
             for ct in content_types:
                 group.permissions.add(Permission.objects.filter(content_type=ct))
-        # add new instructor to instructor group
+        # add new instructor to the instructor group
         group.user_set.add(request.user.id)
-        return response
-
-    def list(self, request, *args, **kwargs):
-        response = super(InstructorLCView, self).list(request, *args, **kwargs)
-        response.data = {
-            'instructors': response.data,
-        }
         return response
 
 
