@@ -2,6 +2,7 @@ from django.contrib.auth.models import ContentType, Group, Permission
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.status import HTTP_201_CREATED
 
 from api import models, serializers
 from api.models import Instructor
@@ -30,6 +31,9 @@ class InstructorLCView(ListCreateAPIView):
         response = super(InstructorLCView, self).create(request, *args, **kwargs)
         # create the instructor group if it does not exist
         group, created = Group.objects.get_or_create(name='Instructor')
+        # do not modify permissions if the request fails
+        if response.status_code is not HTTP_201_CREATED:
+            return response
         if created:
             # get permissions for all instructor models
             content_types = [
@@ -42,9 +46,9 @@ class InstructorLCView(ListCreateAPIView):
                 ContentType.objects.get_for_model(models.TaskTemplate)
             ]
             for ct in content_types:
-                group.permissions.add(Permission.objects.filter(content_type=ct))
+                group.permissions.add(Permission.objects.filter(content_type=ct).first())
         # add new instructor to the instructor group
-        group.user_set.add(request.user.id)
+        group.user_set.add(request.data['user'])
         return response
 
 
