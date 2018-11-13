@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -10,7 +10,7 @@ class EnrollView(APIView):
     """
     The POST view for enrolling in a LabGroup.
     """
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
 
     def post(self, request):
         """

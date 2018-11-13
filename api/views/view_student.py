@@ -1,4 +1,4 @@
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import DjangoModelPermissions
 
@@ -11,7 +11,7 @@ class StudentLCView(ListCreateAPIView):
     """
     The list create view for students.
     """
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (DjangoModelPermissions,)
     lookup_field = 'wwuid'
     serializer_class = serializers.StudentSerializer
@@ -31,7 +31,7 @@ class StudentRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for students.
     """
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.StudentSerializer
