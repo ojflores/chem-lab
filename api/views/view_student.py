@@ -5,6 +5,7 @@ from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.status import HTTP_201_CREATED
 
 from api import models, serializers
+from api.authentication import TokenAuthentication
 from api.models import Student
 
 
@@ -12,7 +13,7 @@ class StudentLCView(ListCreateAPIView):
     """
     The list create view for students.
     """
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (DjangoModelPermissions,)
     lookup_field = 'wwuid'
     serializer_class = serializers.StudentSerializer
@@ -51,7 +52,7 @@ class StudentRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for students.
     """
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.StudentSerializer

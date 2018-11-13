@@ -3,6 +3,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import DjangoModelPermissions
 
 from api import serializers
+from api.authentication import TokenAuthentication
 from api.models import LabGroup
 
 
@@ -10,7 +11,7 @@ class LabGroupLCView(ListCreateAPIView):
     """
     The list create view for labgroups.
     """
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.LabGroupSerializer
@@ -30,7 +31,7 @@ class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for labgroups.
     """
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.LabGroupSerializer
