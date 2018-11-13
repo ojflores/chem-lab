@@ -1,8 +1,9 @@
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import DjangoModelPermissions
 
 from api import serializers
+from api.authentication import TokenAuthentication
 from api.models import LabGroup
 
 
