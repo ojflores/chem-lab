@@ -14,7 +14,11 @@ class LabGroupLCView(ListCreateAPIView):
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
-    serializer_class = serializers.LabGroupSerializer
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name='Instructor').exists():
+            return serializers.LabGroupFullSerializer
+        return serializers.LabGroupPartialSerializer
 
     def get_queryset(self):
         return LabGroup.objects.all()
@@ -34,7 +38,11 @@ class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
-    serializer_class = serializers.LabGroupSerializer
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name='Instructor').exists():
+            return serializers.LabGroupFullSerializer
+        return serializers.LabGroupPartialSerializer
 
     def get_queryset(self):
         return LabGroup.objects.all()

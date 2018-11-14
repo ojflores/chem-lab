@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase
 
 import json
 
+from api import permissions
 from api.models import Course, Instructor, LabGroup
 
 
@@ -18,8 +19,9 @@ class LabGroupLCTest(APITestCase):
         self.student_username = 'student'
         self.password = 'test'
         self.instructor_user = User.objects.create_user(username=self.instructor_username, password=self.password)
-        self.instructor_user.user_permissions.add(Permission.objects.get(codename='add_labgroup'))
         self.student_user = User.objects.create_user(username=self.student_username, password=self.password)
+        self.instructor_user.groups.add(permissions.get_or_create_instructor_permissions())
+        self.student_user.groups.add(permissions.get_or_create_student_permissions())
         self.client.login(username=self.instructor_username, password=self.password)
         # retrieve the view
         self.view_name = 'api:lab-group-lc'
@@ -141,7 +143,8 @@ class LabGroupRUDTest(APITestCase):
         self.password = 'test'
         self.instructor_user = User.objects.create_user(username=self.instructor_username, password=self.password)
         self.student_user = User.objects.create_user(username=self.student_username, password=self.password)
-        self.instructor_user.user_permissions.add(Permission.objects.get(codename='add_labgroup'))
+        self.instructor_user.groups.add(permissions.get_or_create_instructor_permissions())
+        self.student_user.groups.add(permissions.get_or_create_student_permissions())
         self.client.login(username=self.instructor_username, password=self.password)
         # Create foreign keys
         self.instructor = Instructor(user=self.instructor_user, wwuid="1234567")
