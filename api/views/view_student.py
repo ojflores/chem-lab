@@ -36,13 +36,15 @@ class StudentLCView(ListCreateAPIView):
         if response.status_code is not HTTP_201_CREATED:
             return response
         if created:
-            # get permissions for all student models
+            # add group permissions for all student models
             content_types = [
                 ContentType.objects.get_for_model(models.AssignmentEntry),
                 ContentType.objects.get_for_model(models.TaskEntry),
             ]
             for ct in content_types:
-                group.permissions.add(Permission.objects.filter(content_type=ct).first())
+                permissions = Permission.objects.filter(content_type=ct).all()
+                for p in permissions:
+                    group.permissions.add(p)
         # add new student to the student group
         group.user_set.add(request.data['user'])
         return response

@@ -47,7 +47,9 @@ class InstructorLCView(ListCreateAPIView):
                 ContentType.objects.get_for_model(models.TaskTemplate)
             ]
             for ct in content_types:
-                group.permissions.add(Permission.objects.filter(content_type=ct).first())
+                permissions = Permission.objects.filter(content_type=ct).all()
+                for p in permissions:
+                    group.permissions.add(p)
         # add new instructor to the instructor group
         group.user_set.add(request.data['user'])
         return response
