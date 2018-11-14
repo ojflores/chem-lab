@@ -14,6 +14,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'name',
         )
 
+
 class AssignmentTemplateSerializer(serializers.ModelSerializer):
     """
     The serializer for Assignment Templates

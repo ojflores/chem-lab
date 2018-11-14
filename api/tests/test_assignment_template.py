@@ -8,9 +8,10 @@ import json
 from api.models import AssignmentTemplate
 from api.models import Course
 
+
 class AssignmentTemplateLCTest(APITestCase):
     """
-    Test cases for list and create requests on CourseLCView.
+    Test cases for list and create requests on AssignmentTemplateLCView.
     """
     def setUp(self):
         # create test user with permissions
@@ -23,15 +24,13 @@ class AssignmentTemplateLCTest(APITestCase):
         self.view_name = 'api:template-lc'
 
         #make a fake course
-        course = Course(name="TestCourse")
-        course.save()
-
-        self.course = course
+        self.course = Course(name="TestCourse")
+        self.course.save()
 
 
     def test_assignment_template_create(self):
         """
-        Tests that a course is properly created.
+        Tests that an assignment template is properly created.
         """
         # request
         request_body = \
@@ -39,12 +38,11 @@ class AssignmentTemplateLCTest(APITestCase):
             'name': 'test name',
             'course': self.course.id
         }
-
+        # create assignment template
         response = self.client.post(reverse(self.view_name), request_body)
 
         response_body = json.loads(response.content.decode('utf-8'))
-        print(response_body)
-        #create assignment template
+
         # test database
         temp = AssignmentTemplate.objects.first()
         self.assertEqual(temp.name, request_body['name'])
@@ -57,9 +55,9 @@ class AssignmentTemplateLCTest(APITestCase):
 
     def test_assignment_template_list(self):
         """
-        Tests that courses are properly listed.
+        Tests that assignment templates are properly listed.
         """
-        # add courses to database
+        # add assignment templates to database
 
         AssignmentTemplate(name='test name 1', course=self.course).save()
         AssignmentTemplate(name='test name 2', course=self.course).save()
@@ -75,9 +73,9 @@ class AssignmentTemplateLCTest(APITestCase):
         self.assertEqual(response_body['templates'][1]['name'], assignments[1].name)
 
 
-class CourseRUDTest(APITestCase):
+class TemplateRUDTest(APITestCase):
     """
-    Test cases for retrieve, update, and destroy requests on CourseRUDView.
+    Test cases for retrieve, update, and destroy requests on TemplateRUDView.
     """
     def setUp(self):
         # create test user with permissions
@@ -87,7 +85,7 @@ class CourseRUDTest(APITestCase):
         self.user.user_permissions.add(Permission.objects.get(codename='change_assignmenttemplate'))
         self.user.user_permissions.add(Permission.objects.get(codename='delete_assignmenttemplate'))
         self.client.login(username=self.username, password=self.password)
-        # add courses to database
+        # add courses and or templates to database
         self.course = Course(name="testcourse")
         self.course.save() #John added this line and is not sure about it...
         self.template_1 = AssignmentTemplate(name='test name 1',course =self.course)
@@ -101,13 +99,11 @@ class CourseRUDTest(APITestCase):
 
     def test_template_retrieve(self):
         """
-        Tests that a course is properly retrieved.
+        Tests that a assignment template is properly retrieved.
         """
         # request
         response = self.client.get(reverse(self.view_name, args=[self.template_2.id]))
         response_body = json.loads(response.content.decode('utf-8'))
-        print("RESPONSE BODY:")
-        print(response_body)
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.template_2.id)
@@ -116,7 +112,7 @@ class CourseRUDTest(APITestCase):
 
     def test_template_update(self):
         """
-        Tests that a course is properly updated.
+        Tests that a template is properly updated.
         """
         # modify values
         request_body = {
@@ -138,7 +134,7 @@ class CourseRUDTest(APITestCase):
 
     def test_template_destroy(self):
         """
-        Tests that a course is properly destroyed.
+        Tests that a template is properly destroyed.
         """
         # request
         response = self.client.delete(reverse(self.view_name, args=[self.template_2.id]))
