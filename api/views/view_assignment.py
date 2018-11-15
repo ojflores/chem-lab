@@ -22,7 +22,7 @@ class AssignmentLCView(ListCreateAPIView):
     def list(self, request, *args, **kwargs):
         response = super(AssignmentLCView, self).list(request, *args, **kwargs)
         response.data = {
-            'assignment': response.data,
+            'assignments': response.data,
         }
         return response
 
