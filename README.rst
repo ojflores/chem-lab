@@ -183,3 +183,50 @@ your databse will be to recreate it.
 ::
 
   python manage.py migrate
+
+Production Deployment
+---------------------
+Deploying in production is different than the local development.
+
+1. Create a .env file in the project root.
+
+::
+
+  DJANGO_TAG=VERSION
+  DJANGO_ENV=prod
+  DJANGO_PORT=8000
+  DJANGO_SECRET_KEY=SECRET_KEY_GOES_HERE
+  MYSQL_ROOT_PASSWORD=ANY_SECURE_PASSWORD
+  MYSQL_USER=django
+  MYSQL_PASSWORD=ANY_OTHER_SECURE_PASSWORD
+  MYSQL_HOST=database
+  MYSQL_PORT=3306
+  MYSQL_DATABASE=chemlab
+  MYSQL_DIR=DIRECTORY_FOR_MYSQL_DATABASE
+  STATIC_DIR=DIRECTORY_FOR_STATIC_FILES
+
+2. Change the ownership and permissions of the .env file for security.
+
+::
+
+  $ chown root:root .env
+  $ chmod 600
+
+3. Create a directory at 'DIRECTORY_FOR_STATIC_FILES' and put the django static files generate by 'python manage.py collectstatic' there.
+
+4. Run the compose script
+
+::
+
+  docker-compose up
+
+4. Configure the reverse proxy to proxy to port 8000 where Django runs and also serve the static files previously setup.
+
+5. Migrate the database.
+
+::
+
+  $ docker-compose run server python manage.py migrate
+
+6. Create a super user or run any other django commands with the above syntax for using manage.py.
+

@@ -23,18 +23,16 @@ class AssignmentTemplateLCTest(APITestCase):
         # retrieve the view
         self.view_name = 'api:template-lc'
 
-        #make a fake course
+        # make a fake course
         self.course = Course(name="TestCourse")
         self.course.save()
-
 
     def test_assignment_template_create(self):
         """
         Tests that an assignment template is properly created.
         """
         # request
-        request_body = \
-        {
+        request_body = {
             'name': 'test name',
             'course': self.course.id
         }
@@ -87,12 +85,12 @@ class TemplateRUDTest(APITestCase):
         self.client.login(username=self.username, password=self.password)
         # add courses and or templates to database
         self.course = Course(name="testcourse")
-        self.course.save() #John added this line and is not sure about it...
-        self.template_1 = AssignmentTemplate(name='test name 1',course =self.course)
+        self.course.save()
+        self.template_1 = AssignmentTemplate(name='test name 1', course=self.course)
         self.template_1.save()
-        self.template_2 = AssignmentTemplate(name='test name 2',course =self.course)
+        self.template_2 = AssignmentTemplate(name='test name 2', course=self.course)
         self.template_2.save()
-        self.template_3 = AssignmentTemplate(name='test name 3',course =self.course)
+        self.template_3 = AssignmentTemplate(name='test name 3', course=self.course)
         self.template_3.save()
         # retrieve the view
         self.view_name = 'api:template-rud'
@@ -117,14 +115,14 @@ class TemplateRUDTest(APITestCase):
         # modify values
         request_body = {
             'name': 'name changed',
-            'course' : self.course.id
+            'course': self.course.id
         }
         # request
         response = self.client.put(reverse(self.view_name, args=[self.template_2.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
         # self.template_1 = AssignmentTemplate(name='test name 1',course =self.course)
-        course = AssignmentTemplate.objects.filter(name=request_body['name'],course=request_body['course']).first()
+        course = AssignmentTemplate.objects.filter(name=request_body['name'], course=request_body['course']).first()
         self.assertEqual(course.id, self.template_2.id)
         self.assertEqual(course.name, request_body['name'])
         # test response
