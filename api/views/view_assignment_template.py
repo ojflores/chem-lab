@@ -22,7 +22,7 @@ class AssignmentTemplateLCView(ListCreateAPIView):
 
     # returns a list of AssignmentTemplates
     def list(self, request, *args, **kwargs):
-        response = super(AssignmentTemplateLCView,self).list(request,*args,**kwargs)
+        response = super(AssignmentTemplateLCView, self).list(request,*args,**kwargs)
         response.data = {
             'templates': response.data,
         }
