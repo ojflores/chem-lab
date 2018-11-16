@@ -38,7 +38,6 @@ class AssignmentTemplateLCTest(APITestCase):
         }
         # create assignment template
         response = self.client.post(reverse(self.view_name), request_body)
-
         response_body = json.loads(response.content.decode('utf-8'))
 
         # test database
@@ -66,8 +65,10 @@ class AssignmentTemplateLCTest(APITestCase):
         assignments = AssignmentTemplate.objects.all()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['templates'][0]['pk'], assignments[0].id)
+        self.assertEqual(response_body['templates'][0]['course'], assignments[0].course.id)
         self.assertEqual(response_body['templates'][0]['name'], assignments[0].name)
         self.assertEqual(response_body['templates'][1]['pk'], assignments[1].id)
+        self.assertEqual(response_body['templates'][1]['course'], assignments[1].course.id)
         self.assertEqual(response_body['templates'][1]['name'], assignments[1].name)
 
 
@@ -121,13 +122,14 @@ class TemplateRUDTest(APITestCase):
         response = self.client.put(reverse(self.view_name, args=[self.template_2.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
-        # self.template_1 = AssignmentTemplate(name='test name 1',course =self.course)
-        course = AssignmentTemplate.objects.filter(name=request_body['name'], course=request_body['course']).first()
-        self.assertEqual(course.id, self.template_2.id)
-        self.assertEqual(course.name, request_body['name'])
+        assignment_template = AssignmentTemplate.objects.filter(name=request_body['name'], course=request_body['course']).first()
+        self.assertEqual(assignment_template.id, self.template_2.id)
+        self.assertEqual(assignment_template.course.id, request_body['course'])
+        self.assertEqual(assignment_template.name, request_body['name'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.template_2.id)
+        self.assertEqual(response_body['course'], request_body['course'])
         self.assertEqual(response_body['name'], request_body['name'])
 
     def test_template_destroy(self):
@@ -137,9 +139,9 @@ class TemplateRUDTest(APITestCase):
         # request
         response = self.client.delete(reverse(self.view_name, args=[self.template_2.id]))
         # test database
-        courses = AssignmentTemplate.objects.all()
-        self.assertTrue(self.template_1 in courses)
-        self.assertTrue(self.template_2 not in courses)
-        self.assertTrue(self.template_3 in courses)
+        assignment_templates = AssignmentTemplate.objects.all()
+        self.assertTrue(self.template_1 in assignment_templates)
+        self.assertTrue(self.template_2 not in assignment_templates)
+        self.assertTrue(self.template_3 in assignment_templates)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
