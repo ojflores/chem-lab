@@ -6,7 +6,12 @@
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-a-service
 services:
   - mysql:latest
+  - docker:dind
 
+stages:
+  - build
+  - test
+  
 variables:
   MYSQL_DATABASE: chemlab
   MYSQL_ROOT_PASSWORD: root
@@ -17,17 +22,24 @@ cache:
   paths:
   - ~/.cache/pip/
 
-before_script:
-  - python3 -V                                   # Print out Python version for debugging
-  - pip3 -V
-  - export LC_ALL=C.UTF-8                        # Tell Python to use UTF-8
-  - export LANG=C.UTF-8
-  - export MYSQL_HOST=mysql
-  - export MYSQL_PORT=3306
-  - pip3 install pipenv
-  - pipenv install --dev
-  
-test:
-  image: python:latest
+build:
+  stage: build
+  image: docker:latest
   script:
+    - docker info
+    - docker build -t chem-lab-server .
+
+test:
+  stage: test
+  image: python:latest
+  variables:
+    LC_ALL: C.UTF-8        # Tell Python to use UTF-8
+    LANG: C.UTF-8
+    MYSQL_HOST: mysql
+    MYSQL_PORT: 3306
+  script:
+    - python3 -V           # Print out Python version for debugging
+    - pip3 -V
+    - pip3 install pipenv
+    - pipenv install --dev
     - pipenv run python manage.py test
