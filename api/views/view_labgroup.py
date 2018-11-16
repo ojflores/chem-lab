@@ -4,7 +4,7 @@ from rest_framework.permissions import DjangoModelPermissions
 
 from api import serializers
 from api.authentication import TokenAuthentication
-from api.models import LabGroup
+from api.models import Instructor, LabGroup
 
 
 class LabGroupLCView(ListCreateAPIView):
@@ -21,6 +21,10 @@ class LabGroupLCView(ListCreateAPIView):
         return serializers.LabGroupPartialSerializer
 
     def get_queryset(self):
+        print(self.request.user)
+        if self.request.user.groups.filter(name='Instructor').exists():
+            instructor = Instructor.objects.get(user=self.request.user)
+            return LabGroup.objects.filter(instructor=instructor).all()
         return LabGroup.objects.all()
 
     def list(self, request, *args, **kwargs):
