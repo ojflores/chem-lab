@@ -1,3 +1,4 @@
+from .view_assignment_template import *
 from .view_course import *
 from .view_enroll import *
 from .view_instructor import *

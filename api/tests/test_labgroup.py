@@ -44,7 +44,7 @@ class LabGroupLCTest(APITestCase):
         # test database
         labgroup = LabGroup.objects.first()
         self.assertEqual(labgroup.course.id, request_body['course'])
-        self.assertEqual(labgroup.instructor.id, request_body['course'])
+        self.assertEqual(labgroup.instructor.id, request_body['instructor'])
         self.assertEqual(labgroup.group_name, request_body['group_name'])
         self.assertEqual(labgroup.term, request_body['term'])
         self.assertEqual(labgroup.enroll_key, request_body['enroll_key'])

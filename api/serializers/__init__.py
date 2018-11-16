@@ -1,3 +1,4 @@
+from .serializer_assignment_template import *
 from .serializer_course import *
 from .serializer_intructor import *
 from .serializer_labgroup import *
