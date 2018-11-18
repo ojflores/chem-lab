@@ -5,7 +5,7 @@ from api.models import LabGroup
 
 class LabGroupFullSerializer(serializers.ModelSerializer):
     """
-    The serializer for labgroups.
+    The full serializer for labgroups. Includes the enroll key.
     """
     class Meta:
         model = LabGroup
@@ -21,7 +21,7 @@ class LabGroupFullSerializer(serializers.ModelSerializer):
 
 class LabGroupPartialSerializer(serializers.ModelSerializer):
     """
-    The serializer for labgroups.
+    The partial serializer for labgroups. Excludes the enroll key.
     """
     class Meta:
         model = LabGroup
