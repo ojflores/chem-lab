@@ -30,6 +30,7 @@ class LabGroup(models.Model):
 
     class Meta:
         db_table = 'api_labgroup'
+        unique_together = ('course', 'group_name', 'term')
 
 
 class Student(models.Model):

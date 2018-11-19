@@ -6,6 +6,8 @@ from api import serializers
 from api.authentication import TokenAuthentication
 from api.models import Instructor, LabGroup
 
+from datetime import date
+
 
 class LabGroupLCView(ListCreateAPIView):
     """
@@ -21,11 +23,7 @@ class LabGroupLCView(ListCreateAPIView):
         return serializers.LabGroupPartialSerializer
 
     def get_queryset(self):
-        print(self.request.user)
-        if self.request.user.groups.filter(name='Instructor').exists():
-            instructor = Instructor.objects.get(user=self.request.user)
-            return LabGroup.objects.filter(instructor=instructor).all()
-        return LabGroup.objects.all()
+        return LabGroup.objects.filter(term=currentTerm())
 
     def list(self, request, *args, **kwargs):
             response = super(LabGroupLCView, self).list(request, *args, **kwargs)
@@ -50,3 +48,22 @@ class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return LabGroup.objects.all()
+
+
+def currentTerm():
+    today = date.today()
+    # winter term
+    if 1 <= today.month < 3 or today.month is 3 and today.day <= 25:
+        term = 'WINTER'
+    # spring term
+    elif 3 <= today.month < 6 or today.month is 6 and today.day <= 16:
+        term = 'SPRING'
+    # summer term
+    elif 6 <= today.month <= 9:
+        term = 'SUMMER'
+    # fall term
+    else:
+        term = 'FALL'
+    # add year to term
+    term += str(today.year)
+    return term

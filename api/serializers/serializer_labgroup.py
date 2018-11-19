@@ -3,7 +3,14 @@ from rest_framework import serializers
 from api.models import LabGroup
 
 
-class LabGroupFullSerializer(serializers.ModelSerializer):
+class LabGroupBaseSerializer(serializers.ModelSerializer):
+    """
+    The base serializer for labgroups.
+    """
+    term = serializers.RegexField(regex=r'(WINTER|SPRING|SUMMER|FALL)[0-9]{4}')
+
+
+class LabGroupFullSerializer(LabGroupBaseSerializer):
     """
     The full serializer for labgroups. Includes the enroll key.
     """
@@ -19,7 +26,7 @@ class LabGroupFullSerializer(serializers.ModelSerializer):
         )
 
 
-class LabGroupPartialSerializer(serializers.ModelSerializer):
+class LabGroupPartialSerializer(LabGroupBaseSerializer):
     """
     The partial serializer for labgroups. Excludes the enroll key.
     """
