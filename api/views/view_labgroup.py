@@ -18,6 +18,7 @@ class LabGroupLCView(ListCreateAPIView):
     lookup_field = 'pk'
 
     def get_serializer_class(self):
+        # only return the enroll_key if the user is an instructor
         if self.request.user.groups.filter(name='Instructor').exists():
             return serializers.LabGroupFullSerializer
         return serializers.LabGroupPartialSerializer
@@ -51,6 +52,9 @@ class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
 
 
 def currentTerm():
+    """
+    Returns the current term based on the current date.
+    """
     today = date.today()
     # winter term
     if 1 <= today.month < 3 or today.month is 3 and today.day <= 25:
