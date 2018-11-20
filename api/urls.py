@@ -14,6 +14,4 @@ urlpatterns = [
     url(r'^labgroup/(?P<pk>\d+)$', views.LabGroupRUDView.as_view(), name='lab-group-rud'),
     url(r'^assignment$', views.AssignmentLCView.as_view(), name='assignment-lc'),
     url(r'^assignment/(?P<pk>\d+)$', views.AssignmentRUDView.as_view(), name='assignment-rud'),
-    url(r'^template$', views.AssignmentTemplateLCView.as_view(), name='template-lc'),
-    url(r'^template/(?P<pk>\d+)$', views.AssignmentTemplateRUDView.as_view(), name='template-rud'),
 ]
