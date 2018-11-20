@@ -18,8 +18,20 @@ class EnrollView(APIView):
         Enroll in a labgroup.
         """
         # load the labgroup from the database
-        labgroup = LabGroup.objects.get(pk=request.data['labgroup'])
-        if request.data['enroll_key'] == labgroup.enroll_key:
-            Student.objects.filter(user=request.user).update(labgroup=labgroup)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_403_FORBIDDEN)
+        try:
+            labgroup = LabGroup.objects.get(pk=request.data['labgroup'])
+        except LabGroup.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        # check enroll key
+        if request.data['enroll_key'] != labgroup.enroll_key:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        # get users student object
+        try:
+            student = Student.objects.get(user=request.user)
+            student.labgroup = labgroup
+            student.save()
+        except Student.DoesNotExist:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        # return successful response
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
