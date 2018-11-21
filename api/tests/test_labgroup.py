@@ -40,7 +40,7 @@ class LabGroupLCTest(APITestCase):
             'course': self.course.id,
             'instructor': self.instructor.id,
             'group_name': 'test name',
-            'term': 'test term',
+            'term': 'FALL2000',
             'enroll_key': 'test enroll_key',
         }
         response = self.client.post(reverse(self.view_name), request_body)
@@ -215,14 +215,14 @@ class LabGroupRUDTest(APITestCase):
             'course': self.course_2.id,
             'instructor': self.instructor.id,
             'group_name': 'changed',
-            'term': 'changed',
+            'term': 'FALL2000',
             'enroll_key': 'changed',
         }
         # request
         response = self.client.put(reverse(self.view_name, args=[self.labgroup_2.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
-        labgroup = LabGroup.objects.filter(term=request_body['term']).first()
+        labgroup = LabGroup.objects.get(id=self.labgroup_2.id)
         self.assertEqual(labgroup.id, self.labgroup_2.id)
         self.assertEqual(labgroup.course.id, request_body['course'])
         self.assertEqual(labgroup.group_name, request_body['group_name'])

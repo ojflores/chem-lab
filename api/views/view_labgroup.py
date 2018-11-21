@@ -24,7 +24,7 @@ class LabGroupLCView(ListCreateAPIView):
         return serializers.LabGroupPartialSerializer
 
     def get_queryset(self):
-        return LabGroup.objects.filter(term=currentTerm())
+        return LabGroup.objects.filter(term=get_current_term())
 
     def list(self, request, *args, **kwargs):
             response = super(LabGroupLCView, self).list(request, *args, **kwargs)
@@ -51,7 +51,7 @@ class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
         return LabGroup.objects.all()
 
 
-def currentTerm():
+def get_current_term():
     """
     Returns the current term based on the current date.
     """
