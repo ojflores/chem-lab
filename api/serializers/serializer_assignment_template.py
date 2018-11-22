@@ -5,7 +5,7 @@ from api.models import AssignmentTemplate
 
 class AssignmentTemplateSerializer(serializers.ModelSerializer):
     """
-    The serializer for Assignment Templates.
+    The serializer for assignment templates.
     """
     class Meta:
         model = AssignmentTemplate
@@ -14,3 +14,4 @@ class AssignmentTemplateSerializer(serializers.ModelSerializer):
             'name',
             'course'
         )
+
