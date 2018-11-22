@@ -7,6 +7,7 @@ import json
 
 from api import permissions
 from api.models import Course, Instructor, LabGroup
+from api.views import get_current_term
 
 
 class LabGroupLCTest(APITestCase):
@@ -69,12 +70,12 @@ class LabGroupLCTest(APITestCase):
         LabGroup(course=self.course,
                  instructor=self.instructor,
                  group_name='test name 1',
-                 term='test1',
+                 term=get_current_term(),
                  enroll_key='test key 1').save()
         LabGroup(course=self.course,
                  instructor=self.instructor,
                  group_name='test name 2',
-                 term='test2',
+                 term=get_current_term(),
                  enroll_key='test key 2').save()
         # request
         response = self.client.get(reverse(self.view_name))
@@ -103,12 +104,12 @@ class LabGroupLCTest(APITestCase):
         LabGroup(course=self.course,
                  instructor=self.instructor,
                  group_name='test name 1',
-                 term='test1',
+                 term=get_current_term(),
                  enroll_key='test key 1').save()
         LabGroup(course=self.course,
                  instructor=self.instructor,
                  group_name='test name 2',
-                 term='test2',
+                 term=get_current_term(),
                  enroll_key='test key 2').save()
         # request
         self.client.logout()
@@ -251,3 +252,4 @@ class LabGroupRUDTest(APITestCase):
         self.assertTrue(self.labgroup_3 in labgroups)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
