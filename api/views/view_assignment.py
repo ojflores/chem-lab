@@ -2,7 +2,6 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import DjangoModelPermissions
 
-
 from api import serializers
 from api.models import Assignment
 
@@ -38,3 +37,4 @@ class AssignmentRUDView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Assignment.objects.all()
+

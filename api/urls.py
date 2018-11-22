@@ -17,3 +17,4 @@ urlpatterns = [
     url(r'^template$', views.AssignmentTemplateLCView.as_view(), name='template-lc'),
     url(r'^template/(?P<pk>\d+)$', views.AssignmentTemplateRUDView.as_view(), name='template-rud'),
 ]
+

@@ -15,3 +15,4 @@ class AssignmentSerializer(serializers.ModelSerializer):
             'open_date',
             'close_date',
         )
+
