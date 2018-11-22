@@ -3,6 +3,8 @@ from api import views
 
 
 urlpatterns = [
+    url(r'^assignment$', views.AssignmentLCView.as_view(), name='assignment-lc'),
+    url(r'^assignment/(?P<pk>\d+)$', views.AssignmentRUDView.as_view(), name='assignment-rud'),
     url(r'^course$', views.CourseLCView.as_view(), name='course-lc'),
     url(r'^course/(?P<pk>\d+)$', views.CourseRUDView.as_view(), name='course-rud'),
     url(r'^enroll$', views.EnrollView.as_view(), name='enroll'),
