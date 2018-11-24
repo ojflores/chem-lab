@@ -1,6 +1,9 @@
 from django.contrib.auth.models import ContentType, Group, Permission
+from rest_framework.permissions import DjangoModelPermissions
 
 from api import models
+
+import copy
 
 
 def get_or_create_instructor_permissions():
@@ -38,3 +41,13 @@ def get_or_create_student_permissions():
             for p in permissions:
                 group.permissions.add(p)
     return group
+
+
+class ViewDjangoModelPermissions(DjangoModelPermissions):
+    """
+    Overrides DjangoModelPermissions to enforce view_* permissions.
+    """
+    def __init__(self):
+        self.perms_map = copy.deepcopy(self.perms_map)
+        self.perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
+
