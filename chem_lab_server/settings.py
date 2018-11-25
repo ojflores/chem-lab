@@ -33,6 +33,7 @@ ROOT_URLCONF = 'chem_lab_server.urls'
 WSGI_APPLICATION = 'chem_lab_server.wsgi.application'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+CORS_ORIGIN_ALLOW_ALL = True
 
 # time and language
 LANGUAGE_CODE = 'en-us'
@@ -70,9 +71,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'api',
 ]
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -110,3 +113,4 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
