@@ -1,9 +1,9 @@
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.status import HTTP_201_CREATED
 
-
-from api import serializers
+from api import permissions, serializers
 from api.authentication import TokenAuthentication
 from api.models import Instructor
 
@@ -25,6 +25,16 @@ class InstructorLCView(ListCreateAPIView):
         response.data = {
             'instructors': response.data,
         }
+        return response
+
+    def create(self, request, *args, **kwargs):
+        response = super(InstructorLCView, self).create(request, *args, **kwargs)
+        # do not modify permissions if the request fails
+        if response.status_code is not HTTP_201_CREATED:
+            return response
+        # add new instructor to the instructor group
+        group = permissions.get_or_create_instructor_permissions()
+        group.user_set.add(request.data['user'])
         return response
 
 

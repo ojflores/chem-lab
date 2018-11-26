@@ -54,6 +54,19 @@ class StudentLCTest(APITestCase):
         self.assertEqual(response_body['labgroup'], request_body['labgroup'])
         self.assertEqual(response_body['wwuid'], request_body['wwuid'])
 
+    def test_student_permissions(self):
+        """
+        Tests that a student's user is assigned the appropriate permissions.
+        """
+        # request
+        request_body = {
+            'wwuid': '1111111',
+            'user': self.student_user.id
+        }
+        self.client.post(reverse(self.view_name), request_body)
+        # check that the user is in the instructor group
+        self.assertTrue(self.student_user.groups.filter(name='Student').exists())
+
     def test_student_list(self):
         """
         Tests that students are properly listed.
