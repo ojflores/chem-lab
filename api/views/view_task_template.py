@@ -29,7 +29,7 @@ class TaskTemplateLCView(ListCreateAPIView):
         return response
 
 
-class AssignmentTemplateRUDView(RetrieveUpdateDestroyAPIView):
+class TaskTemplateRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for TaskTemplates
     """

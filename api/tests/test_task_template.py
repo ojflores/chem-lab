@@ -45,28 +45,50 @@ class TaskTemplateLCTest(APITestCase):
         self.assignment_template = AssignmentTemplate(course=self.course, name="TestAssignmentTemplate")
         self.assignment_template.save()
 
-    def test_assignment_template_create(self):
+    def test_task_template_create(self):
         """
-        Tests that an assignment template is properly created.
+        Tests that a task template is properly created.
         """
         # request
         request_body = {
+            'assignment_template': self.assignment_template.id,
             'name': 'test name',
-            'course': self.course.id
+            'summary': 'test summary',
+            'prompt': 'test prompt',
+            'prompt_format': 'test prompt format',
+            'image_urls': 'test urls',
+            'attempts_allowed': 3,
+            'numeric_accuracy': 2,
+            'numeric_only': False
+
         }
-        # create assignment template
-        response = self.client.post(reverse(self.view_name), request_body)
+        # create task template
+        response = self.client.post(reverse(self.view_name, args=[self.assignment_template.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
 
         # test database
-        temp = AssignmentTemplate.objects.first()
+        temp = TaskTemplate.objects.first()
+        self.assertEqual(temp.assignment_template.id, request_body['assignment_template'])
         self.assertEqual(temp.name, request_body['name'])
-        self.assertEqual(self.course.id, request_body['course'])
+        self.assertEqual(temp.summary, request_body['summary'])
+        self.assertEqual(temp.prompt, request_body['prompt'])
+        self.assertEqual(temp.prompt_format, request_body['prompt_format'])
+        self.assertEqual(temp.image_urls, request_body['image_urls'])
+        self.assertEqual(temp.attempts_allowed, request_body['attempts_allowed'])
+        self.assertEqual(temp.numeric_accuracy, request_body['numeric_accuracy'])
+        self.assertEqual(temp.numeric_only, request_body['numeric_only'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['pk'], temp.id)
+        self.assertEqual(response_body['assignment_template'], request_body['assignment_template'])
         self.assertEqual(response_body['name'], request_body['name'])
-        self.assertEqual(response_body['course'], self.course.id)
+        self.assertEqual(response_body['summary'], request_body['summary'])
+        self.assertEqual(response_body['prompt'], request_body['prompt'])
+        self.assertEqual(response_body['prompt_format'], request_body['prompt_format'])
+        self.assertEqual(response_body['image_urls'], request_body['image_urls'])
+        self.assertEqual(response_body['attempts_allowed'], request_body['attempts_allowed'])
+        self.assertEqual(response_body['numeric_accuracy'], request_body['numeric_accuracy'])
+        self.assertEqual(response_body['numeric_only'], request_body['numeric_only'])
 
     def test_task_template_list(self):
         """
@@ -93,7 +115,7 @@ class TaskTemplateLCTest(APITestCase):
                      numeric_accuracy=2,
                      numeric_only=False).save()
         # request
-        response = self.client.get(reverse(self.view_name))
+        response = self.client.get(reverse(self.view_name, args=[self.assignment_template.id]))
         response_body = json.loads(response.content.decode('utf-8'))
         # test response
         task_templates = TaskTemplate.objects.all()
