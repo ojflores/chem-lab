@@ -71,6 +71,7 @@ class TaskTemplate(models.Model):
 
     class Meta:
         db_table = 'api_task_template'
+        unique_together = ('assignment_template', 'name')
 
 
 class Assignment(models.Model):
@@ -106,7 +107,7 @@ class TaskEntry(models.Model):
     assignment_entry = models.ForeignKey(AssignmentEntry, on_delete=models.CASCADE)
     task_template = models.ForeignKey(TaskTemplate, on_delete=models.CASCADE)
     attempts = models.IntegerField()
-    passed = models.BooleanField()
+    raw_input = models.TextField()
 
     class Meta:
         db_table = 'api_task_entry'

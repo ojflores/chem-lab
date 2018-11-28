@@ -5,6 +5,7 @@ from api import views
 urlpatterns = [
     url(r'^assignment$', views.AssignmentLCView.as_view(), name='assignment-lc'),
     url(r'^assignment/(?P<pk>\d+)$', views.AssignmentRUDView.as_view(), name='assignment-rud'),
+    url(r'^assignment/(?P<pk>\d+).csv$', views.AssignmentCSVView.as_view(), name='assignment-csv'),
     url(r'^assignment/(?P<assignment_pk>\d+)/start$', views.AssignmentEntryStartView.as_view(), name='assignment-entry-start'),
     url(r'^assignment/(?P<assignment_pk>\d+)/submit$', views.AssignmentEntrySubmitView.as_view(), name='assignment-entry-submit'),
     url(r'^course$', views.CourseLCView.as_view(), name='course-lc'),
