@@ -6,7 +6,7 @@ from datetime import datetime
 from rest_framework import status
 
 from api import serializers
-from api.models import AssignmentEntry, Assignment
+from api.models import AssignmentEntry, Assignment, Student
 
 class AssignmentEntryStartView(APIView):
     """
@@ -14,8 +14,12 @@ class AssignmentEntryStartView(APIView):
     """
     authentication_classes = (SessionAuthentication,)
     permission_classes = (DjangoModelPermissions,)
-    lookup_field = 'pk'
-    serializer_class = serializers.AssignmentEntrySerializer
+
+    def post(self, request, *args, **kwargs):
+        student = Student.objects.get(user=request.user)
+        assignment = Assignment.objects.get(id=kwargs['assignment_pk'])
+        assignment_entry = AssignmentEntry(student=student, assignment=assignment)
+        assignment_entry.save()
 
 
 
@@ -26,7 +30,6 @@ class AssignmentEntrySubmitView(APIView):
     authentication_classes = (SessionAuthentication,)
     permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
-    serializer_class = serializers.AssignmentEntrySerializer
 
     def post(self, request, *args, **kwargs):
         # TODO check assignment exists
@@ -34,7 +37,8 @@ class AssignmentEntrySubmitView(APIView):
         # TODO check if assignment has already been submitted
 
         assignment = Assignment.objects.get(id=kwargs['assignment_pk'])
-        assignment_entry = AssignmentEntry.objects.get(assignment=assignment)
+        student = Student.objects.get(user=request.user)
+        assignment_entry = AssignmentEntry.objects.get(assignment=assignment, student=student)
         assignment_entry.submit_date = datetime.now()
         assignment_entry.save()
 
