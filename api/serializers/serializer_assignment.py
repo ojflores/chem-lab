@@ -10,6 +10,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
         fields = (
+            'pk',
             'assignment_template',
             'labgroup',
             'open_date',

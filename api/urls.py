@@ -5,8 +5,8 @@ from api import views
 urlpatterns = [
     url(r'^assignment$', views.AssignmentLCView.as_view(), name='assignment-lc'),
     url(r'^assignment/(?P<pk>\d+)$', views.AssignmentRUDView.as_view(), name='assignment-rud'),
-    url(r'^assignment/(?P<pk>\d+)/start$', views.AssignmentEntryStartView.as_view(), name='assignment-entry-start'),
-    url(r'^assignment/(?P<pk>\d+)/submit$', views.AssignmentEntrySubmitView.as_view(), name='assignment-entry-submit'),
+    url(r'^assignment/(?P<assignment_pk>\d+)/start$', views.AssignmentEntryStartView.as_view(), name='assignment-entry-start'),
+    url(r'^assignment/(?P<assignment_pk>\d+)/submit$', views.AssignmentEntrySubmitView.as_view(), name='assignment-entry-submit'),
     url(r'^course$', views.CourseLCView.as_view(), name='course-lc'),
     url(r'^course/(?P<pk>\d+)$', views.CourseRUDView.as_view(), name='course-rud'),
     url(r'^enroll$', views.EnrollView.as_view(), name='enroll'),
