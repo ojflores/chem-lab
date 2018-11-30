@@ -49,4 +49,6 @@ class AssignmentCSVView(APIView):
                 row[task.task_template.name] = task.raw_input
             assignment_csv.append(row)
         # return the CSV
-        return Response(assignment_csv)
+        response = Response(assignment_csv)
+        response['Content-Disposition'] = 'attachment; filename="{}-{}-{}.csv"'.format(assignment.assignment_template.name, assignment.labgroup.group_name, assignment.labgroup.term)
+        return response
