@@ -57,4 +57,4 @@ class IsInstructor(BasePermission):
     Permission class to determine if the user is an instructor.
     """
     def has_permission(self, request, view):
-        return models.Instructor.objects.get(user=request.user).exists()
+            return models.Instructor.objects.filter(user=request.user).exists()
