@@ -11,14 +11,18 @@ from api import models
 
 
 class AssignmentRenderer(renderers.CSVRenderer):
-    header = ['first', 'last', 'email']
+    def render(self, data, media_type=None, renderer_context={}, writer_opts=None):
+        if data:
+            self.header = sorted(data[0].keys())
+            self.header.insert(0, self.header.pop(self.header.index('student')))
+        return super().render(data, media_type, renderer_context, writer_opts)
 
 
 class AssignmentCSVView(APIView):
     """
     The GET view for generating a CSV formatted version of an assignment.
     """
-    renderer_classes = (renderers.CSVRenderer,)
+    renderer_classes = (AssignmentRenderer,)
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     # TODO: fix the instructor permission class
     # permission_classes = (IsInstructor,)
