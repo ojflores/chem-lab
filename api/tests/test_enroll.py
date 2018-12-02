@@ -51,7 +51,7 @@ class EnrollTest(APITestCase):
 
     def test_enroll_not_student(self):
         """
-        Tests that non-students cannot enroll in labsgroups.
+        Tests that non-students cannot enroll in labgroups.
         """
         # request
         self.client.logout()
