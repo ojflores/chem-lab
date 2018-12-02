@@ -12,7 +12,6 @@ class InstructorLCView(ListCreateAPIView):
     """
     The list create view for instructors.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.InstructorSerializer
@@ -42,7 +41,6 @@ class InstructorRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for instructors.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.InstructorSerializer

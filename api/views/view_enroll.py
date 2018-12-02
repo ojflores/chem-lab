@@ -11,7 +11,6 @@ class EnrollView(APIView):
     """
     The POST view for enrolling in a LabGroup.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
 
     def post(self, request):
         """

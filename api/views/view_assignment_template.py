@@ -11,7 +11,6 @@ class AssignmentTemplateLCView(ListCreateAPIView):
     """
     The list create view for AssignmentTemplates.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.AssignmentTemplateSerializer
@@ -33,7 +32,6 @@ class AssignmentTemplateRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for AssignmentTemplate.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.AssignmentTemplateSerializer

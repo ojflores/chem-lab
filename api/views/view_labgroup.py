@@ -13,7 +13,6 @@ class LabGroupLCView(ListCreateAPIView):
     """
     The list create view for labgroups.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
 
@@ -38,7 +37,6 @@ class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for labgroups.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
     permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
 
