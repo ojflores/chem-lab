@@ -1,9 +1,6 @@
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import DjangoModelPermissions
 
 from api import serializers
-from api.authentication import TokenAuthentication
 from api.models import AssignmentTemplate
 
 
@@ -11,7 +8,6 @@ class AssignmentTemplateLCView(ListCreateAPIView):
     """
     The list create view for AssignmentTemplates.
     """
-    permission_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.AssignmentTemplateSerializer
 
@@ -32,7 +28,6 @@ class AssignmentTemplateRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for AssignmentTemplate.
     """
-    permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.AssignmentTemplateSerializer
 

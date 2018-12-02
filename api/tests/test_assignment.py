@@ -93,6 +93,8 @@ class AssignmentRUDTest(APITestCase):
         self.password = 'test'
         self.instructor_user = User.objects.create_user(username=self.username, password=self.password)
         self.instructor_user.user_permissions.add(Permission.objects.get(codename='add_assignment'))
+        self.instructor_user.user_permissions.add(Permission.objects.get(codename='change_assignment'))
+        self.instructor_user.user_permissions.add(Permission.objects.get(codename='delete_assignment'))
         self.client.login(username=self.username, password=self.password)
         # populate test database
         self.instructor = Instructor(user=self.instructor_user, wwuid='9994141')
