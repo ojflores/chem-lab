@@ -1,20 +1,19 @@
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
-from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from datetime import datetime
 from rest_framework import status
 
 from api import serializers
-from api.authentication import TokenAuthentication
+from api.permissions import IsStudent
 from api.models import AssignmentEntry, Assignment, Student
 
 
 class AssignmentEntryStartView(APIView):
     """
-    The create view for assingment_entrys.
+    The create view for assignment entries.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated, IsStudent)
 
     def post(self, request, *args, **kwargs):
         # TODO check assignment exists
@@ -29,9 +28,9 @@ class AssignmentEntryStartView(APIView):
 
 class AssignmentEntrySubmitView(APIView):
     """
-    The submit view for assignment entry.
+    The submit view for assignment entries.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated, IsStudent)
 
     def post(self, request, *args, **kwargs):
         # TODO check assignment exists
