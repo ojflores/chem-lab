@@ -13,20 +13,6 @@ class TaskTemplateLCTest(APITestCase):
     Test cases for list and create requests on TaskTemplateLCView.
     """
 
-    """
-    Copied from models.py:
-    
-    assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
-    name = models.CharField(max_length=30)
-    summary = models.TextField(blank=True)
-    prompt = models.TextField()
-    prompt_format = models.CharField(max_length=50, null=True)
-    image_urls = models.TextField(null=True)
-    attempts_allowed = models.IntegerField(null=True)
-    numeric_accuracy = models.IntegerField(null=True)
-    numeric_only = models.BooleanField()
-    """
-
     def setUp(self):
         # create test user with permissions
         self.username = 'test'
@@ -63,7 +49,7 @@ class TaskTemplateLCTest(APITestCase):
 
         }
         # create task template
-        response = self.client.post(reverse(self.view_name, args=[self.assignment_template.id]), request_body)
+        response = self.client.post(reverse(viewname=self.view_name, args=[self.assignment_template.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
 
         # test database
@@ -79,7 +65,6 @@ class TaskTemplateLCTest(APITestCase):
         self.assertEqual(temp.numeric_only, request_body['numeric_only'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response_body['pk'], temp.id)
         self.assertEqual(response_body['assignment_template'], request_body['assignment_template'])
         self.assertEqual(response_body['name'], request_body['name'])
         self.assertEqual(response_body['summary'], request_body['summary'])
@@ -130,16 +115,16 @@ class TaskTemplateLCTest(APITestCase):
         self.assertEqual(response_body['task_templates'][0]['attempts_allowed'], task_templates[0].attempts_allowed)
         self.assertEqual(response_body['task_templates'][0]['numeric_accuracy'], task_templates[0].numeric_accuracy)
         self.assertEqual(response_body['task_templates'][0]['numeric_only'], task_templates[0].numeric_only)
-        self.assertEqual(response_body['task_templates'][1]['pk'], task_templates[0].id)
-        self.assertEqual(response_body['task_templates'][1]['assignment_template'], task_templates[0].assignment_template.id)
-        self.assertEqual(response_body['task_templates'][1]['name'], task_templates[0].name)
-        self.assertEqual(response_body['task_templates'][1]['summary'], task_templates[0].summary)
-        self.assertEqual(response_body['task_templates'][1]['prompt'], task_templates[0].prompt)
-        self.assertEqual(response_body['task_templates'][1]['prompt_format'], task_templates[0].prompt_format)
-        self.assertEqual(response_body['task_templates'][1]['image_urls'], task_templates[0].image_urls)
-        self.assertEqual(response_body['task_templates'][1]['attempts_allowed'], task_templates[0].attempts_allowed)
-        self.assertEqual(response_body['task_templates'][1]['numeric_accuracy'], task_templates[0].numeric_accuracy)
-        self.assertEqual(response_body['task_templates'][1]['numeric_only'], task_templates[0].numeric_only)
+        self.assertEqual(response_body['task_templates'][1]['pk'], task_templates[1].id)
+        self.assertEqual(response_body['task_templates'][1]['assignment_template'], task_templates[1].assignment_template.id)
+        self.assertEqual(response_body['task_templates'][1]['name'], task_templates[1].name)
+        self.assertEqual(response_body['task_templates'][1]['summary'], task_templates[1].summary)
+        self.assertEqual(response_body['task_templates'][1]['prompt'], task_templates[1].prompt)
+        self.assertEqual(response_body['task_templates'][1]['prompt_format'], task_templates[1].prompt_format)
+        self.assertEqual(response_body['task_templates'][1]['image_urls'], task_templates[1].image_urls)
+        self.assertEqual(response_body['task_templates'][1]['attempts_allowed'], task_templates[1].attempts_allowed)
+        self.assertEqual(response_body['task_templates'][1]['numeric_accuracy'], task_templates[1].numeric_accuracy)
+        self.assertEqual(response_body['task_templates'][1]['numeric_only'], task_templates[1].numeric_only)
 
 
 class TaskTemplateRUDTest(APITestCase):
@@ -178,16 +163,15 @@ class TaskTemplateRUDTest(APITestCase):
                                             numeric_accuracy=3, numeric_only=True)
         self.task_template_3.save()
 
-
         # retrieve the view
-        self.view_name = 'api:task_template-rud'
+        self.view_name = 'api:task-template-rud'
 
     def test_task_template_retrieve(self):
         """
         Tests that a task template is properly retrieved.
         """
         # request
-        response = self.client.get(reverse(self.view_name, args=[self.task_template_1.id]))
+        response = self.client.get(reverse(self.view_name, args=[self.template_2.id, self.task_template_1.id]))
         response_body = json.loads(response.content.decode('utf-8'))
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -219,7 +203,7 @@ class TaskTemplateRUDTest(APITestCase):
             'numeric_only': True,
         }
         # request
-        response = self.client.put(reverse(self.view_name, args=[self.task_template_2.id]), request_body)
+        response = self.client.put(reverse(self.view_name, args=[self.template_2.id, self.task_template_2.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
         task_template = TaskTemplate.objects.filter(name=request_body['name']).first()
@@ -235,7 +219,7 @@ class TaskTemplateRUDTest(APITestCase):
 
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_body['pk'], self.template_2.id)
+        self.assertEqual(response_body['pk'], self.task_template_2.id)
         self.assertEqual(response_body['assignment_template'], request_body['assignment_template'])
         self.assertEqual(response_body['name'], request_body['name'])
         self.assertEqual(response_body['summary'], request_body['summary'])
@@ -246,13 +230,12 @@ class TaskTemplateRUDTest(APITestCase):
         self.assertEqual(response_body['numeric_accuracy'], request_body['numeric_accuracy'])
         self.assertEqual(response_body['numeric_only'], request_body['numeric_only'])
 
-
     def test_task_template_destroy(self):
         """
         Tests that a task template is properly destroyed.
         """
         # request
-        response = self.client.delete(reverse(self.view_name, args=[self.task_template_2.id]))
+        response = self.client.delete(reverse(self.view_name, args=[self.template_2.id, self.task_template_2.id]))
         # test database
         task_templates = TaskTemplate.objects.all()
         self.assertTrue(self.task_template_1 in task_templates)

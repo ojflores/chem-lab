@@ -24,7 +24,7 @@ class TaskTemplateLCView(ListCreateAPIView):
     def list(self, request, *args, **kwargs):
         response = super(TaskTemplateLCView, self).list(request,*args,**kwargs)
         response.data = {
-            'task templates': response.data,
+            'task_templates': response.data,
         }
         return response
 

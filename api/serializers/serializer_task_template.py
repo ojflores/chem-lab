@@ -10,6 +10,7 @@ class TaskTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskTemplate
         fields = (
+            'pk',
             'assignment_template',
             'name',
             'summary',
