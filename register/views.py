@@ -1,8 +1,14 @@
-from rest_framework.views import APIView
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import AllowAny
+
+from register.serializers import UserSerializer
 
 
-class RegisterView(APIView):
-    authentication_classes = None
+class RegisterView(CreateAPIView):
+    authentication_classes = ()
+    permission_classes = (AllowAny,)
+    # serializer_class = (UserSerializer,)
+    lookup_field = 'pk'
 
-    def post(self, request, *args, **kwargs):
-        pass
+    def get_serializer_class(self):
+        return UserSerializer
