@@ -62,7 +62,7 @@ class IsInstructor(BasePermission):
 
 class IsStudent(BasePermission):
     """
-    Permission class to determine if the user is an student.
+    Permission class to determine if the user is a student.
     """
 
     def has_permission(self, request, view):

@@ -1,17 +1,17 @@
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.authentication import TokenAuthentication
 from api.models import Student, LabGroup
+from api.permissions import IsStudent
 
 
 class EnrollView(APIView):
     """
     The POST view for enrolling in a LabGroup.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated, IsStudent)
 
     def post(self, request):
         """
@@ -26,12 +26,9 @@ class EnrollView(APIView):
         if request.data['enroll_key'] != labgroup.enroll_key:
             return Response(status=status.HTTP_403_FORBIDDEN)
         # get users student object
-        try:
-            student = Student.objects.get(user=request.user)
-            student.labgroup = labgroup
-            student.save()
-        except Student.DoesNotExist:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        student = Student.objects.get(user=request.user)
+        student.labgroup = labgroup
+        student.save()
         # return successful response
         return Response(status=status.HTTP_204_NO_CONTENT)
 
