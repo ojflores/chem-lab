@@ -16,14 +16,24 @@ class AssignmentEntryStartView(APIView):
     permission_classes = (IsAuthenticated, IsStudent)
 
     def post(self, request, *args, **kwargs):
-        # TODO check assignment exists
-        # TODO check assignment entry exists
+        # TODO: check that student is in assignments labgroup
         student = Student.objects.get(user=request.user)
-        assignment = Assignment.objects.get(id=kwargs['assignment_pk'])
+        # check if assignment exists and get it
+        try:
+            assignment = Assignment.objects.get(id=kwargs['assignment_pk'])
+        except Assignment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        # check if student is in the assignments labgroup
+        if student.labgroup is None or assignment.labgroup.id is not student.labgroup.id:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        # check if student has already started the assignment
+        if AssignmentEntry.objects.filter(student=student, assignment=assignment).exists():
+            return Response(status=status.HTTP_409_CONFLICT)
         assignment_entry = AssignmentEntry(student=student, assignment=assignment)
         assignment_entry.save()
-
-        return Response(status=status.HTTP_200_OK)
+        # response
+        serialized_assignment_entry = serializers.AssignmentEntrySerializer(assignment_entry)
+        return Response(serialized_assignment_entry.data, status=status.HTTP_201_CREATED)
 
 
 class AssignmentEntrySubmitView(APIView):
@@ -43,4 +53,4 @@ class AssignmentEntrySubmitView(APIView):
         assignment_entry.submit_date = datetime.now()
         assignment_entry.save()
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
