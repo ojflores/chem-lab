@@ -1,4 +1,4 @@
-# make your equations here. you can add more files if needed just be sure to import them in equations/__init__.py
+# make your equations here. you can add more files if needed
 
 
 def example_equation(data_a, data_b, optional_data=False):
