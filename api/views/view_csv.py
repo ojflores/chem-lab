@@ -45,7 +45,7 @@ class AssignmentCSVView(APIView):
         for entry in assignment_entries:
             task_entries = models.TaskEntry.objects.filter(assignment_entry=entry).all()
             row = {
-                'student': entry.student.id
+                'student': entry.student.wwuid
             }
             # build all columns for the student
             for task in task_entries:

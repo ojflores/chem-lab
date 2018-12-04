@@ -79,8 +79,8 @@ class GenerateCSVTest(APITestCase):
         response = self.client.get(reverse(self.view_name, args=[self.assignment.id]))
         # test response
         csv = 'student,1,2,3\r\n' \
-              '1,1111111-1,1111111-2,1111111-3\r\n' \
-              '2,2222222-1,2222222-2,2222222-3\r\n' \
-              '3,3333333-1,3333333-2,3333333-3\r\n'
+              '1111111,1111111-1,1111111-2,1111111-3\r\n' \
+              '2222222,2222222-1,2222222-2,2222222-3\r\n' \
+              '3333333,3333333-1,3333333-2,3333333-3\r\n'
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode('utf-8'), csv)
