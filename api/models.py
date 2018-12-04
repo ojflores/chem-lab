@@ -91,7 +91,6 @@ class AssignmentEntry(models.Model):
     """
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-    grade = models.FloatField()
     start_date = models.DateTimeField(auto_now_add=True)
     submit_date = models.DateTimeField(null=True)
 
