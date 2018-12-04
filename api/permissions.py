@@ -52,6 +52,14 @@ class ViewDjangoModelPermissions(DjangoModelPermissions):
         self.perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
 
 
+class IsInstructor(BasePermission):
+    """
+    Permission class to determine if the user is an instructor.
+    """
+    def has_permission(self, request, view):
+            return models.Instructor.objects.filter(user=request.user).exists()
+
+
 class IsStudent(BasePermission):
     """
     Permission class to determine if the user is a student.
