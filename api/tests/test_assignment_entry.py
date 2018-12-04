@@ -12,6 +12,70 @@ from api.models import Course, Instructor, LabGroup, Assignment, AssignmentTempl
 from api.views.view_labgroup import get_current_term
 
 
+class AssignmentEntryTest(APITestCase):
+    """
+    Test cases for viewing the user's assignment entry on AssignmentEntryView.
+    """
+
+    def setUp(self):
+        # create test user with permissions
+        self.student_username = 'student'
+        self.instructor_username = 'instructor'
+        self.password = 'test'
+        self.student_user = User.objects.create_user(username=self.student_username, password=self.password)
+        self.instructor_user = User.objects.create_user(username=self.instructor_username, password=self.password)
+        self.client.login(username=self.student_username, password=self.password)
+        # populate test database
+        self.instructor = Instructor(user=self.instructor_user, wwuid='9994141')
+        self.instructor.save()
+        self.course = Course(name='Bounty Hunting 101')
+        self.course.save()
+        self.group = LabGroup(course=self.course,
+                              instructor=self.instructor,
+                              term=get_current_term(),
+                              enroll_key='4',
+                              group_name='Group A')
+        self.group.save()
+        self.student = Student(user=self.student_user, labgroup=self.group, wwuid='1111111')
+        self.student.save()
+        self.template = AssignmentTemplate(course=self.course, name='Royalty Kidnapping Section A')
+        self.template.save()
+        self.assignment = Assignment(assignment_template=self.template,
+                                     labgroup=self.group,
+                                     open_date=datetime.now(timezone(settings.TIME_ZONE)),
+                                     close_date=datetime.now(timezone(settings.TIME_ZONE)) + timedelta(days=1))
+        self.assignment.save()
+        # retrieve the view
+        self.view_name = 'api:assignment-entry'
+
+    def test_view_assignment_entry(self):
+        """
+        Tests that an assignment entry is properly retrieved.
+        """
+        # create assignment entry
+        assignment_entry = AssignmentEntry(student=self.student, assignment=self.assignment)
+        assignment_entry.save()
+        # request
+        response = self.client.get(reverse(self.view_name, args=[self.assignment.id]))
+        response_body = json.loads(response.content.decode('utf-8'))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_body['pk'], assignment_entry.id)
+        self.assertEqual(response_body['student'], self.student.id)
+        self.assertEqual(response_body['assignment'], self.assignment.id)
+        self.assertTrue('start_date' in response_body.keys())
+        self.assertTrue('submit_date' in response_body.keys())
+
+    def test_view_assignment_entry_not_started(self):
+        """
+        Tests that an assignment entry is not retrieved if it has not been started.
+        """
+        # request
+        response = self.client.get(reverse(self.view_name, args=[self.assignment.id]))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
 class AssignmentEntryStartTest(APITestCase):
     """
     Test cases for starting assignments on AssignmentEntryStartView.

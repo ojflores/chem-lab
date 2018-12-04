@@ -1,5 +1,6 @@
 from django.conf import settings
 from rest_framework import status
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +11,17 @@ from pytz import timezone
 from api import serializers
 from api.permissions import IsStudent
 from api.models import AssignmentEntry, Assignment, Student
+from api.serializers import AssignmentEntrySerializer
+
+
+class AssignmentEntryView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated, IsStudent)
+    lookup_field = 'assignment'
+    serializer_class = AssignmentEntrySerializer
+
+    def get_queryset(self):
+        student = Student.objects.get(user=self.request.user)
+        return AssignmentEntry.objects.filter(student=student, assignment=self.kwargs['assignment']).all()
 
 
 class AssignmentEntryStartView(APIView):
@@ -22,7 +34,7 @@ class AssignmentEntryStartView(APIView):
         student = Student.objects.get(user=request.user)
         # check if assignment exists and get it
         try:
-            assignment = Assignment.objects.get(id=kwargs['assignment_pk'])
+            assignment = Assignment.objects.get(id=kwargs['assignment'])
         except Assignment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         # check if student is in the assignments labgroup
@@ -47,7 +59,7 @@ class AssignmentEntrySubmitView(APIView):
     def post(self, request, *args, **kwargs):
         # check if assignment exists
         try:
-            assignment = Assignment.objects.get(id=kwargs['assignment_pk'])
+            assignment = Assignment.objects.get(id=kwargs['assignment'])
         except Assignment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         # get student
