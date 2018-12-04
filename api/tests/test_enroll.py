@@ -10,6 +10,7 @@ class EnrollTest(APITestCase):
     """
     Test cases for POST requests on EnrollView.
     """
+
     def setUp(self):
         # create test users
         self.student_username = 'student'
@@ -26,10 +27,10 @@ class EnrollTest(APITestCase):
         self.course = Course(name='test name')
         self.course.save()
         self.labgroup = LabGroup(course=self.course,
-                                  instructor=self.instructor,
-                                  group_name='A',
-                                  term='FALL2018',
-                                  enroll_key='ABC')
+                                 instructor=self.instructor,
+                                 group_name='A',
+                                 term='FALL2018',
+                                 enroll_key='ABC')
         self.labgroup.save()
         # retrieve the view
         self.view_name = 'api:enroll'
@@ -40,14 +41,17 @@ class EnrollTest(APITestCase):
         """
         # request
         request_body = {
+            'wwuid': self.student.wwuid,
             'labgroup': self.labgroup.id,
             'enroll_key': self.labgroup.enroll_key
         }
         response = self.client.post(reverse(self.view_name), request_body)
-        # test database
-        self.assertEqual(Student.objects.first().labgroup, self.labgroup)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # test database
+        self.assertEqual(Student.objects.first().user, self.student_user)
+        self.assertEqual(Student.objects.first().labgroup, self.labgroup)
+        self.assertEqual(Student.objects.first().wwuid, self.student.wwuid)
 
     def test_enroll_not_student(self):
         """
@@ -57,14 +61,15 @@ class EnrollTest(APITestCase):
         self.client.logout()
         self.client.login(username=self.teacher_username, password=self.password)
         request_body = {
+            'wwuid': '2222222',
             'labgroup': self.labgroup.id,
             'enroll_key': self.labgroup.enroll_key
         }
         response = self.client.post(reverse(self.view_name), request_body)
-        # test database
-        self.assertEqual(Student.objects.first().labgroup, None)
         # test response
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # test database
+        self.assertEqual(Student.objects.get(user=self.instructor_user).labgroup, self.labgroup)
 
     def test_enroll_bad_labgroup(self):
         """
@@ -72,14 +77,15 @@ class EnrollTest(APITestCase):
         """
         # request
         request_body = {
+            'wwuid': self.student.wwuid,
             'labgroup': 0,
-            'enroll_key:': ''
+            'enroll_key': self.labgroup.enroll_key
         }
         response = self.client.post(reverse(self.view_name), request_body)
-        # test database
-        self.assertEqual(Student.objects.first().labgroup, None)
         # test response
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # test database
+        self.assertEqual(Student.objects.first().labgroup, None)
 
     def test_enroll_bad_key(self):
         """
@@ -87,11 +93,43 @@ class EnrollTest(APITestCase):
         """
         # request
         request_body = {
+            'wwuid': self.student.wwuid,
             'labgroup': self.labgroup.id,
             'enroll_key': ''
         }
         response = self.client.post(reverse(self.view_name), request_body)
-        # test database
-        self.assertEqual(Student.objects.first().labgroup, None)
         # test response
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # test database
+        self.assertEqual(Student.objects.first().labgroup, None)
+
+    def test_missing_parameters(self):
+        """
+        Tests that a missing parameter causes the request to do nothing.
+        """
+        # request
+        request_body = {
+            'wwuid': self.student.wwuid,
+            'enroll_key': self.labgroup.enroll_key
+        }
+        response = self.client.post(reverse(self.view_name), request_body)
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test database
+        self.assertEqual(Student.objects.first().labgroup, None)
+
+    def test_invalid_student(self):
+        """
+        Tests that entering invalid student does nothing.
+        """
+        # request
+        request_body = {
+            'wwuid': '123456789',  # too long
+            'labgroup': self.labgroup.id,
+            'enroll_key': self.labgroup.enroll_key
+        }
+        response = self.client.post(reverse(self.view_name), request_body)
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test database
+        self.assertEqual(len(Student.objects.all()), 0)
