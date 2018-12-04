@@ -7,6 +7,7 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField()
     email = serializers.RegexField(r'^[^@]+@wallawalla\.edu$', allow_blank=False)
+    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         model = User
@@ -15,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'email',
                   'first_name',
                   'last_name',)
-        extra_kwargs = {'password': {'write_only': True}}
+        # extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, data):
         user = User(**data)
