@@ -1,7 +1,6 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 from api import serializers
-from api.authentication import TokenAuthentication
 from api.models import Assignment
 
 
