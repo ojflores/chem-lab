@@ -15,6 +15,9 @@ from api.serializers import AssignmentEntrySerializer
 
 
 class AssignmentEntryView(RetrieveAPIView):
+    """
+    The retrieve view for assignment entries.
+    """
     permission_classes = (IsAuthenticated, IsStudent)
     lookup_field = 'assignment'
     serializer_class = AssignmentEntrySerializer

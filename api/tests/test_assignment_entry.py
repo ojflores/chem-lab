@@ -114,7 +114,7 @@ class AssignmentEntryStartTest(APITestCase):
 
     def test_assignment_start(self):
         """
-        Tests that an assignment is properly created.
+        Tests that an assignment entry is properly created.
         """
         # request
         response = self.client.post(reverse(self.view_name, args=[self.assignment.id]))
@@ -135,7 +135,12 @@ class AssignmentEntryStartTest(APITestCase):
         self.assertEqual(response_body['submit_date'], None)
 
     def test_assignment_start_duplicate(self):
+        """
+        Tests that nothing happens when the assignment is started more than once.
+        """
+        # create extra assignment entry
         self.client.post(reverse(self.view_name, args=[self.assignment.id]))
+        # request
         response = self.client.post(reverse(self.view_name, args=[self.assignment.id]))
         # test database
         self.assertEqual(len(AssignmentEntry.objects.all()), 1)
@@ -143,6 +148,9 @@ class AssignmentEntryStartTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
     def test_assignment_does_not_exist(self):
+        """
+        Tests that nothing happens when the assignment does not exist.
+        """
         response = self.client.post(reverse(self.view_name, args=[0]))
         # test database
         self.assertEqual(len(AssignmentEntry.objects.all()), 0)
@@ -150,6 +158,9 @@ class AssignmentEntryStartTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_student_not_assigned_assignment(self):
+        """
+        Tests that nothing happens when the user tries to start an assignment not assigned to their labgroup.
+        """
         # add user to different labgroup
         new_labgroup = LabGroup(course=self.course,
                                 instructor=self.instructor,
