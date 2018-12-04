@@ -1,4 +1,5 @@
 from .serializer_assignment import *
+from .serializer_assignment_entry import *
 from .serializer_assignment_template import *
 from .serializer_course import *
 from .serializer_intructor import *
