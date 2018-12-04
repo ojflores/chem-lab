@@ -18,7 +18,7 @@ class TaskTemplateLCView(ListCreateAPIView):
 
     # returns all query objects of this type
     def get_queryset(self):
-        return TaskTemplate.objects.all()
+        return TaskTemplate.objects.filter(assignment_template=self.kwargs['template_pk']).all()
 
     # returns a list of TaskTemplates
     def list(self, request, *args, **kwargs):
