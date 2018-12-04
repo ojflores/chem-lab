@@ -1,8 +1,11 @@
-from rest_framework.views import APIView
+from django.conf import settings
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from datetime import datetime
-from rest_framework import status
+from pytz import timezone
 
 from api import serializers
 from api.permissions import IsStudent
@@ -16,7 +19,6 @@ class AssignmentEntryStartView(APIView):
     permission_classes = (IsAuthenticated, IsStudent)
 
     def post(self, request, *args, **kwargs):
-        # TODO: check that student is in assignments labgroup
         student = Student.objects.get(user=request.user)
         # check if assignment exists and get it
         try:
@@ -43,14 +45,21 @@ class AssignmentEntrySubmitView(APIView):
     permission_classes = (IsAuthenticated, IsStudent)
 
     def post(self, request, *args, **kwargs):
-        # TODO check assignment exists
-        # TODO check assignment entry exists
-        # TODO check if assignment has already been submitted
-
-        assignment = Assignment.objects.get(id=kwargs['assignment_pk'])
+        # check if assignment exists
+        try:
+            assignment = Assignment.objects.get(id=kwargs['assignment_pk'])
+        except Assignment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        # get student
         student = Student.objects.get(user=request.user)
-        assignment_entry = AssignmentEntry.objects.get(assignment=assignment, student=student)
-        assignment_entry.submit_date = datetime.now()
+        # check if assignment has been started
+        try:
+            assignment_entry = AssignmentEntry.objects.get(assignment=assignment, student=student)
+        except AssignmentEntry.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # set the submit date
+        assignment_entry.submit_date = datetime.now(timezone(settings.TIME_ZONE))
         assignment_entry.save()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        # response
+        serialized_assignment_entry = serializers.AssignmentEntrySerializer(assignment_entry)
+        return Response(serialized_assignment_entry.data, status=status.HTTP_200_OK)
