@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import Student, LabGroup
-from api.permissions import IsStudent
 from api.serializers import StudentSerializer
 
 
