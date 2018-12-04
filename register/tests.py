@@ -26,6 +26,7 @@ class RegisterTest(APITestCase):
                                             first_name=request_body['first_name'],
                                             last_name=request_body['last_name']).exists())
         # test response
+        self.assertEqual(response_body['username'], request_body['email'].split('@')[0])
         self.assertTrue('password' not in response_body.keys())
         self.assertEqual(response_body['email'], request_body['email'])
         self.assertEqual(response_body['first_name'], request_body['first_name'])
