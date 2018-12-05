@@ -8,7 +8,6 @@ class TaskTemplateSerializer(serializers.ModelSerializer):
     """
     The serializer for Template Tasks.
     """
-
     def validate_assignment_template(self, value):
         try:
             AssignmentTemplate.objects.get(id=value)
@@ -21,7 +20,7 @@ class TaskTemplateSerializer(serializers.ModelSerializer):
         fields = (
             'pk',
             'assignment_template',
-            'name',
+            'problem_num',
             'summary',
             'prompt',
             'prompt_format',

@@ -37,7 +37,7 @@ class TaskTemplateLCTest(APITestCase):
         """
         # request
         request_body = {
-            'name': 'test name',
+            'problem_num': 1,
             'summary': 'test summary',
             'prompt': 'test prompt',
             'prompt_format': 'test prompt format',
@@ -54,7 +54,7 @@ class TaskTemplateLCTest(APITestCase):
         # test database
         temp = TaskTemplate.objects.first()
         self.assertEqual(temp.assignment_template.id, self.assignment_template.id)
-        self.assertEqual(temp.name, request_body['name'])
+        self.assertEqual(temp.problem_num, request_body['problem_num'])
         self.assertEqual(temp.summary, request_body['summary'])
         self.assertEqual(temp.prompt, request_body['prompt'])
         self.assertEqual(temp.prompt_format, request_body['prompt_format'])
@@ -65,7 +65,7 @@ class TaskTemplateLCTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['assignment_template'], self.assignment_template.id)
-        self.assertEqual(response_body['name'], request_body['name'])
+        self.assertEqual(response_body['problem_num'], request_body['problem_num'])
         self.assertEqual(response_body['summary'], request_body['summary'])
         self.assertEqual(response_body['prompt'], request_body['prompt'])
         self.assertEqual(response_body['prompt_format'], request_body['prompt_format'])
@@ -81,7 +81,7 @@ class TaskTemplateLCTest(APITestCase):
         # request
         request_body = {
             'assignment_template': 0,
-            'name': 'test name',
+            'problem_num': 1,
             'summary': 'test summary',
             'prompt': 'test prompt',
             'prompt_format': 'test prompt format',
@@ -97,7 +97,7 @@ class TaskTemplateLCTest(APITestCase):
         # test database
         temp = TaskTemplate.objects.first()
         self.assertEqual(temp.assignment_template.id, self.assignment_template.id)
-        self.assertEqual(temp.name, request_body['name'])
+        self.assertEqual(temp.problem_num, request_body['problem_num'])
         self.assertEqual(temp.summary, request_body['summary'])
         self.assertEqual(temp.prompt, request_body['prompt'])
         self.assertEqual(temp.prompt_format, request_body['prompt_format'])
@@ -108,7 +108,7 @@ class TaskTemplateLCTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['assignment_template'], self.assignment_template.id)
-        self.assertEqual(response_body['name'], request_body['name'])
+        self.assertEqual(response_body['problem_num'], request_body['problem_num'])
         self.assertEqual(response_body['summary'], request_body['summary'])
         self.assertEqual(response_body['prompt'], request_body['prompt'])
         self.assertEqual(response_body['prompt_format'], request_body['prompt_format'])
@@ -124,7 +124,7 @@ class TaskTemplateLCTest(APITestCase):
         # add task templates to database
 
         TaskTemplate(assignment_template=self.assignment_template,
-                     name='test name 1',
+                     problem_num=1,
                      summary='test summary 1',
                      prompt='test prompt 1',
                      prompt_format='test format 1',
@@ -133,7 +133,7 @@ class TaskTemplateLCTest(APITestCase):
                      numeric_accuracy=2,
                      numeric_only=False).save()
         TaskTemplate(assignment_template=self.assignment_template,
-                     name='test name 2',
+                     problem_num=2,
                      summary='test summary 2',
                      prompt='test prompt 2',
                      prompt_format='test format 2',
@@ -149,7 +149,7 @@ class TaskTemplateLCTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['task_templates'][0]['pk'], task_templates[0].id)
         self.assertEqual(response_body['task_templates'][0]['assignment_template'], task_templates[0].assignment_template.id)
-        self.assertEqual(response_body['task_templates'][0]['name'], task_templates[0].name)
+        self.assertEqual(response_body['task_templates'][0]['problem_num'], task_templates[0].problem_num)
         self.assertEqual(response_body['task_templates'][0]['summary'], task_templates[0].summary)
         self.assertEqual(response_body['task_templates'][0]['prompt'], task_templates[0].prompt)
         self.assertEqual(response_body['task_templates'][0]['prompt_format'], task_templates[0].prompt_format)
@@ -159,7 +159,7 @@ class TaskTemplateLCTest(APITestCase):
         self.assertEqual(response_body['task_templates'][0]['numeric_only'], task_templates[0].numeric_only)
         self.assertEqual(response_body['task_templates'][1]['pk'], task_templates[1].id)
         self.assertEqual(response_body['task_templates'][1]['assignment_template'], task_templates[1].assignment_template.id)
-        self.assertEqual(response_body['task_templates'][1]['name'], task_templates[1].name)
+        self.assertEqual(response_body['task_templates'][1]['problem_num'], task_templates[1].problem_num)
         self.assertEqual(response_body['task_templates'][1]['summary'], task_templates[1].summary)
         self.assertEqual(response_body['task_templates'][1]['prompt'], task_templates[1].prompt)
         self.assertEqual(response_body['task_templates'][1]['prompt_format'], task_templates[1].prompt_format)
@@ -189,17 +189,17 @@ class TaskTemplateRUDTest(APITestCase):
         self.template_2 = AssignmentTemplate(name='Cosmic Drift', course=self.course)
         self.template_2.save()
 
-        self.task_template_1 = TaskTemplate(assignment_template=self.template, name='Black Holes Q1',
+        self.task_template_1 = TaskTemplate(assignment_template=self.template, problem_num=1,
                                             summary='This is a summary.', prompt='This is the prompt1',
                                             prompt_format='CAF-citation', image_urls='all', attempts_allowed=1,
                                             numeric_accuracy=1, numeric_only=False)
         self.task_template_1.save()
-        self.task_template_2 = TaskTemplate(assignment_template=self.template, name='Black Holes Q2',
+        self.task_template_2 = TaskTemplate(assignment_template=self.template, problem_num=2,
                                             summary='This is a summary.', prompt='This is the prompt2',
                                             prompt_format='CAF-citation', image_urls='all', attempts_allowed=2,
                                             numeric_accuracy=2, numeric_only=False)
         self.task_template_2.save()
-        self.task_template_3 = TaskTemplate(assignment_template=self.template, name='Black Holes Q3',
+        self.task_template_3 = TaskTemplate(assignment_template=self.template, problem_num=3,
                                             summary='This is a summary.', prompt='This is the prompt3',
                                             prompt_format='SIGFIGS', image_urls='all', attempts_allowed=3,
                                             numeric_accuracy=3, numeric_only=True)
@@ -219,7 +219,7 @@ class TaskTemplateRUDTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.task_template_1.id)
         self.assertEqual(response_body['assignment_template'], self.task_template_1.assignment_template.id)
-        self.assertEqual(response_body['name'], self.task_template_1.name)
+        self.assertEqual(response_body['problem_num'], self.task_template_1.problem_num)
         self.assertEqual(response_body['summary'], self.task_template_1.summary)
         self.assertEqual(response_body['prompt'], self.task_template_1.prompt)
         self.assertEqual(response_body['prompt_format'], self.task_template_1.prompt_format)
@@ -234,7 +234,7 @@ class TaskTemplateRUDTest(APITestCase):
         """
         # modify values
         request_body = {
-            'name': 'name changed',
+            'problem_num': 10,
             'summary': 'new summary',
             'prompt': 'new prompt',
             'prompt_format': 'CAC-Citation',
@@ -247,9 +247,9 @@ class TaskTemplateRUDTest(APITestCase):
         response = self.client.put(reverse(self.view_name, args=[self.template_2.id, self.task_template_2.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test database
-        task_template = TaskTemplate.objects.filter(name=request_body['name']).first()
+        task_template = TaskTemplate.objects.filter(problem_num=request_body['problem_num']).first()
         self.assertEqual(task_template.id, self.task_template_2.id)
-        self.assertEqual(task_template.name, request_body['name'])
+        self.assertEqual(task_template.problem_num, request_body['problem_num'])
         self.assertEqual(task_template.summary, request_body['summary'])
         self.assertEqual(task_template.prompt, request_body['prompt'])
         self.assertEqual(task_template.prompt_format, request_body['prompt_format'])
@@ -261,7 +261,7 @@ class TaskTemplateRUDTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.task_template_2.id)
-        self.assertEqual(response_body['name'], request_body['name'])
+        self.assertEqual(response_body['problem_num'], request_body['problem_num'])
         self.assertEqual(response_body['summary'], request_body['summary'])
         self.assertEqual(response_body['prompt'], request_body['prompt'])
         self.assertEqual(response_body['prompt_format'], request_body['prompt_format'])

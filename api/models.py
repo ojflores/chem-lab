@@ -60,7 +60,7 @@ class TaskTemplate(models.Model):
     assignment such as the question to ask and how to grade them.
     """
     assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
-    name = models.CharField(max_length=30)
+    problem_num = models.IntegerField()
     summary = models.TextField(blank=True)
     prompt = models.TextField()
     prompt_format = models.CharField(max_length=50, null=True)
@@ -71,7 +71,7 @@ class TaskTemplate(models.Model):
 
     class Meta:
         db_table = 'api_task_template'
-        unique_together = ('assignment_template', 'name')
+        unique_together = ('assignment_template', 'problem_num')
 
 
 class Assignment(models.Model):
