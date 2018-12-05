@@ -306,3 +306,18 @@ class AssignmentEntryEntrySubmitTest(APITestCase):
         # test database
         self.assertEqual(AssignmentEntry.objects.get(id=self.assignment_entry.id).submit_date,
                          self.assignment_entry.submit_date)
+
+    def test_assignment_closed(self):
+        """
+        Tests that nothing happens when the user tries to start an assignment that has been closed.
+        """
+        # modify open dates
+        self.assignment.open_date = datetime.now(timezone(settings.TIME_ZONE)) - timedelta(days=2)
+        self.assignment.close_date = datetime.now(timezone(settings.TIME_ZONE)) - timedelta(days=1)
+        self.assignment.save()
+        # request
+        response = self.client.post(reverse(self.view_name, args=[self.assignment.id]))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # test database
+        self.assertEqual(self.assignment_entry.submit_date, None)

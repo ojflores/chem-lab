@@ -71,6 +71,10 @@ class AssignmentEntrySubmitView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         # get student
         student = Student.objects.get(user=request.user)
+        # check if assignment is open
+        current_time = datetime.now(timezone(settings.TIME_ZONE))
+        if assignment.open_date > current_time or assignment.close_date < current_time:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         # check if assignment has been started
         try:
             assignment_entry = AssignmentEntry.objects.get(assignment=assignment, student=student)
