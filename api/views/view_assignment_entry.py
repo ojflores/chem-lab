@@ -72,6 +72,9 @@ class AssignmentEntrySubmitView(APIView):
             assignment_entry = AssignmentEntry.objects.get(assignment=assignment, student=student)
         except AssignmentEntry.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        # check if the assignment has already been submitted
+        if assignment_entry.submit_date is not None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         # set the submit date
         assignment_entry.submit_date = datetime.now(timezone(settings.TIME_ZONE))
         assignment_entry.save()
