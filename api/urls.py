@@ -20,7 +20,8 @@ urlpatterns = [
     url(r'^student/(?P<pk>\d+)$', views.StudentRUDView.as_view(), name='student-rud'),
     url(r'^template$', views.AssignmentTemplateLCView.as_view(), name='template-lc'),
     url(r'^template/(?P<pk>\d+)$', views.AssignmentTemplateRUDView.as_view(), name='template-rud'),
-    url(r'^template/(?P<template_pk>\d+)/task$', views.TaskTemplateLCView.as_view(), name='task-template-lc'),
-    url(r'^template/(?P<template_pk>\d+)/task/(?P<pk>\d+)$', views.TaskTemplateRUDView.as_view(), name='task-template-rud'),
+    url(r'^template/(?P<assignment_template>\d+)/task$', views.TaskTemplateLCView.as_view(), name='task-template-lc'),
+    url(r'^template/(?P<assignment_template>\d+)/task/(?P<pk>\d+)$', views.TaskTemplateRUDView.as_view(),
+        name='task-template-rud'),
 ]
 
