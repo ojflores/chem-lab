@@ -40,6 +40,10 @@ class AssignmentEntryStartView(APIView):
             assignment = Assignment.objects.get(id=kwargs['assignment'])
         except Assignment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        # check if assignment is open
+        current_time = datetime.now(timezone(settings.TIME_ZONE))
+        if assignment.open_date > current_time or assignment.close_date < current_time:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         # check if student is in the assignments labgroup
         if student.labgroup is None or assignment.labgroup.id is not student.labgroup.id:
             return Response(status=status.HTTP_404_NOT_FOUND)
