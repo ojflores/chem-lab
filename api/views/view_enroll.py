@@ -1,9 +1,10 @@
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import Student, LabGroup
-from api.permissions import IsStudent
+from api import permissions
 from api.serializers import StudentSerializer
 
 
@@ -11,7 +12,7 @@ class EnrollView(APIView):
     """
     The POST view for enrolling in a LabGroup.
     """
-    permission_classes = (IsStudent,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         """
@@ -47,5 +48,8 @@ class EnrollView(APIView):
         # create the student
         student = Student(user=request.user, labgroup=labgroup, wwuid=request.data['wwuid'])
         student.save()
+        # add new student to the student group
+        group = permissions.get_or_create_student_permissions()
+        group.user_set.add(request.user)
         # return successful response
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -58,22 +58,6 @@ class EnrollTest(APITestCase):
         self.assertEqual(Student.objects.first().labgroup, self.labgroup)
         self.assertEqual(Student.objects.first().wwuid, self.student.wwuid)
 
-    def test_enroll_not_student(self):
-        """
-        Tests that non-students cannot enroll in labgroups.
-        """
-        # request
-        self.client.logout()
-        self.client.login(username=self.instructor_username, password=self.password)
-        request_body = {
-            'wwuid': '2222222',
-            'labgroup': self.labgroup.id,
-            'enroll_key': self.labgroup.enroll_key
-        }
-        response = self.client.post(reverse(self.view_name), request_body)
-        # test response
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
     def test_enroll_bad_labgroup(self):
         """
         Tests that entering a bad labgroup is properly handled.
