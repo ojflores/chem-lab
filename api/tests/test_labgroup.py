@@ -132,6 +132,35 @@ class LabGroupLCTest(APITestCase):
         self.assertTrue('enroll_key' not in response_body['labgroups'][0].keys())
         self.assertEqual(response_body['labgroups'][1]['term'], labgroups[1].term)
 
+    def test_labgroup_visibility_instructor(self):
+        """
+        Tests that labgroups displayed to instructor were created by that instructor
+        """
+        # setup second instructor users
+        self.instructor_username_2 = 'different_instructor'
+        self.instructor_user_2 = User.objects.create_user(username=self.instructor_username_2, password=self.password)
+        self.instructor_2 = Instructor(user=self.instructor_user_2, wwuid="7654321")
+        self.instructor_2.save()
+        # add labgroups to database
+        LabGroup(course=self.course,
+                 instructor=self.instructor,
+                 group_name='test name 1',
+                 term=get_current_term(),
+                 enroll_key='test key 1').save()
+        LabGroup(course=self.course,
+                 instructor=self.instructor_2,
+                 group_name='test name 2',
+                 term=get_current_term(),
+                 enroll_key='test key 2').save()
+        # request
+        response = self.client.get(reverse(self.view_name))
+        response_body = json.loads(response.content.decode('utf-8'))
+        print("response_body", response_body)
+        # test response
+        labgroups = LabGroup.objects.all()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # assert response_body contains exactly 1 labgroup
+        self.assertEqual(len(response_body['labgroups']), 1)
 
 class LabGroupRUDTest(APITestCase):
     """
@@ -252,4 +281,3 @@ class LabGroupRUDTest(APITestCase):
         self.assertTrue(self.labgroup_3 in labgroups)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
