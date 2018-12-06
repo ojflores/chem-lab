@@ -1,11 +1,12 @@
-from django.contrib.auth.models import Permission, User
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 import json
 
-from api.models import AssignmentTemplate, TaskTemplate, Course
+from api.models import AssignmentTemplate, TaskTemplate, Course, Instructor
+from api import permissions
 
 
 class TaskTemplateLCTest(APITestCase):
@@ -18,7 +19,9 @@ class TaskTemplateLCTest(APITestCase):
         self.username = 'test'
         self.password = 'test'
         self.user = User.objects.create_user(username=self.username, password=self.password)
-        self.user.user_permissions.add(Permission.objects.get(codename='add_tasktemplate'))
+        Instructor(user=self.user, wwuid='9999999').save()
+        group = permissions.get_or_create_instructor_permissions()
+        group.user_set.add(self.user)
         self.client.login(username=self.username, password=self.password)
         # retrieve the view
         self.view_name = 'api:task-template-lc'
@@ -178,8 +181,9 @@ class TaskTemplateRUDTest(APITestCase):
         self.username = 'test'
         self.password = 'test'
         self.user = User.objects.create_user(username=self.username, password=self.password)
-        self.user.user_permissions.add(Permission.objects.get(codename='change_tasktemplate'))
-        self.user.user_permissions.add(Permission.objects.get(codename='delete_tasktemplate'))
+        Instructor(user=self.user, wwuid='9999999').save()
+        group = permissions.get_or_create_instructor_permissions()
+        group.user_set.add(self.user)
         self.client.login(username=self.username, password=self.password)
         # add courses and or templates to database
         self.course = Course(name="Astrophysics 820")

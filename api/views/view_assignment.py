@@ -1,7 +1,9 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 
 from api import serializers
 from api.models import Assignment
+from api.permissions import IsStudentOrInstructor
 
 
 class AssignmentLCView(ListCreateAPIView):
@@ -10,6 +12,7 @@ class AssignmentLCView(ListCreateAPIView):
     """
     lookup_field = 'pk'
     serializer_class = serializers.AssignmentSerializer
+    permission_classes = (DjangoModelPermissions, IsStudentOrInstructor)
 
     def get_queryset(self):
         return Assignment.objects.all()
@@ -28,6 +31,7 @@ class AssignmentRUDView(RetrieveUpdateDestroyAPIView):
     """
     lookup_field = 'pk'
     serializer_class = serializers.AssignmentSerializer
+    permission_classes = (DjangoModelPermissions, IsStudentOrInstructor)
 
     def get_queryset(self):
         return Assignment.objects.all()

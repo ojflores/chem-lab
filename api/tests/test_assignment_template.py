@@ -5,8 +5,8 @@ from rest_framework.test import APITestCase
 
 import json
 
-from api.models import AssignmentTemplate
-from api.models import Course
+from api.models import AssignmentTemplate, Course, Instructor
+from api import permissions
 
 
 class AssignmentTemplateLCTest(APITestCase):
@@ -18,7 +18,9 @@ class AssignmentTemplateLCTest(APITestCase):
         self.username = 'test'
         self.password = 'test'
         self.user = User.objects.create_user(username=self.username, password=self.password)
-        self.user.user_permissions.add(Permission.objects.get(codename='add_assignmenttemplate'))
+        Instructor(user=self.user, wwuid='9999999').save()
+        group = permissions.get_or_create_instructor_permissions()
+        group.user_set.add(self.user)
         self.client.login(username=self.username, password=self.password)
         # retrieve the view
         self.view_name = 'api:template-lc'
@@ -81,8 +83,9 @@ class TemplateRUDTest(APITestCase):
         self.username = 'test'
         self.password = 'test'
         self.user = User.objects.create_user(username=self.username, password=self.password)
-        self.user.user_permissions.add(Permission.objects.get(codename='change_assignmenttemplate'))
-        self.user.user_permissions.add(Permission.objects.get(codename='delete_assignmenttemplate'))
+        Instructor(user=self.user, wwuid='9999999').save()
+        group = permissions.get_or_create_instructor_permissions()
+        group.user_set.add(self.user)
         self.client.login(username=self.username, password=self.password)
         # add courses and or templates to database
         self.course = Course(name="testcourse")
@@ -96,7 +99,7 @@ class TemplateRUDTest(APITestCase):
         # retrieve the view
         self.view_name = 'api:template-rud'
 
-    def test_template_retrieve(self):
+    def test_assignment_template_retrieve(self):
         """
         Tests that a assignment template is properly retrieved.
         """
@@ -109,7 +112,7 @@ class TemplateRUDTest(APITestCase):
         self.assertEqual(response_body['name'], self.template_2.name)
         self.assertEqual(response_body['course'], self.course.id)
 
-    def test_template_update(self):
+    def test_assignment_template_update(self):
         """
         Tests that a template is properly updated.
         """
@@ -132,7 +135,7 @@ class TemplateRUDTest(APITestCase):
         self.assertEqual(response_body['course'], request_body['course'])
         self.assertEqual(response_body['name'], request_body['name'])
 
-    def test_template_destroy(self):
+    def test_assignment_template_destroy(self):
         """
         Tests that a template is properly destroyed.
         """

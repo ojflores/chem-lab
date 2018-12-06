@@ -1,5 +1,6 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.status import HTTP_201_CREATED
+from rest_framework.permissions import DjangoModelPermissions
+from rest_framework import status
 
 from api import permissions, serializers
 from api.models import Student
@@ -11,6 +12,7 @@ class StudentLCView(ListCreateAPIView):
     """
     lookup_field = 'wwuid'
     serializer_class = serializers.StudentSerializer
+    permission_classes = (DjangoModelPermissions, permissions.IsInstructor)
 
     def get_queryset(self):
         return Student.objects.all()
@@ -25,7 +27,7 @@ class StudentLCView(ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         response = super(StudentLCView, self).create(request, *args, **kwargs)
         # do not modify permissions if the request fails
-        if response.status_code is not HTTP_201_CREATED:
+        if response.status_code is not status.HTTP_201_CREATED:
             return response
         # add new student to the student group
         group = permissions.get_or_create_student_permissions()
@@ -39,6 +41,7 @@ class StudentRUDView(RetrieveUpdateDestroyAPIView):
     """
     lookup_field = 'pk'
     serializer_class = serializers.StudentSerializer
+    permission_classes = (DjangoModelPermissions, permissions.IsInstructor)
 
     def get_queryset(self):
         return Student.objects.all()

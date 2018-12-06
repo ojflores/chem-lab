@@ -1,20 +1,18 @@
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from api import serializers
-from api.authentication import TokenAuthentication
 from api.models import AssignmentTemplate, TaskTemplate
+from api.permissions import IsStudentOrInstructor
 
 
 class TaskTemplateLCView(ListCreateAPIView):
     """
     The list create view for TaskTemplates
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = (DjangoModelPermissions, IsStudentOrInstructor)
     lookup_field = 'pk'
     serializer_class = serializers.TaskTemplateSerializer
 
@@ -50,8 +48,7 @@ class TaskTemplateRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for TaskTemplates
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
-    permissions_classes = (DjangoModelPermissions,)
+    permissions_classes = (DjangoModelPermissions, IsStudentOrInstructor)
     lookup_field = 'pk'
     serializer_class = serializers.TaskTemplateSerializer
 

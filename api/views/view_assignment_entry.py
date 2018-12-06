@@ -18,7 +18,7 @@ class AssignmentEntryView(RetrieveAPIView):
     """
     The retrieve view for assignment entries.
     """
-    permission_classes = (IsAuthenticated, IsStudent)
+    permission_classes = (IsStudent,)
     lookup_field = 'assignment'
     serializer_class = AssignmentEntrySerializer
 
@@ -31,7 +31,7 @@ class AssignmentEntryStartView(APIView):
     """
     The create view for assignment entries.
     """
-    permission_classes = (IsAuthenticated, IsStudent)
+    permission_classes = (IsStudent,)
 
     def post(self, request, *args, **kwargs):
         student = Student.objects.get(user=request.user)
@@ -61,7 +61,7 @@ class AssignmentEntrySubmitView(APIView):
     """
     The submit view for assignment entries.
     """
-    permission_classes = (IsAuthenticated, IsStudent)
+    permission_classes = (IsStudent,)
 
     def post(self, request, *args, **kwargs):
         # check if assignment exists

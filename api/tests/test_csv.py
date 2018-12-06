@@ -45,7 +45,7 @@ class GenerateCSVTest(APITestCase):
         self.task_templates = []
         for task in range(1, 4):
             self.task_templates.append(models.TaskTemplate(assignment_template=self.assignment_template,
-                                                           name=str(task),
+                                                           problem_num=task,
                                                            summary='test summary',
                                                            prompt='test prompt',
                                                            numeric_only=False))
@@ -66,7 +66,7 @@ class GenerateCSVTest(APITestCase):
                 models.TaskEntry(assignment_entry=ae,
                                  task_template=tt,
                                  attempts=1,
-                                 raw_input='{}-{}'.format(student.wwuid, tt.name)).save()
+                                 raw_input='{}-{}'.format(student.wwuid, str(tt.problem_num))).save()
 
         # retrieve the view
         self.view_name = 'api:assignment-csv'

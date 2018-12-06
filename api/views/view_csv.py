@@ -49,7 +49,7 @@ class AssignmentCSVView(APIView):
             }
             # build all columns for the student
             for task in task_entries:
-                row[task.task_template.name] = task.raw_input
+                row[str(task.task_template.problem_num)] = task.raw_input
             assignment_csv.append(row)
         # build the response
         response = Response(assignment_csv)
