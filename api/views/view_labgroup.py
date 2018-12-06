@@ -1,7 +1,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 from api import serializers
-from api.models import LabGroup
+from api.models import LabGroup, Instructor
 
 from datetime import date
 
@@ -19,6 +19,10 @@ class LabGroupLCView(ListCreateAPIView):
         return serializers.LabGroupPartialSerializer
 
     def get_queryset(self):
+        # only return labgroups that belong to the querying instructor
+        if self.request.user.groups.filter(name='Instructor').exists():
+            instructor = Instructor.objects.get(user = self.request.user.id)
+            return LabGroup.objects.filter(term=get_current_term(), instructor=instructor.id)
         return LabGroup.objects.filter(term=get_current_term())
 
     def list(self, request, *args, **kwargs):
