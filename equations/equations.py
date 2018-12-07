@@ -124,10 +124,10 @@ def mgo_enthalpy(mgo_mass,mgo_hcl_mass,ccal_true,mgotf,mgoti):
     return (-0.040304*((mgo_mass+mgo_hcl_mass)*3.86+ccal_true)*(mgotf-mgoti)/mgo_mass)
 
 def enthalpy_check_mgo(mgo_molar_enthalpy,mgoenthalpy):
-    if(abs(mgo_molar_enthalpy-mgoenthalpy) < 1):
+  if(abs(mgo_molar_enthalpy-mgoenthalpy) < 1):
     #"Your calculated enthalpy is consistent with the data entered."
     return True
-    else:
+  else:
     #,"Your calculated enthalpy is NOT consistent with the data entered.")
     return False
 
@@ -136,23 +136,24 @@ def true_wavelength_equation(distance_along_white_board,distance_to_white_board)
 
 def wave_length_check(calculated_wavelength,true_wavelength):
     if(abs(calculated_wavelength-true_wavelength)<0.6):
-    #"Your calculated wavelength is consistent with the data entered."
-    return True
+      #"Your calculated wavelength is consistent with the data entered."
+      return True
     else:
-    #,"Your calculated wavelength is NOT consistent with the data entered."
-    return False
+      #,"Your calculated wavelength is NOT consistent with the data entered."
+      return False
 
 def true_photon_energy(wavelength):
     return (0.0000000000000001986449/wavelength)
 
 def energy_check(energy,true_energy):
     if(abs(energy-true_energy) < 0.00000000000000000002):
-    #"Your calculated energy is consistent with the data entered."
-    return True
+      #"Your calculated energy is consistent with the data entered."
+      return True
     else:
-    #,"Your calculated energy is NOT consistent with the data entered."
-    return False
+      #,"Your calculated energy is NOT consistent with the data entered."
+      return False
 
-
-
-#end at: 3 e check
+#initial quantum number equation
+#I'm not confident I understand what is occuring
+#with the quantum number equations, so I am not
+#including them to avoid disaster and or innacuracy
