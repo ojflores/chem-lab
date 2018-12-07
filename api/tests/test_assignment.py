@@ -1,10 +1,12 @@
+from django.conf import settings
 from django.contrib.auth.models import Permission, User
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
+from pytz import timezone
 
 from api.models import Course, Instructor, LabGroup, Assignment, AssignmentTemplate
 
@@ -57,6 +59,30 @@ class AssignmentLCTest(APITestCase):
         self.assertEqual(response_body['labgroup'], request_body['labgroup'])
         self.assertEqual(response_body['open_date'], request_body['open_date'])
         self.assertEqual(response_body['close_date'], request_body['close_date'])
+
+    def test_assignment_create_template_course_incompatible(self):
+        """
+        Tests that an assignment is not created when the assignment template doesn't belong to a shared course.
+        """
+        # create different course
+        course = Course(name='other course')
+        course.save()
+        # create different template
+        template = AssignmentTemplate(course=course, name='other template')
+        template.save()
+        # request
+        current_time = datetime.now(timezone(settings.TIME_ZONE))
+        request_body = {
+            'assignment_template': template.id,
+            'labgroup': self.group.id,
+            'open_date': (current_time - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'close_date': (current_time + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        }
+        response = self.client.post(reverse(self.view_name), request_body)
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test database
+        self.assertFalse(Assignment.objects.exists())
 
     def test_assignment_list(self):
         """
