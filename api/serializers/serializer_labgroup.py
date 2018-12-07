@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import LabGroup
+from api.models import LabGroup, Instructor
 
 
 class LabGroupBaseSerializer(serializers.ModelSerializer):
@@ -8,6 +8,12 @@ class LabGroupBaseSerializer(serializers.ModelSerializer):
     The base serializer for labgroups.
     """
     term = serializers.RegexField(regex=r'(WINTER|SPRING|SUMMER|FALL)[0-9]{4}')
+
+    def validate_instructor(self, instructor):
+        # check if the requester set himself in the instructor field
+        if self.context['request'].user != instructor.user:
+            raise serializers.ValidationError('specified instructor is not the instructor making the request')
+        return instructor
 
 
 class LabGroupFullSerializer(LabGroupBaseSerializer):

@@ -10,7 +10,7 @@ from api.permissions import IsStudentOrInstructor
 
 class TaskTemplateLCView(ListCreateAPIView):
     """
-    The list create view for TaskTemplates
+    The list create view for TaskTemplates.
     """
     permission_classes = (DjangoModelPermissions, IsStudentOrInstructor)
     lookup_field = 'pk'
@@ -46,7 +46,7 @@ class TaskTemplateLCView(ListCreateAPIView):
 
 class TaskTemplateRUDView(RetrieveUpdateDestroyAPIView):
     """
-    The retrieve update destroy view for TaskTemplates
+    The retrieve update destroy view for TaskTemplates.
     """
     permissions_classes = (DjangoModelPermissions, IsStudentOrInstructor)
     lookup_field = 'pk'

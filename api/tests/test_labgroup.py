@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission, User
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -61,6 +61,28 @@ class LabGroupLCTest(APITestCase):
         self.assertEqual(response_body['group_name'], request_body['group_name'])
         self.assertEqual(response_body['term'], request_body['term'])
         self.assertEqual(response_body['enroll_key'], request_body['enroll_key'])
+
+    def test_labgroup_create_different_instructor(self):
+        """
+        Tests that a labgroup is not created if the instructor passed in is not the instructors making the request.
+        """
+        # create new user and instructor
+        user = User.objects.create_user(username='other_teacher', password='password')
+        instructor = Instructor(user=user, wwuid='9999999')
+        instructor.save()
+        # request
+        request_body = {
+            'course': self.course.id,
+            'instructor': instructor.id,
+            'group_name': 'test name',
+            'term': 'FALL2000',
+            'enroll_key': 'test enroll_key',
+        }
+        response = self.client.post(reverse(self.view_name), request_body)
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test database
+        self.assertFalse(LabGroup.objects.exists())
 
     def test_labgroup_list_instructor(self):
         """
@@ -155,12 +177,12 @@ class LabGroupLCTest(APITestCase):
         # request
         response = self.client.get(reverse(self.view_name))
         response_body = json.loads(response.content.decode('utf-8'))
-        print("response_body", response_body)
         # test response
         labgroups = LabGroup.objects.all()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # assert response_body contains exactly 1 labgroup
         self.assertEqual(len(response_body['labgroups']), 1)
+
 
 class LabGroupRUDTest(APITestCase):
     """
