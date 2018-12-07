@@ -39,6 +39,10 @@ class AssignmentCSVView(APIView):
             assignment = models.Assignment.objects.get(id=kwargs['pk'])
         except models.Assignment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        # check if instructor owns the assignment
+        instructor = models.Instructor.objects.get(user=request.user)
+        if assignment.labgroup.instructor != instructor:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         # retrieve all assignment entries and build the CSV
         assignment_entries = models.AssignmentEntry.objects.filter(assignment=assignment).all()
         assignment_csv = []
