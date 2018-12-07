@@ -182,6 +182,31 @@ class AssignmentRUDTest(APITestCase):
         self.assertEqual(response_body['open_date'], request_body['open_date'])
         self.assertEqual(response_body['close_date'], request_body['close_date'])
 
+    def test_assignment_update_template_course_incompatible(self):
+        """
+        Tests that an assignment is not created when the assignment template doesn't belong to a shared course.
+        """
+        # create different course
+        course = Course(name='other course')
+        course.save()
+        # create different template
+        template = AssignmentTemplate(course=course, name='other template')
+        template.save()
+        # request
+        current_time = datetime.now(timezone(settings.TIME_ZONE))
+        request_body = {
+            'assignment_template': template.id,
+            'labgroup': self.group.id,
+            'open_date': (current_time - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'close_date': (current_time + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        }
+        response = self.client.put(reverse(self.view_name,  args=[self.assignment.id]), request_body)
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test database
+        assignment = Assignment.objects.get(id=self.assignment.id)
+        self.assertNotEqual(assignment.assignment_template, template)
+
     def test_assignment_destroy(self):
         """
         Tests that an assignment is properly destroyed.
