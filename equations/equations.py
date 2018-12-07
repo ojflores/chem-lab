@@ -47,4 +47,78 @@ def ph_check(phydrogent,hydrogen_pressure,true_ph):
     #Your calculated hydrogen pressure is NOT consistent with the data entered.
     return False
 
+#True Moles
+def true_moles(true_ph,initial_mensicus_level,final_mensicus_level,room_temperature):
+    return (0.000016034*true_ph*(initial_mensicus_level-final_mensicus_level)/(273.15+room_temperature))
 
+#check for valid moles
+def mole_check(moles_hydrogen,true_moles):
+    if(abs(moles_hydrogen-true_moles) < 0.0000022):
+        #"Your calculation of moles hydrogen gas is consistent with the data entered."
+        return True
+    else:
+        #"Your calculation of moles hydrogen gas is NOT consistent with the data entered."
+        return False
+
+#true ka
+def true_ka(a_acid,a_buffer,a_base):
+    return (0.0000977*(a_acid-a_buffer)/a_buffer-a_base)
+
+#checks ka
+def ka_check(ka,true_ka):
+    if(abs(ka-true_ka) < 0.00002):
+        #"Your calculated equilibrium constant is consistent with the data entered.
+        return True
+    else:
+        #"Your calculated equilibrium constant is NOT consistent with the data entered.
+        return False
+       
+       
+#MgO enthalpy lab
+
+#initial temps equation
+def mgTi(mg_reaction_initiation_time,mg_slope_before_addition,mg_intercept_before_addition):
+    return (mg_reaction_initiation_time*mg_slope_before_addition+mg_intercept_before_addition)
+    
+#final temps equation
+#CcTf: this is the equation for the final temperature of the calorimeter constant lab
+def calorimeter_constant_lab(reaction_initiation_time,cc_slope_after_addition,cc_intercept_after_addition):
+    return(reaction_initiation_time*cc_slope_after_addition+cc_intercept_after_addition)
+    
+#final temp check
+def final_temp_check(final_temperature,true_final_temperature):
+    if(abs(final_temperature-true_final_temperature) < 0.02):
+        #"Your calculated final temperature is consistent with the data entered."
+        return True
+    #"Your calculated final temperature is NOT consistent with the data entered."
+    return False
+
+#collisionary 5000
+
+#calorimeter constant equation
+def ccal_true(oxalic_acid_mass,cctf,ccti,na_oh_mass):
+    return((663.76*oxalic_acid_mass/(cctf-ccti))-4.04*oxalic_acid_mass+na_oh_mass)
+
+def ccal_check(calorimeter_constant,ccal_true):
+    if(abs(calorimeter_constant-ccal_true) < 1.2):
+        #,"Your calculated calorimeter constant is consistent with the data entered.",
+        return True
+    else:
+        #"Your calculated calorimeter constant is NOT consistent with the data entered.
+        return False
+    
+def molar_mg_enthalpy_equation(magnesium_mass,mg_hci_mass,ccal_true,mgtf,mgti):
+    return(-0.024305*((magnesium_mass+mg_hci_mass)*3.68+ccal_true)*mgtf-mgti/magnesium_mass)
+
+def enthalpy_check(mg_molar_enthalpy,mgenthalpy):
+    if(abs(mg_molar_enthalpy-mgenthalpy) < 2):
+        #"Your calculated enthalpy is consistent with the data entered."
+        return True
+    else:
+        #"Your calculated enthalpy is NOTconsistent with the data entered."
+        return False
+    
+def mgo_enthalpy(mgo_mass,mgo_hcl_mass,ccal_true,mgotf,mgoti):
+    return (-0.040304*((mgo_mass+mgo_hcl_mass)*3.86+ccal_true)*(mgotf-mgoti)/mgo_mass)
+
+#end at: 3 e check
