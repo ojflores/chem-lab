@@ -1,6 +1,11 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+<<<<<<< HEAD
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework import status
+=======
+from rest_framework.status import HTTP_201_CREATED
+from rest_framework.permissions import IsAdminUser
+>>>>>>> 72b72a572e9a9ce8fc83a6224485a23b9480f5b0
 
 from api import permissions, serializers
 from api.models import Student
@@ -12,7 +17,7 @@ class StudentLCView(ListCreateAPIView):
     """
     lookup_field = 'wwuid'
     serializer_class = serializers.StudentSerializer
-    permission_classes = (DjangoModelPermissions, permissions.IsInstructor)
+    permissions_classes = (IsAdminUser|permissions.IsInstructor)
 
     def get_queryset(self):
         return Student.objects.all()
@@ -41,7 +46,7 @@ class StudentRUDView(RetrieveUpdateDestroyAPIView):
     """
     lookup_field = 'pk'
     serializer_class = serializers.StudentSerializer
-    permission_classes = (DjangoModelPermissions, permissions.IsInstructor)
+    permissions_classes = (IsAdminUser|permissions.IsInstructor)
 
     def get_queryset(self):
         return Student.objects.all()
