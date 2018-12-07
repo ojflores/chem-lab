@@ -6,6 +6,7 @@ from rest_framework.test import APITestCase
 import json
 
 from api.models import Course, Instructor, LabGroup, Student
+from api import permissions
 
 
 class StudentLCTest(APITestCase):
@@ -18,8 +19,9 @@ class StudentLCTest(APITestCase):
         self.password = 'test'
         self.student_username = 'bob'
         self.instructor_user = User.objects.create_user(username=self.username, password=self.password)
+        group = permissions.get_or_create_instructor_permissions()
+        group.user_set.add(self.instructor_user)
         self.student_user = User.objects.create_user(username=self.student_username, password=self.password)
-        self.instructor_user.user_permissions.add(Permission.objects.get(codename='add_student'))
         self.client.login(username=self.username, password=self.password)
         # populate test database
         self.instructor = Instructor(user=self.instructor_user, wwuid='9994141')
@@ -86,6 +88,21 @@ class StudentLCTest(APITestCase):
         self.assertEqual(response_body['students'][1]['user'], students[1].user.id)
         self.assertEqual(response_body['students'][1]['labgroup'], students[1].labgroup.id)
         self.assertEqual(response_body['students'][1]['wwuid'], students[1].wwuid)
+
+    def test_student_list_not_shown_to_students(self):
+        """
+        Tests that students are not listed to other students.
+        """
+        # login the student
+        self.client.logout()
+        self.client.login(username=self.student_username, password=self.password)
+        # add students to database
+        Student(user=self.student_user, labgroup=self.group, wwuid='64').save()
+        Student(user=self.instructor_user, labgroup=self.group, wwuid='12').save()
+        # request
+        response = self.client.get(reverse(self.view_name))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class StudentRUDTest(APITestCase):
