@@ -21,7 +21,7 @@ class TaskEntryLCTest(APITestCase):
         self.student_user = User.objects.create_user(username=self.student_username, password=self.password)
         self.instructor_user.groups.add(permissions.get_or_create_instructor_permissions())
         self.student_user.groups.add(permissions.get_or_create_student_permissions())
-        self.client.login(username=self.instructor_username, password=self.password)
+        self.client.login(username=self.student_username, password=self.password)
         # populate test database
         self.instructor = Instructor(user=self.instructor_user, wwuid='9994141')
         self.instructor.save()
@@ -79,6 +79,9 @@ class TaskEntryLCTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['task_template'], request_body['task_template'])
+        self.assertEqual(response_body['assignment_entry'], request_body['assignment_entry'])
+        self.assertEqual(response_body['attempts'], request_body['attempts'])
+        self.assertEqual(response_body['passed'], request_body['passed'])
 
 
 
