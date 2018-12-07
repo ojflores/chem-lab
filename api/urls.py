@@ -18,5 +18,7 @@ urlpatterns = [
     url(r'^student/(?P<pk>\d+)$', views.StudentRUDView.as_view(), name='student-rud'),
     url(r'^template$', views.AssignmentTemplateLCView.as_view(), name='template-lc'),
     url(r'^template/(?P<pk>\d+)$', views.AssignmentTemplateRUDView.as_view(), name='template-rud'),
+    url(r'^assignment/(?P<pk>\d+)/task$', views.TaskEntryLCView.as_view(), name='task-entry-lc'),
+    url(r'^assignment/(?P<pk>\d+)/task/(?P<task_entry_pk>\d+)$', views.TaskEntryRUDView.as_view(), name='task-entry-rud'),
 ]
 
