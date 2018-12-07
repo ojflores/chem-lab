@@ -83,6 +83,25 @@ class TaskEntryLCTest(APITestCase):
         self.assertEqual(response_body['attempts'], request_body['attempts'])
         self.assertEqual(response_body['passed'], request_body['passed'])
 
+    def test_task_entry_list(self):
+        """
+        Tests that Task Entries are properly listed.
+        """
+        # add assignments to database
+        TaskEntry(assignment_entry=self.assignment_entry, task_template=self.task_template, attempts=3, passed=True).save()
+        TaskEntry(assignment_entry=self.assignment_entry, task_template=self.task_template, attempts=4, passed=True).save()
+        # request
+        response = self.client.get(reverse(self.view_name, args=[self.task_template.id]))
+        response_body = json.loads(response.content.decode('utf-8'))
+        # test response
+        task_entries = TaskEntry.objects.all()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_body['task_entry'][0]['pk'], task_entries[0].id)
+        self.assertEqual(response_body['task_entry'][0]['task_template'], task_entries[0].task_template.id)
+        self.assertEqual(response_body['task_entry'][0]['assignment_entry'], task_entries[0].assignment_entry.id)
+        self.assertEqual(response_body['task_entry'][0]['attempts'], task_entries[0].attempts)
+        self.assertEqual(response_body['task_entry'][0]['passed'], task_entries[0].passed)
 
 
 
