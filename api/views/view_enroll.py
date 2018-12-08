@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 
 from api.models import Student, LabGroup
 from api import permissions
-from api.serializers import StudentSerializer
+from api.serializers import StudentSerializer, EnrollStatusSerializer
 
 
 class EnrollView(APIView):
@@ -13,6 +13,24 @@ class EnrollView(APIView):
     The POST view for enrolling in a LabGroup.
     """
     permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        """
+        Retrieve the enrollment status of the current user.
+        """
+        # get the student if they exist
+        try:
+            student = Student.objects.get(user=request.user.id)
+        except Student.DoesNotExist:
+            student = None
+        # compile the data to be serialized
+        data = {
+            'user': request.user,
+            'student': student,
+        }
+        # serialize and return the response
+        serializer = EnrollStatusSerializer(data)
+        return Response(serializer.data)
 
     def post(self, request):
         """
