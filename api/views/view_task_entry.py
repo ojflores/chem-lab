@@ -1,19 +1,18 @@
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import DjangoModelPermissions
+
 from api import serializers
 from api.models import TaskEntry
-from api.authentication import TokenAuthentication
+from api.permissions import IsStudent
 
 
 class TaskEntryLCView(ListCreateAPIView):
     """
     The list create view for task entry
     """
-    authentication_classes = (SessionAuthentication,)
-    permission_classes = (DjangoModelPermissions,)
-    lookup_field = 'pk'
+    permission_classes = (DjangoModelPermissions, IsStudent)
     serializer_class = serializers.TaskEntrySerializer
+    lookup_field = 'pk'
 
     def get_queryset(self):
         return TaskEntry.objects.all()
@@ -30,10 +29,9 @@ class TaskEntryRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for task entry.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
-    permissions_classes = (DjangoModelPermissions,)
-    lookup_field = 'pk'
+    permissions_classes = (DjangoModelPermissions, IsStudent)
     serializer_class = serializers.TaskEntrySerializer
+    lookup_field = 'pk'
 
     def get_queryset(self):
         return TaskEntry.objects.all()
