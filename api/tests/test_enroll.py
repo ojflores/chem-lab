@@ -3,6 +3,8 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
+import json
+
 from api.models import Course, Instructor, LabGroup, Student
 
 
@@ -133,3 +135,44 @@ class EnrollTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # test database
         self.assertEqual(len(Student.objects.all()), 0)
+
+    def test_enroll_status(self):
+        """
+        Tests that the enrollment status of a user can be retrieved.
+        """
+        # enroll request
+        request_body = {
+            'user': self.student_user,
+            'student': self.student,
+        }
+        self.client.post(reverse(self.view_name), request_body)
+        # enroll status request
+        response = self.client.get(reverse(self.view_name))
+        response_body = json.loads(response.content.decode('utf-8'))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_body['user']['username'], self.student_user.username)
+        self.assertEqual(response_body['user']['email'], self.student_user.email)
+        self.assertEqual(response_body['user']['first_name'], self.student_user.first_name)
+        self.assertEqual(response_body['user']['last_name'], self.student_user.last_name)
+        self.assertEqual(response_body['student']['pk'], self.student.id)
+        self.assertEqual(response_body['student']['labgroup'], self.student.labgroup)
+        self.assertEqual(response_body['student']['user'], self.student.user.id)
+        self.assertEqual(response_body['student']['wwuid'], self.student.wwuid)
+
+    def test_enroll_status_not_enrolled(self):
+        """
+        Tests that no enrollment status is retrieved for an un-enrolled user.
+        """
+        # un-enroll user
+        self.student.delete()
+        # enroll status request
+        response = self.client.get(reverse(self.view_name))
+        response_body = json.loads(response.content.decode('utf-8'))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_body['user']['username'], self.student_user.username)
+        self.assertEqual(response_body['user']['email'], self.student_user.email)
+        self.assertEqual(response_body['user']['first_name'], self.student_user.first_name)
+        self.assertEqual(response_body['user']['last_name'], self.student_user.last_name)
+        self.assertEqual(response_body['student'], None)
