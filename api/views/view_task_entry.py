@@ -2,7 +2,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import DjangoModelPermissions
 
 from api import serializers
-from api.models import TaskEntry
+from api.models import TaskEntry, Assignment, AssignmentEntry
 from api.permissions import IsStudent
 
 
@@ -15,7 +15,7 @@ class TaskEntryLCView(ListCreateAPIView):
     lookup_field = 'pk'
 
     def get_queryset(self):
-        return TaskEntry.objects.all()
+        return TaskEntry.objects.filter(assignment_entry=AssignmentEntry.objects.get(assignment=self.kwargs['assignment']))
 
     def list(self, request, *args, **kwargs):
         response = super(TaskEntryLCView, self).list(request, *args, **kwargs)

@@ -62,7 +62,7 @@ class TaskEntryLCTest(APITestCase):
             'attempts': 2,
             'raw_input': 'input',
         }
-        response = self.client.post(reverse(self.view_name, args=[self.task_template.id]), request_body)
+        response = self.client.post(reverse(self.view_name, args=[self.assignment.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -81,22 +81,43 @@ class TaskEntryLCTest(APITestCase):
         """
         Tests that Task Entries are properly listed.
         """
-        # add assignments to database
+        # add new template, assignment, assignment entry, task template, and task entry
+        assignment_template = AssignmentTemplate(course=self.course, name='other template')
+        assignment_template.save()
+        assignment = Assignment(assignment_template=assignment_template,
+                                labgroup=self.lab_group,
+                                open_date=datetime.now(timezone(settings.TIME_ZONE)),
+                                close_date=datetime.now(timezone(settings.TIME_ZONE)) + timedelta(days=1))
+        assignment.save()
+        assignment_entry = AssignmentEntry(student=self.student, assignment=assignment)
+        assignment_entry.save()
+        task_template = TaskTemplate(assignment_template=assignment_template,
+                                     problem_num=1,
+                                     prompt='prompt',
+                                     numeric_only=False)
+        task_template.save()
+        other_task = TaskEntry(assignment_entry=assignment_entry,
+                               task_template=task_template,
+                               attempts=3,
+                               raw_input='other input')
+        other_task.save()
+        # add task entries to database
         task_1 = TaskEntry(assignment_entry=self.assignment_entry,
                            task_template=self.task_template,
                            attempts=3,
-                           raw_input='input')
+                           raw_input='input 1')
         task_1.save()
         task_2 = TaskEntry(assignment_entry=self.assignment_entry,
                            task_template=self.task_template,
                            attempts=4,
-                           raw_input='input')
+                           raw_input='input 2')
         task_2.save()
         # request
-        response = self.client.get(reverse(self.view_name, args=[self.task_template.id]))
+        response = self.client.get(reverse(self.view_name, args=[self.assignment.id]))
         response_body = json.loads(response.content.decode('utf-8'))
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response_body['task_entry']), 2)
         self.assertEqual(response_body['task_entry'][0]['pk'], task_1.id)
         self.assertEqual(response_body['task_entry'][0]['task_template'], task_1.task_template.id)
         self.assertEqual(response_body['task_entry'][0]['assignment_entry'], task_1.assignment_entry.id)
