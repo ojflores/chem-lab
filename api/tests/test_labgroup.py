@@ -14,6 +14,7 @@ class LabGroupLCTest(APITestCase):
     """
     Test cases for list and create requests on LabGroupLCView.
     """
+
     def setUp(self):
         # create test user with permissions
         self.instructor_username = 'instructor'
@@ -183,11 +184,44 @@ class LabGroupLCTest(APITestCase):
         # assert response_body contains exactly 1 labgroup
         self.assertEqual(len(response_body['labgroups']), 1)
 
+    def test_labgroup_filter_by_course(self):
+        """
+        Tests that labgroups can be filtered by the courses query parameter.
+        """
+        # add course to database
+        course = Course(name='course name')
+        course.save()
+        # add labgroups to database
+        labgroup = LabGroup(course=course,
+                            instructor=self.instructor,
+                            group_name='test name 1',
+                            term=get_current_term(),
+                            enroll_key='test key 1')
+        labgroup.save()
+        LabGroup(course=self.course,
+                 instructor=self.instructor,
+                 group_name='test name 2',
+                 term=get_current_term(),
+                 enroll_key='test key 2').save()
+        # request
+        response = self.client.get(reverse(self.view_name), {'course': course.id})
+        response_body = json.loads(response.content.decode('utf-8'))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response_body['labgroups']), 1)
+        self.assertEqual(response_body['labgroups'][0]['pk'], labgroup.id)
+        self.assertEqual(response_body['labgroups'][0]['course'], labgroup.course.id)
+        self.assertEqual(response_body['labgroups'][0]['instructor'], labgroup.instructor.id)
+        self.assertEqual(response_body['labgroups'][0]['group_name'], labgroup.group_name)
+        self.assertEqual(response_body['labgroups'][0]['term'], labgroup.term)
+        self.assertEqual(response_body['labgroups'][0]['enroll_key'], labgroup.enroll_key)
+
 
 class LabGroupRUDTest(APITestCase):
     """
     Test cases for retrieve, update, and destroy requests on LabGroupRUDView.
     """
+
     def setUp(self):
         # create test user with permissions
         self.instructor_username = 'instructor'
