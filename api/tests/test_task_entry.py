@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission, User
+from django.contrib.auth.models import User
 from django.conf import settings
 from rest_framework import status
 from api import permissions
@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import json
 from pytz import timezone
 from api.models import Course, Instructor, LabGroup, Assignment, AssignmentTemplate, TaskTemplate, AssignmentEntry, Student, TaskEntry
+
 
 class TaskEntryLCTest(APITestCase):
     """
@@ -38,14 +39,8 @@ class TaskEntryLCTest(APITestCase):
         self.assignment.save()
         self.task_template = TaskTemplate(assignment_template=self.template,
                                           name='test name 1',
-                                          description='test summary 1',
-                                          image_urls='test image 1',
-                                          points=23,
-                                          attempts_allowed=3,
-                                          text_input='test input',
-                                          numeric_input='23',
-                                          multiple_choice='text',
-                                          numeric_accuracy=2)
+                                          prompt='prompt',
+                                          numeric_only=False)
         self.task_template.save()
         self.student = Student(user=self.student_user, labgroup=self.lab_group, wwuid='12345')
         self.student.save()
@@ -63,33 +58,36 @@ class TaskEntryLCTest(APITestCase):
             'task_template': self.task_template.id,
             'assignment_entry': self.assignment_entry.id,
             'attempts': 2,
-            'passed': True,
+            'raw_input': 'input',
         }
-        task_entry = TaskEntry(assignment_entry=self.assignment_entry, task_template=self.task_template, attempts=2,
-                               passed=True)
-        task_entry.save()
-        task_one = TaskEntry.objects.first()
         response = self.client.post(reverse(self.view_name, args=[self.task_template.id]), request_body)
         response_body = json.loads(response.content.decode('utf-8'))
-        # test database
-        self.assertEqual(task_one.assignment_entry.id, request_body['assignment_entry'])
-        self.assertEqual(task_one.task_template.id, request_body['task_template'])
-        self.assertEqual(task_one.attempts, request_body['attempts'])
-        self.assertEqual(task_one.passed, request_body['passed'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['task_template'], request_body['task_template'])
         self.assertEqual(response_body['assignment_entry'], request_body['assignment_entry'])
         self.assertEqual(response_body['attempts'], request_body['attempts'])
-        self.assertEqual(response_body['passed'], request_body['passed'])
+        self.assertEqual(response_body['raw_input'], request_body['raw_input'])
+        # test database
+        task = TaskEntry.objects.get(id=response_body['pk'])
+        self.assertEqual(task.assignment_entry.id, request_body['assignment_entry'])
+        self.assertEqual(task.task_template.id, request_body['task_template'])
+        self.assertEqual(task.attempts, request_body['attempts'])
+        self.assertEqual(task.raw_input, request_body['raw_input'])
 
     def test_task_entry_list(self):
         """
         Tests that Task Entries are properly listed.
         """
         # add assignments to database
-        TaskEntry(assignment_entry=self.assignment_entry, task_template=self.task_template, attempts=3, passed=True).save()
-        TaskEntry(assignment_entry=self.assignment_entry, task_template=self.task_template, attempts=4, passed=True).save()
+        TaskEntry(assignment_entry=self.assignment_entry,
+                  task_template=self.task_template,
+                  attempts=3,
+                  raw_input='input').save()
+        TaskEntry(assignment_entry=self.assignment_entry,
+                  task_template=self.task_template,
+                  attempts=4,
+                  raw_input='input').save()
         # request
         response = self.client.get(reverse(self.view_name, args=[self.task_template.id]))
         response_body = json.loads(response.content.decode('utf-8'))
@@ -101,7 +99,8 @@ class TaskEntryLCTest(APITestCase):
         self.assertEqual(response_body['task_entry'][0]['task_template'], task_entries[0].task_template.id)
         self.assertEqual(response_body['task_entry'][0]['assignment_entry'], task_entries[0].assignment_entry.id)
         self.assertEqual(response_body['task_entry'][0]['attempts'], task_entries[0].attempts)
-        self.assertEqual(response_body['task_entry'][0]['passed'], task_entries[0].passed)
+        self.assertEqual(response_body['task_entry'][0]['raw_input'], task_entries[0].raw_input)
+
 
 class TaskEntryRUDTest(APITestCase):
     """
@@ -132,25 +131,13 @@ class TaskEntryRUDTest(APITestCase):
         self.assignment.save()
         self.task_template = TaskTemplate(assignment_template=self.template,
                                           name='test name 1',
-                                          description='test summary 1',
-                                          image_urls='test image 1',
-                                          points=23,
-                                          attempts_allowed=3,
-                                          text_input='test input',
-                                          numeric_input='23',
-                                          multiple_choice='text',
-                                          numeric_accuracy=2)
+                                          prompt='prompt',
+                                          numeric_only=False)
         self.task_template.save()
         self.task_template_2 = TaskTemplate(assignment_template=self.template,
-                                            name='test name 1',
-                                            description='test summary 1',
-                                            image_urls='test image 1',
-                                            points=23,
-                                            attempts_allowed=3,
-                                            text_input='test input',
-                                            numeric_input='23',
-                                            multiple_choice='text',
-                                            numeric_accuracy=2)
+                                            name='test name 2',
+                                            prompt='prompt',
+                                            numeric_only=False)
         self.task_template_2.save()
         self.student = Student(user=self.student_user, labgroup=self.lab_group, wwuid='12345')
         self.student.save()
@@ -159,11 +146,20 @@ class TaskEntryRUDTest(APITestCase):
         self.assignment_entry_2 = AssignmentEntry(student=self.student, assignment=self.assignment)
         self.assignment_entry_2.save()
         # add tasks to the database
-        self.task_1 = TaskEntry(assignment_entry=self.assignment_entry, task_template=self.task_template, attempts=1, passed=True)
+        self.task_1 = TaskEntry(assignment_entry=self.assignment_entry,
+                                task_template=self.task_template,
+                                attempts=1,
+                                raw_input='input')
         self.task_1.save()
-        self.task_2 = TaskEntry(assignment_entry=self.assignment_entry, task_template=self.task_template, attempts=2, passed=True)
+        self.task_2 = TaskEntry(assignment_entry=self.assignment_entry,
+                                task_template=self.task_template,
+                                attempts=2,
+                                raw_input='input')
         self.task_2.save()
-        self.task_3 = TaskEntry(assignment_entry=self.assignment_entry, task_template=self.task_template, attempts=3, passed=True)
+        self.task_3 = TaskEntry(assignment_entry=self.assignment_entry,
+                                task_template=self.task_template,
+                                attempts=3,
+                                raw_input='input')
         self.task_3.save()
         # retrieve the view
         self.view_name = 'api:task-entry-rud'
@@ -181,7 +177,7 @@ class TaskEntryRUDTest(APITestCase):
         self.assertEqual(response_body['assignment_entry'], self.task_1.assignment_entry.id)
         self.assertEqual(response_body['task_template'], self.task_1.task_template.id)
         self.assertEqual(response_body['attempts'], self.task_1.attempts)
-        self.assertEqual(response_body['passed'], self.task_1.passed)
+        self.assertEqual(response_body['raw_input'], self.task_1.raw_input)
 
     def test_task_entry_update(self):
         """
@@ -192,7 +188,7 @@ class TaskEntryRUDTest(APITestCase):
             'task_template': self.task_template_2.id,
             'assignment_entry': self.assignment_entry_2.id,
             'attempts': 10,
-            'passed': False,
+            'raw_input': 'input',
         }
         # request
         response = self.client.put(reverse(self.view_name, args=[self.task_2.id, self.task_2.id]), request_body)
@@ -203,14 +199,14 @@ class TaskEntryRUDTest(APITestCase):
         self.assertEqual(task_change.task_template.id, request_body['task_template'])
         self.assertEqual(task_change.assignment_entry.id, request_body['assignment_entry'])
         self.assertEqual(task_change.attempts, request_body['attempts'])
-        self.assertEqual(task_change.passed, request_body['passed'])
+        self.assertEqual(task_change.raw_input, request_body['raw_input'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.task_2.id)
-        self.assertEqual(response_body['assignment_entry'], request_body['task_template'])
-        self.assertEqual(response_body['task_template'], request_body['assignment_entry'])
+        self.assertEqual(response_body['task_template'], request_body['task_template'])
+        self.assertEqual(response_body['assignment_entry'], request_body['assignment_entry'])
         self.assertEqual(response_body['attempts'], request_body['attempts'])
-        self.assertEqual(response_body['passed'], request_body['passed'])
+        self.assertEqual(response_body['raw_input'], request_body['raw_input'])
 
     def test_task_entry_destroy(self):
         """
@@ -225,27 +221,3 @@ class TaskEntryRUDTest(APITestCase):
         self.assertTrue(self.task_3 in task_entries)
         # test response
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

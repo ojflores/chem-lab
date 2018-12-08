@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from api.models import TaskEntry
 
+
 class TaskEntrySerializer(serializers.ModelSerializer):
     """
     Serializer for Task Entries
@@ -12,5 +13,5 @@ class TaskEntrySerializer(serializers.ModelSerializer):
             'assignment_entry',
             'task_template',
             'attempts',
-            'passed',
+            'raw_input',
         )

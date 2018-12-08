@@ -14,6 +14,7 @@ class TaskEntryLCView(ListCreateAPIView):
     permission_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
     serializer_class = serializers.TaskEntrySerializer
+
     def get_queryset(self):
         return TaskEntry.objects.all()
 
@@ -23,6 +24,7 @@ class TaskEntryLCView(ListCreateAPIView):
             'task_entry': response.data,
         }
         return response
+
 
 class TaskEntryRUDView(RetrieveUpdateDestroyAPIView):
     """
