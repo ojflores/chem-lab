@@ -61,17 +61,17 @@ class TaskTemplate(models.Model):
     """
     assignment_template = models.ForeignKey(AssignmentTemplate, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
-    description = models.TextField(blank=True)
+    summary = models.TextField(blank=True)
+    prompt = models.TextField()
+    prompt_format = models.CharField(max_length=50, null=True)
     image_urls = models.TextField(null=True)
-    points = models.FloatField()
     attempts_allowed = models.IntegerField(null=True)
-    text_input = models.TextField(null=True)
-    numeric_input = models.TextField(null=True)
     numeric_accuracy = models.IntegerField(null=True)
-    multiple_choice = models.TextField(null=True)
+    numeric_only = models.BooleanField()
 
     class Meta:
         db_table = 'api_task_template'
+        unique_together = ('assignment_template', 'name')
 
 
 class Assignment(models.Model):
@@ -107,7 +107,7 @@ class TaskEntry(models.Model):
     assignment_entry = models.ForeignKey(AssignmentEntry, on_delete=models.CASCADE)
     task_template = models.ForeignKey(TaskTemplate, on_delete=models.CASCADE)
     attempts = models.IntegerField()
-    passed = models.BooleanField()
+    raw_input = models.TextField()
 
     class Meta:
         db_table = 'api_task_entry'

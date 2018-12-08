@@ -1,5 +1,5 @@
 from django.contrib.auth.models import ContentType, Group, Permission
-from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.permissions import BasePermission, DjangoModelPermissions
 
 from api import models
 
@@ -51,3 +51,19 @@ class ViewDjangoModelPermissions(DjangoModelPermissions):
         self.perms_map = copy.deepcopy(self.perms_map)
         self.perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
 
+
+class IsInstructor(BasePermission):
+    """
+    Permission class to determine if the user is an instructor.
+    """
+    def has_permission(self, request, view):
+            return models.Instructor.objects.filter(user=request.user).exists()
+
+
+class IsStudent(BasePermission):
+    """
+    Permission class to determine if the user is a student.
+    """
+
+    def has_permission(self, request, view):
+        return models.Student.objects.filter(user=request.user).exists()

@@ -42,7 +42,7 @@ class InstructorLCTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_body['pk'], instructor.id)
-        self.assertEqual(response_body['wwuid'], request_body['wwuid'])
+        self.assertTrue('wwuid' not in response_body.keys())
         self.assertEqual(response_body['user'], request_body['user'])
 
     def test_instructor_permissions(self):
@@ -72,10 +72,10 @@ class InstructorLCTest(APITestCase):
         instructors = Instructor.objects.all()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['instructors'][0]['pk'], instructors[0].id)
-        self.assertEqual(response_body['instructors'][0]['wwuid'], instructors[0].wwuid)
+        self.assertTrue('wwuid' not in response_body['instructors'][0].keys())
         self.assertEqual(response_body['instructors'][0]['user'], instructors[0].user.id)
         self.assertEqual(response_body['instructors'][1]['pk'], instructors[1].id)
-        self.assertEqual(response_body['instructors'][1]['wwuid'], instructors[1].wwuid)
+        self.assertTrue('wwuid' not in response_body['instructors'][1].keys())
         self.assertEqual(response_body['instructors'][1]['user'], instructors[1].user.id)
 
 
@@ -115,7 +115,7 @@ class InstructorRUDTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.instructor_2.id)
-        self.assertEqual(response_body['wwuid'], self.instructor_2.wwuid)
+        self.assertTrue('wwuid' not in response_body.keys())
         self.assertEqual(response_body['user'], self.instructor_2.user.id)
 
     def test_instructor_update(self):
@@ -133,12 +133,12 @@ class InstructorRUDTest(APITestCase):
         # test database
         instructor = Instructor.objects.filter(id=self.instructor_2.id).first()
         self.assertEqual(instructor.id, self.instructor_2.id)
-        self.assertEqual(instructor.wwuid, request_body['wwuid'])
+        self.assertTrue('wwuid' not in response_body.keys())
         self.assertEqual(instructor.user.id, request_body['user'])
         # test response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_body['pk'], self.instructor_2.id)
-        self.assertEqual(response_body['wwuid'], request_body['wwuid'])
+        self.assertTrue('wwuid' not in response_body.keys())
         self.assertEqual(response_body['user'], request_body['user'])
 
     def test_instructor_destroy(self):

@@ -1,10 +1,7 @@
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import DjangoModelPermissions
 
 from api import serializers
-from api.authentication import TokenAuthentication
-from api.models import Instructor, LabGroup
+from api.models import LabGroup, Instructor
 
 from datetime import date
 
@@ -13,8 +10,6 @@ class LabGroupLCView(ListCreateAPIView):
     """
     The list create view for labgroups.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
-    permission_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
 
     def get_serializer_class(self):
@@ -24,6 +19,10 @@ class LabGroupLCView(ListCreateAPIView):
         return serializers.LabGroupPartialSerializer
 
     def get_queryset(self):
+        # only return labgroups that belong to the querying instructor
+        if self.request.user.groups.filter(name='Instructor').exists():
+            instructor = Instructor.objects.get(user = self.request.user.id)
+            return LabGroup.objects.filter(term=get_current_term(), instructor=instructor.id)
         return LabGroup.objects.filter(term=get_current_term())
 
     def list(self, request, *args, **kwargs):
@@ -38,8 +37,6 @@ class LabGroupRUDView(RetrieveUpdateDestroyAPIView):
     """
     The retrieve update destroy view for labgroups.
     """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
-    permissions_classes = (DjangoModelPermissions,)
     lookup_field = 'pk'
 
     def get_serializer_class(self):

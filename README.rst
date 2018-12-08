@@ -209,8 +209,8 @@ Deploying in production is different than the local development.
 
 ::
 
-  $ chown root:root .env
-  $ chmod 600
+  $ sudo chown root:root .env
+  $ sudo chmod 600 .env
 
 3. Create a directory at 'DIRECTORY_FOR_STATIC_FILES' and put the django static files generate by 'python manage.py collectstatic' there.
 
