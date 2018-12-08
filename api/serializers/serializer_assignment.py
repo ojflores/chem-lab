@@ -17,6 +17,9 @@ class AssignmentSerializer(serializers.ModelSerializer):
         # check if they have the same course
         if data['labgroup'].course != data['assignment_template'].course:
             raise serializers.ValidationError('the labgroup and assignment template must be a part of the same course')
+        # check if open date is less than close date
+        if data['open_date'] >= data['close_date']:
+            raise serializers.ValidationError('the close date is not after the start date')
         return super_data
 
     class Meta:

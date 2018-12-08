@@ -60,6 +60,25 @@ class AssignmentLCTest(APITestCase):
         self.assertEqual(response_body['open_date'], request_body['open_date'])
         self.assertEqual(response_body['close_date'], request_body['close_date'])
 
+    def test_assignment_create_check_valid_dates(self):
+        """
+        Tests that an assignment is not created when the open and close dates are incompatible.
+        """
+        # get current time
+        current_time = datetime.now(timezone(settings.TIME_ZONE))
+        # request
+        request_body = {
+            'assignment_template': self.template.id,
+            'labgroup': self.group.id,
+            'open_date': (current_time + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'close_date': current_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        }
+        response = self.client.post(reverse(self.view_name), request_body)
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test database
+        self.assertFalse(Assignment.objects.exists())
+
     def test_assignment_create_template_course_incompatible(self):
         """
         Tests that an assignment is not created when the assignment template doesn't belong to a shared course.
@@ -181,6 +200,28 @@ class AssignmentRUDTest(APITestCase):
         self.assertEqual(response_body['labgroup'], request_body['labgroup'])
         self.assertEqual(response_body['open_date'], request_body['open_date'])
         self.assertEqual(response_body['close_date'], request_body['close_date'])
+
+    def test_assignment_update_check_valid_dates(self):
+        """
+        Tests that an assignment is not updated when the open and close dates are incompatible.
+        """
+        # get current time
+        current_time = datetime.now(timezone(settings.TIME_ZONE))
+        # request
+        request_body = {
+            'assignment_template': self.template.id,
+            'labgroup': self.group.id,
+            'open_date': (current_time + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'close_date': current_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        }
+        response = self.client.put(reverse(self.view_name, args=[self.assignment.id]), request_body)
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test database
+        self.assertEqual(self.assignment.assignment_template.id, request_body['assignment_template'])
+        self.assertEqual(self.assignment.labgroup.id, request_body['labgroup'])
+        self.assertNotEqual(self.assignment.open_date, request_body['open_date'])
+        self.assertNotEqual(self.assignment.close_date, request_body['close_date'])
 
     def test_assignment_update_template_course_incompatible(self):
         """
