@@ -1,0 +1,32 @@
+version: "3"
+services:
+  database:
+    environment:
+     - MYSQL_ROOT_PASSWORD
+     - MYSQL_DATABASE
+     - MYSQL_USER
+     - MYSQL_PASSWORD
+    image: mysql:5.7
+    container_name: chem_lab_database
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - "${MYSQL_DIR}:/var/lib/mysql"
+    restart: on-failure
+  server:
+    environment:
+      - DJANGO_ENV
+      - DJANGO_SECRET_KEY
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MYSQL_HOST
+      - MYSQL_PORT
+    image: "chem-lab-server:${DJANGO_TAG}"
+    build: .
+    container_name: chem_lab_server
+    volumes:
+      - "${STATIC_DIR}:/home/django/chem_lab_server/static"
+    restart: on-failure
+    ports:
+      - "${DJANGO_PORT}:8000"
+    links:
+      - database
