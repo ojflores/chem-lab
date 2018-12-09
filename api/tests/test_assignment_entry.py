@@ -177,6 +177,36 @@ class AssignmentEntryStartTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_assignment_not_open(self):
+        """
+        Tests that nothing happens when the user tries to start an assignment that is not open.
+        """
+        # modify open dates
+        self.assignment.open_date = datetime.now(timezone(settings.TIME_ZONE)) + timedelta(days=1)
+        self.assignment.close_date = datetime.now(timezone(settings.TIME_ZONE)) + timedelta(days=2)
+        self.assignment.save()
+        # request
+        response = self.client.post(reverse(self.view_name, args=[self.assignment.id]))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # test database
+        self.assertEqual(len(AssignmentEntry.objects.all()), 0)
+
+    def test_assignment_closed(self):
+        """
+        Tests that nothing happens when the user tries to start an assignment that has been closed.
+        """
+        # modify open dates
+        self.assignment.open_date = datetime.now(timezone(settings.TIME_ZONE)) - timedelta(days=2)
+        self.assignment.close_date = datetime.now(timezone(settings.TIME_ZONE)) - timedelta(days=1)
+        self.assignment.save()
+        # request
+        response = self.client.post(reverse(self.view_name, args=[self.assignment.id]))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # test database
+        self.assertEqual(len(AssignmentEntry.objects.all()), 0)
+
 
 class AssignmentEntryEntrySubmitTest(APITestCase):
     """
@@ -237,7 +267,7 @@ class AssignmentEntryEntrySubmitTest(APITestCase):
         self.assertTrue('start_date' in response_body.keys())
         self.assertTrue('submit_date' in response_body.keys())
 
-    def test_assignment_does_not_exist(self):
+    def test_assignment_entry_does_not_exist(self):
         """
         Tests that nothing happens when the assignment does not exist.
         """
@@ -249,7 +279,7 @@ class AssignmentEntryEntrySubmitTest(APITestCase):
         # test response
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_assignment_entry_does_not_started(self):
+    def test_assignment_entry_not_started(self):
         """
         Tests that nothing happens when the assignment entry has not been started.
         """
@@ -261,3 +291,33 @@ class AssignmentEntryEntrySubmitTest(APITestCase):
         self.assertEqual(len(AssignmentEntry.objects.all()), 0)
         # test response
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_assignment_entry_already_submitted(self):
+        """
+        Tests that nothing happens when the assignment entry has already been submitted.
+        """
+        # submit assignment
+        self.assignment_entry.submit_date = datetime.now(timezone(settings.TIME_ZONE))
+        self.assignment_entry.save()
+        # request
+        response = self.client.post(reverse(self.view_name, args=[self.assignment.id]))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test database
+        self.assertEqual(AssignmentEntry.objects.get(id=self.assignment_entry.id).submit_date,
+                         self.assignment_entry.submit_date)
+
+    def test_assignment_closed(self):
+        """
+        Tests that nothing happens when the user tries to start an assignment that has been closed.
+        """
+        # modify open dates
+        self.assignment.open_date = datetime.now(timezone(settings.TIME_ZONE)) - timedelta(days=2)
+        self.assignment.close_date = datetime.now(timezone(settings.TIME_ZONE)) - timedelta(days=1)
+        self.assignment.save()
+        # request
+        response = self.client.post(reverse(self.view_name, args=[self.assignment.id]))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # test database
+        self.assertEqual(self.assignment_entry.submit_date, None)

@@ -6,6 +6,7 @@ from rest_framework.test import APITestCase
 import json
 
 from api.models import Course, Instructor, LabGroup, Student
+from api import permissions
 
 
 class EnrollTest(APITestCase):
@@ -16,10 +17,14 @@ class EnrollTest(APITestCase):
     def setUp(self):
         # create test users
         self.student_username = 'student'
-        self.teacher_username = 'teacher'
+        self.instructor_username = 'teacher'
         self.password = 'test'
         self.student_user = User.objects.create_user(username=self.student_username, password=self.password)
-        self.instructor_user = User.objects.create_user(username=self.teacher_username, password=self.password)
+        self.instructor_user = User.objects.create_user(username=self.instructor_username, password=self.password)
+        group = permissions.get_or_create_instructor_permissions()
+        group.user_set.add(self.instructor_user)
+        group = permissions.get_or_create_student_permissions()
+        group.user_set.add(self.student_user)
         self.client.login(username=self.student_username, password=self.password)
         # populate the database
         self.student = Student(labgroup=None, user=self.student_user, wwuid='1111111')
@@ -54,24 +59,6 @@ class EnrollTest(APITestCase):
         self.assertEqual(Student.objects.first().user, self.student_user)
         self.assertEqual(Student.objects.first().labgroup, self.labgroup)
         self.assertEqual(Student.objects.first().wwuid, self.student.wwuid)
-
-    def test_enroll_not_student(self):
-        """
-        Tests that non-students cannot enroll in labgroups.
-        """
-        # request
-        self.client.logout()
-        self.client.login(username=self.teacher_username, password=self.password)
-        request_body = {
-            'wwuid': '2222222',
-            'labgroup': self.labgroup.id,
-            'enroll_key': self.labgroup.enroll_key
-        }
-        response = self.client.post(reverse(self.view_name), request_body)
-        # test response
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        # test database
-        self.assertEqual(Student.objects.get(user=self.instructor_user).labgroup, self.labgroup)
 
     def test_enroll_bad_labgroup(self):
         """

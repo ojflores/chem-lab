@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 from api import serializers
@@ -11,6 +12,8 @@ class LabGroupLCView(ListCreateAPIView):
     The list create view for labgroups.
     """
     lookup_field = 'pk'
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('course',)
 
     def get_serializer_class(self):
         # only return the enroll_key if the user is an instructor

@@ -1,7 +1,6 @@
 from django.conf import settings
 from rest_framework import status
 from rest_framework.generics import RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -18,7 +17,7 @@ class AssignmentEntryView(RetrieveAPIView):
     """
     The retrieve view for assignment entries.
     """
-    permission_classes = (IsAuthenticated, IsStudent)
+    permission_classes = (IsStudent,)
     lookup_field = 'assignment'
     serializer_class = AssignmentEntrySerializer
 
@@ -31,7 +30,7 @@ class AssignmentEntryStartView(APIView):
     """
     The create view for assignment entries.
     """
-    permission_classes = (IsAuthenticated, IsStudent)
+    permission_classes = (IsStudent,)
 
     def post(self, request, *args, **kwargs):
         student = Student.objects.get(user=request.user)
@@ -40,6 +39,10 @@ class AssignmentEntryStartView(APIView):
             assignment = Assignment.objects.get(id=kwargs['assignment'])
         except Assignment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        # check if assignment is open
+        current_time = datetime.now(timezone(settings.TIME_ZONE))
+        if assignment.open_date > current_time or assignment.close_date < current_time:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         # check if student is in the assignments labgroup
         if student.labgroup is None or assignment.labgroup.id is not student.labgroup.id:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -57,7 +60,7 @@ class AssignmentEntrySubmitView(APIView):
     """
     The submit view for assignment entries.
     """
-    permission_classes = (IsAuthenticated, IsStudent)
+    permission_classes = (IsStudent,)
 
     def post(self, request, *args, **kwargs):
         # check if assignment exists
@@ -67,10 +70,17 @@ class AssignmentEntrySubmitView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         # get student
         student = Student.objects.get(user=request.user)
+        # check if assignment is open
+        current_time = datetime.now(timezone(settings.TIME_ZONE))
+        if assignment.open_date > current_time or assignment.close_date < current_time:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         # check if assignment has been started
         try:
             assignment_entry = AssignmentEntry.objects.get(assignment=assignment, student=student)
         except AssignmentEntry.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # check if the assignment has already been submitted
+        if assignment_entry.submit_date is not None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         # set the submit date
         assignment_entry.submit_date = datetime.now(timezone(settings.TIME_ZONE))

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission, User
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -14,6 +14,7 @@ class LabGroupLCTest(APITestCase):
     """
     Test cases for list and create requests on LabGroupLCView.
     """
+
     def setUp(self):
         # create test user with permissions
         self.instructor_username = 'instructor'
@@ -61,6 +62,28 @@ class LabGroupLCTest(APITestCase):
         self.assertEqual(response_body['group_name'], request_body['group_name'])
         self.assertEqual(response_body['term'], request_body['term'])
         self.assertEqual(response_body['enroll_key'], request_body['enroll_key'])
+
+    def test_labgroup_create_different_instructor(self):
+        """
+        Tests that a labgroup is not created if the instructor passed in is not the instructors making the request.
+        """
+        # create new user and instructor
+        user = User.objects.create_user(username='other_teacher', password='password')
+        instructor = Instructor(user=user, wwuid='9999999')
+        instructor.save()
+        # request
+        request_body = {
+            'course': self.course.id,
+            'instructor': instructor.id,
+            'group_name': 'test name',
+            'term': 'FALL2000',
+            'enroll_key': 'test enroll_key',
+        }
+        response = self.client.post(reverse(self.view_name), request_body)
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # test database
+        self.assertFalse(LabGroup.objects.exists())
 
     def test_labgroup_list_instructor(self):
         """
@@ -155,17 +178,50 @@ class LabGroupLCTest(APITestCase):
         # request
         response = self.client.get(reverse(self.view_name))
         response_body = json.loads(response.content.decode('utf-8'))
-        print("response_body", response_body)
         # test response
         labgroups = LabGroup.objects.all()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # assert response_body contains exactly 1 labgroup
         self.assertEqual(len(response_body['labgroups']), 1)
 
+    def test_labgroup_filter_by_course(self):
+        """
+        Tests that labgroups can be filtered by the courses query parameter.
+        """
+        # add course to database
+        course = Course(name='course name')
+        course.save()
+        # add labgroups to database
+        labgroup = LabGroup(course=course,
+                            instructor=self.instructor,
+                            group_name='test name 1',
+                            term=get_current_term(),
+                            enroll_key='test key 1')
+        labgroup.save()
+        LabGroup(course=self.course,
+                 instructor=self.instructor,
+                 group_name='test name 2',
+                 term=get_current_term(),
+                 enroll_key='test key 2').save()
+        # request
+        response = self.client.get(reverse(self.view_name), {'course': course.id})
+        response_body = json.loads(response.content.decode('utf-8'))
+        # test response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response_body['labgroups']), 1)
+        self.assertEqual(response_body['labgroups'][0]['pk'], labgroup.id)
+        self.assertEqual(response_body['labgroups'][0]['course'], labgroup.course.id)
+        self.assertEqual(response_body['labgroups'][0]['instructor'], labgroup.instructor.id)
+        self.assertEqual(response_body['labgroups'][0]['group_name'], labgroup.group_name)
+        self.assertEqual(response_body['labgroups'][0]['term'], labgroup.term)
+        self.assertEqual(response_body['labgroups'][0]['enroll_key'], labgroup.enroll_key)
+
+
 class LabGroupRUDTest(APITestCase):
     """
     Test cases for retrieve, update, and destroy requests on LabGroupRUDView.
     """
+
     def setUp(self):
         # create test user with permissions
         self.instructor_username = 'instructor'

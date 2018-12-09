@@ -45,7 +45,7 @@ class GenerateCSVTest(APITestCase):
         self.task_templates = []
         for task in range(1, 4):
             self.task_templates.append(models.TaskTemplate(assignment_template=self.assignment_template,
-                                                           name=str(task),
+                                                           problem_num=task,
                                                            summary='test summary',
                                                            prompt='test prompt',
                                                            numeric_only=False))
@@ -66,7 +66,7 @@ class GenerateCSVTest(APITestCase):
                 models.TaskEntry(assignment_entry=ae,
                                  task_template=tt,
                                  attempts=1,
-                                 raw_input='{}-{}'.format(student.wwuid, tt.name)).save()
+                                 raw_input='{}-{}'.format(student.wwuid, str(tt.problem_num))).save()
 
         # retrieve the view
         self.view_name = 'api:assignment-csv'
@@ -84,3 +84,19 @@ class GenerateCSVTest(APITestCase):
               '3333333,3333333-1,3333333-2,3333333-3\r\n'
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode('utf-8'), csv)
+
+    def test_instructor_not_owner(self):
+        """
+        Tests that a CSV is not generated if an instructor does not own the assignment.
+        """
+        # create new instructor
+        password = 'password'
+        new_instructor_user = User.objects.create_user(username='new_instructor', password=password)
+        new_instructor = models.Instructor(user=new_instructor_user, wwuid='8888888')
+        new_instructor.save()
+        self.client.logout()
+        self.client.login(username=new_instructor_user.username, password=password)
+        # request
+        response = self.client.get(reverse(self.view_name, args=[self.assignment.id]))
+        # test repsonse
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import Student, LabGroup
+from api import permissions
 from api.serializers import StudentSerializer, EnrollStatusSerializer
 
 
@@ -65,5 +66,8 @@ class EnrollView(APIView):
         # create the student
         student = Student(user=request.user, labgroup=labgroup, wwuid=request.data['wwuid'])
         student.save()
+        # add new student to the student group
+        group = permissions.get_or_create_student_permissions()
+        group.user_set.add(request.user)
         # return successful response
         return Response(status=status.HTTP_204_NO_CONTENT)

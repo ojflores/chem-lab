@@ -11,6 +11,7 @@ pymysql = "~=0.9"
 django-cors-headers = "*"
 djangorestframework-csv = "*"
 djangorestframework-jwt = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.7"
