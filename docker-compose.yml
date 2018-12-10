@@ -30,4 +30,3 @@ services:
       - "${DJANGO_PORT}:8000"
     links:
       - database
-
